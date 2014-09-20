@@ -1,0 +1,182 @@
+//
+//  NewGameTableViewController.m
+//  Thatso
+//
+//  Created by John A Seubert on 8/22/14.
+//  Copyright (c) 2014 John Seubert. All rights reserved.
+//
+
+#import "NewGameTableViewController.h"
+
+@interface NewGameTableViewController () <CommsDelegate>
+
+@end
+
+@implementation NewGameTableViewController
+
+- (id)initWithStyle:(UITableViewStyle)style
+{
+    self = [super initWithStyle:style];
+    if (self) {
+        // Custom initialization
+    }
+    return self;
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithTitle:@"Start Game" style:UIBarButtonItemStyleBordered target:self action:@selector(startGame:)];
+    self.navigationItem.rightBarButtonItem = barButton;
+    
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    self.activityIndicator.frame = CGRectMake(self.view.frame.size.width/2 - 40, self.view.frame.size.height/2 -40, 80, 80);
+    [self.view addSubview:self.activityIndicator];
+    
+    self.tableView.allowsMultipleSelection = YES;
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Table view data source
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    // Return the number of sections.
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    // Return the number of rows in the section.
+    return [DataStore instance].fbFriendsArray.count;
+}
+
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *cellIdentifier = @"Cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    }
+    NSLog(@"Freind in row: %ld, %@",(long)indexPath.row, [[DataStore instance].fbFriendsArray objectAtIndex:indexPath.row]);
+    
+    if([DataStore instance].fbFriendsArray.count <= 0)
+    {
+        [cell.textLabel setText:@"No Friends :("];
+    }else{
+        [cell.textLabel setText:[[[DataStore instance].fbFriendsArray objectAtIndex:indexPath.row] objectForKey:@"name"]];
+    }
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryCheckmark;
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryNone;
+}
+
+
+
+
+// Override to support conditional editing of the table view.
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // Return NO if you do not want the specified item to be editable.
+    return NO;
+}
+
+
+/*
+// Override to support editing the table view.
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        // Delete the row from the data source
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
+        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+    }   
+}
+*/
+
+/*
+// Override to support rearranging the table view.
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
+{
+}
+*/
+
+/*
+// Override to support conditional rearranging of the table view.
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // Return NO if you do not want the item to be re-orderable.
+    return YES;
+}
+*/
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+-(IBAction)startGame:(id)sender{
+    NSLog(@"startGame");
+    if([self.tableView indexPathsForSelectedRows].count <= 0){
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No Friends Selected"
+                                                        message:@"You must pick at least one friend."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+    } else {
+        NSMutableArray* selectedFriends = [[NSMutableArray alloc] init];
+        for(NSIndexPath * indexPath in [self.tableView indexPathsForSelectedRows])
+        {
+            NSLog(@"addingFreind: %ld", (long)indexPath.row);
+            [selectedFriends addObject:[[[DataStore instance].fbFriendsArray objectAtIndex:indexPath.row] objectForKey:@"id"]];
+        }
+        [self.activityIndicator startAnimating];
+        [Comms startNewGameWithUsers:selectedFriends forDelegate:self];
+
+    }
+        
+    
+    
+}
+
+- (void) newGameUploadedToServer:(BOOL)success info:(NSString *)info{
+    NSLog(@"newGameUploadedToServer: %d", success);
+    [self.activityIndicator stopAnimating];
+    if (success) {
+        [self.navigationController popViewControllerAnimated:YES];
+    
+    }else{
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error!"
+                                                        message:info
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+    }
+    
+
+}
+
+@end

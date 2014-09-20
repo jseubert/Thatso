@@ -7,16 +7,42 @@
 //
 
 #import "AppDelegate.h"
+#import "LoginScreenViewController.h"
+
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [Parse setApplicationId:@"Riu6PqKr6bUkHTPDqZ7l8Z9YKCCgPD9ginQbW5Bh" clientKey:@"RRLGVt4cvUEEv1o1pU1a4s78O9FdKS7TQk4A3lfv"];
+    
+    // Initialize Parse's Facebook Utilities singleton. This uses the FacebookAppID we specified in our App bundle's plist.
+    [PFFacebookUtils initializeFacebook];
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
+    
+    LoginScreenViewController *rootViewController = [[LoginScreenViewController alloc] init];
+    
+    UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:rootViewController];
+    
+    [self.window makeKeyAndVisible];
+    [self.window addSubview:navController.view];
+    self.window.rootViewController = navController;
     return YES;
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    //return [FBAppCall handleOpenURL:url sourceApplication:sourceApplication];
+    return [PFFacebookUtils handleOpenURL:url];
+}
+
+- (BOOL) application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+    return [PFFacebookUtils handleOpenURL:url];
+    //return [FBAppCall handleOpenURL:url sourceApplication:nil];
+    
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
