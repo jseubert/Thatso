@@ -43,6 +43,8 @@
 		9A2C6FD019A85D5800DCF2B7 /* NSOperationQueue+NSoperationQueue_SharedQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A2C6FCF19A85D5800DCF2B7 /* NSOperationQueue+NSoperationQueue_SharedQueue.m */; };
 		9A2C6FD619A85EF300DCF2B7 /* NewGameTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A2C6FD519A85EF300DCF2B7 /* NewGameTableViewController.m */; };
 		9A2C6FD919AC526500DCF2B7 /* UserGames.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A2C6FD819AC526500DCF2B7 /* UserGames.m */; };
+		9AFBF0CF19CD4826004F6550 /* GameViewControllerTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFBF0CE19CD4826004F6550 /* GameViewControllerTableViewController.m */; };
+		9AFBF0D319CD4B19004F6550 /* ProfileViewTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFBF0D219CD4B19004F6550 /* ProfileViewTableViewCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +104,10 @@
 		9A2C6FD519A85EF300DCF2B7 /* NewGameTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewGameTableViewController.m; sourceTree = "<group>"; };
 		9A2C6FD719AC526500DCF2B7 /* UserGames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserGames.h; sourceTree = "<group>"; };
 		9A2C6FD819AC526500DCF2B7 /* UserGames.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserGames.m; sourceTree = "<group>"; };
+		9AFBF0CD19CD4826004F6550 /* GameViewControllerTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameViewControllerTableViewController.h; sourceTree = "<group>"; };
+		9AFBF0CE19CD4826004F6550 /* GameViewControllerTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameViewControllerTableViewController.m; sourceTree = "<group>"; };
+		9AFBF0D119CD4B19004F6550 /* ProfileViewTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileViewTableViewCell.h; sourceTree = "<group>"; };
+		9AFBF0D219CD4B19004F6550 /* ProfileViewTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileViewTableViewCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -236,12 +242,15 @@
 		9A38E83319CD25DF0063242D /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				9AFBF0D019CD4A76004F6550 /* TableCells */,
 				9A2C6F9519A832CC00DCF2B7 /* LoginScreenViewController.h */,
 				9A2C6F9619A832CC00DCF2B7 /* LoginScreenViewController.m */,
 				9A2C6F9819A835CD00DCF2B7 /* SelectGameTableViewController.h */,
 				9A2C6F9919A835CD00DCF2B7 /* SelectGameTableViewController.m */,
 				9A2C6FD419A85EF300DCF2B7 /* NewGameTableViewController.h */,
 				9A2C6FD519A85EF300DCF2B7 /* NewGameTableViewController.m */,
+				9AFBF0CD19CD4826004F6550 /* GameViewControllerTableViewController.h */,
+				9AFBF0CE19CD4826004F6550 /* GameViewControllerTableViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -266,6 +275,15 @@
 				9A2C6FD819AC526500DCF2B7 /* UserGames.m */,
 			);
 			name = Data;
+			sourceTree = "<group>";
+		};
+		9AFBF0D019CD4A76004F6550 /* TableCells */ = {
+			isa = PBXGroup;
+			children = (
+				9AFBF0D119CD4B19004F6550 /* ProfileViewTableViewCell.h */,
+				9AFBF0D219CD4B19004F6550 /* ProfileViewTableViewCell.m */,
+			);
+			name = TableCells;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -366,8 +384,10 @@
 			files = (
 				9A2C6F7719A8324200DCF2B7 /* AppDelegate.m in Sources */,
 				9A2C6F7319A8324200DCF2B7 /* main.m in Sources */,
+				9AFBF0CF19CD4826004F6550 /* GameViewControllerTableViewController.m in Sources */,
 				9A2C6FD619A85EF300DCF2B7 /* NewGameTableViewController.m in Sources */,
 				9A2C6FD019A85D5800DCF2B7 /* NSOperationQueue+NSoperationQueue_SharedQueue.m in Sources */,
+				9AFBF0D319CD4B19004F6550 /* ProfileViewTableViewCell.m in Sources */,
 				9A2C6F9719A832CC00DCF2B7 /* LoginScreenViewController.m in Sources */,
 				9A2C6FCA19A852D200DCF2B7 /* Comms.m in Sources */,
 				9A2C6F9A19A835CD00DCF2B7 /* SelectGameTableViewController.m in Sources */,

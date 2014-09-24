@@ -8,6 +8,7 @@
 
 #import "SelectGameTableViewController.h"
 #import "NewGameTableViewController.h"
+#import "GameViewControllerTableViewController.h"
 
 @interface SelectGameTableViewController () <CommsDelegate>
 
@@ -140,7 +141,10 @@
 }
 
 
-
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    GameViewControllerTableViewController *vc = [[GameViewControllerTableViewController alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
+}
 
 
 -(IBAction)logout:(id)sender{
