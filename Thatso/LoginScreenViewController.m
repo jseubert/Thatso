@@ -9,6 +9,7 @@
 #import "LoginScreenViewController.h"
 #import "SelectGameTableViewController.h"
 
+
 @interface LoginScreenViewController ()
 
 @end
@@ -34,11 +35,14 @@
     [self.loginButton setTintColor:[UIColor blueColor]];
     [self.loginButton addTarget:self action:@selector(login:) forControlEvents:UIControlEventTouchUpInside];
     [self.loginButton setTitle:@"Login to Facebook" forState:UIControlStateNormal];
+    [self.loginButton setTintColor:[UIColor whiteColor]];
     [self.view addSubview:self.loginButton];
     
     self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.activityIndicator.frame = CGRectMake(self.view.frame.size.width/2 - 40, self.view.frame.size.height/2 -40, 80, 80);
     [self.view addSubview:self.activityIndicator];
+    
+    [self.view setBackgroundColor:[UIColor blueAppColor]];
      
 
     
