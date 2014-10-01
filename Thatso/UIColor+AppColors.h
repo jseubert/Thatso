@@ -10,4 +10,5 @@
 
 @interface UIColor (AppColors)
 + (UIColor *) blueAppColor;
++ (UIColor *) pinkAppColor;
 @end
