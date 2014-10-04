@@ -16,12 +16,12 @@
     if (self) {
         // Initialization code
         _profilePicture = [[UIImageView alloc] initWithFrame:(CGRectMake(0, 0, 100, 100))];
-        [self.contentView addSubview:_profilePicture];
+        [self addSubview:_profilePicture];
         
         _nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(110, 0, self.frame.size.width -100, 100)];
         _nameLabel.text = @"Name";
         _nameLabel.backgroundColor = [UIColor greenColor];
-        [self.contentView addSubview:_nameLabel];
+        [self addSubview:_nameLabel];
         
         [self setBackgroundColor:[UIColor redColor]];
         

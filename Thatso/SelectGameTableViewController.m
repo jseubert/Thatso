@@ -9,6 +9,7 @@
 #import "SelectGameTableViewController.h"
 #import "NewGameTableViewController.h"
 #import "GameViewControllerTableViewController.h"
+#import "SelectGameTableViewCell.h"
 
 @interface SelectGameTableViewController () <CommsDelegate>
 
@@ -32,11 +33,21 @@
     _dateFormatter = [[NSDateFormatter alloc] init];
     [_dateFormatter setDateFormat:@"MMM d, h:mm a"];
     
+    //New Game Button
     UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithTitle:@"New Game" style:UIBarButtonItemStyleBordered target:self action:@selector(newGame:)];
+    barButton.tintColor = [UIColor whiteColor];
+    NSDictionary *barButtonAppearanceDict = @{NSFontAttributeName : [UIFont defaultAppFontWithSize:18.0 ], NSForegroundColorAttributeName: [UIColor whiteColor]};
+    [barButton setTitleTextAttributes:barButtonAppearanceDict forState:UIControlStateNormal];
+
     self.navigationItem.rightBarButtonItem = barButton;
     
+    //Logout Button
     UIBarButtonItem *logoutButton = [[UIBarButtonItem alloc] initWithTitle:@"Logout" style:UIBarButtonItemStyleBordered target:self action:@selector(logout:)];
+    logoutButton.tintColor = [UIColor whiteColor];
+    [logoutButton setTitleTextAttributes:barButtonAppearanceDict forState:UIControlStateNormal];
     self.navigationItem.leftBarButtonItem = logoutButton;
+    
+    self.navigationController.title = @"Games";
     
     // If we are using iOS 6+, put a pull to refresh control in the table
     if (NSClassFromString(@"UIRefreshControl") != Nil) {
@@ -76,27 +87,22 @@
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if([[UserGames instance].games count] <= 0)
-    {
-        return 30;
-    }else
-    {
-        Game* game = [[UserGames instance].games objectAtIndex:indexPath.row];
-        NSArray *players = game.players;
-        return game.players.count * 30;
-    }
+    return 60;
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    /*
     if([[UserGames instance].games count] > 0)
     {
         return (int)[[UserGames instance].games count];
     }else
     {
         return 1;
-    }
+    }*/
+    return tableView.frame.size.height/60;
+  //  return 6;
 }
 
 
@@ -116,15 +122,17 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *cellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    SelectGameTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        cell = [[SelectGameTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
+    /*
     if([[UserGames instance].games count] <= 0)
     {
         [cell.textLabel setText:@"No Games Found"];
     }else
     {
+     
         NSString *title = [[NSString alloc] init];
         Game* game = [[UserGames instance].games objectAtIndex:indexPath.row];
         NSArray *players = game.players;
@@ -136,7 +144,14 @@
         [cell.textLabel setText:title];
         cell.textLabel.numberOfLines = players.count;
         cell.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    }*/
+    if(indexPath.row == 0)
+    {
+        cell.namesLabel.text = @"No Games Found.";
     }
+    
+    [cell setColorScheme:indexPath.row];
+
     return cell;
 }
 
