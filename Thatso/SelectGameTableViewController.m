@@ -10,6 +10,8 @@
 #import "NewGameTableViewController.h"
 #import "GameViewControllerTableViewController.h"
 #import "SelectGameTableViewCell.h"
+#import "FratBarButtonItem.h"
+#import <math.h>
 
 @interface SelectGameTableViewController () <CommsDelegate>
 
@@ -22,6 +24,7 @@
     self = [super initWithStyle:style];
     if (self) {
         // Custom initialization
+        
     }
     return self;
 }
@@ -29,32 +32,45 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.tableView.backgroundColor = [UIColor blueAppColor];
+    [self.tableView setSeparatorColor:[UIColor clearColor]];
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+    self.navigationItem.title = @"Games";
+    [self.navigationController.navigationBar setTitleTextAttributes:
+     [NSDictionary dictionaryWithObjectsAndKeys:
+      [UIFont fontWithName:@"mplus-1c-regular" size:50],
+      NSFontAttributeName, nil]];
+    
     // Create a re-usable NSDateFormatter
     _dateFormatter = [[NSDateFormatter alloc] init];
     [_dateFormatter setDateFormat:@"MMM d, h:mm a"];
     
+    //Back button - needed for pushed view controllers
+    FratBarButtonItem *backButton= [[FratBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
+    [self.navigationItem setBackBarButtonItem: backButton];
+    
     //New Game Button
-    UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithTitle:@"New Game" style:UIBarButtonItemStyleBordered target:self action:@selector(newGame:)];
-    barButton.tintColor = [UIColor whiteColor];
-    NSDictionary *barButtonAppearanceDict = @{NSFontAttributeName : [UIFont defaultAppFontWithSize:18.0 ], NSForegroundColorAttributeName: [UIColor whiteColor]};
-    [barButton setTitleTextAttributes:barButtonAppearanceDict forState:UIControlStateNormal];
-
-    self.navigationItem.rightBarButtonItem = barButton;
+    FratBarButtonItem *newGameButton= [[FratBarButtonItem alloc] initWithTitle:@"New Game" style:UIBarButtonItemStyleBordered target:self action:@selector(newGame:)];
+    self.navigationItem.rightBarButtonItem = newGameButton;
     
     //Logout Button
-    UIBarButtonItem *logoutButton = [[UIBarButtonItem alloc] initWithTitle:@"Logout" style:UIBarButtonItemStyleBordered target:self action:@selector(logout:)];
-    logoutButton.tintColor = [UIColor whiteColor];
-    [logoutButton setTitleTextAttributes:barButtonAppearanceDict forState:UIControlStateNormal];
+    FratBarButtonItem *logoutButton = [[FratBarButtonItem alloc] initWithTitle:@"Logout" style:UIBarButtonItemStyleBordered target:self action:@selector(logout:)];
     self.navigationItem.leftBarButtonItem = logoutButton;
     
-    self.navigationController.title = @"Games";
+    
     
     // If we are using iOS 6+, put a pull to refresh control in the table
     if (NSClassFromString(@"UIRefreshControl") != Nil) {
         UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
-        refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull to Refresh"];
+        
+        
+        refreshControl.attributedTitle = [self makeRefreshText:@"Pull to refresh"];
         [refreshControl addTarget:self action:@selector(refreshGames:) forControlEvents:UIControlEventValueChanged];
+        [refreshControl setTintColor:[UIColor whiteColor]];
+    
         self.refreshControl = refreshControl;
+        
     }
     
     // Listen for image downloads so that we can refresh the image wall
@@ -62,7 +78,18 @@
                                              selector:@selector(gamesDownloaded:)
                                                  name:N_GamesDownloaded
                                                object:nil];
+    
+    
 
+}
+
+-(NSAttributedString *) makeRefreshText:(NSString *) string
+{
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:string];
+    [attributedString addAttribute:NSForegroundColorAttributeName value:[UIColor whiteColor] range:NSMakeRange(0, string.length)];
+    [attributedString addAttribute:NSFontAttributeName value:[UIFont defaultAppFontWithSize:14.0] range:NSMakeRange(0, string.length)];
+    
+    return attributedString;
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -93,16 +120,15 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    /*
+    
     if([[UserGames instance].games count] > 0)
     {
         return (int)[[UserGames instance].games count];
     }else
     {
-        return 1;
-    }*/
-    return tableView.frame.size.height/60;
-  //  return 6;
+        return roundf(tableView.frame.size.height/60);
+    }
+
 }
 
 
@@ -126,11 +152,12 @@
     if (cell == nil) {
         cell = [[SelectGameTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
-    /*
-    if([[UserGames instance].games count] <= 0)
+    
+    if([[UserGames instance].games count] <= 0 && indexPath.row == 0)
     {
-        [cell.textLabel setText:@"No Games Found"];
-    }else
+        cell.namesLabel.text = @"No Games Found.";
+
+    }else if([[UserGames instance].games count] > 0)
     {
      
         NSString *title = [[NSString alloc] init];
@@ -141,13 +168,11 @@
             NSString *name = [[[DataStore instance].fbFriends objectForKey:[players objectAtIndex:i]] objectForKey:@"name"];
             title = [title stringByAppendingString:[NSString stringWithFormat:@"%@\n", name]];
         }
-        [cell.textLabel setText:title];
-        cell.textLabel.numberOfLines = players.count;
+        [cell.namesLabel setText:title];
+        
         cell.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    }*/
-    if(indexPath.row == 0)
-    {
-        cell.namesLabel.text = @"No Games Found.";
+        
+        [cell.categoryLabel setText:@"Category"];
     }
     
     [cell setColorScheme:indexPath.row];
@@ -197,7 +222,9 @@
     // Update the refresh control if we have one
 	if (self.refreshControl) {
 		NSString *lastUpdated = [NSString stringWithFormat:@"Last updated on %@", [_dateFormatter stringFromDate:[NSDate date]]];
-		[self.refreshControl setAttributedTitle:[[NSAttributedString alloc] initWithString:lastUpdated]];
+		[self.refreshControl setAttributedTitle:[self makeRefreshText:lastUpdated]];
+        [self.refreshControl setTintColor:[UIColor whiteColor]];
+        
 		[self.refreshControl endRefreshing];
 	}
 }

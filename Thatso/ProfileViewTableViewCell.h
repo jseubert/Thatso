@@ -11,4 +11,6 @@
 @interface ProfileViewTableViewCell : UITableViewCell
 @property (nonatomic, strong) IBOutlet UIImageView *profilePicture;
 @property (nonatomic, strong) IBOutlet UILabel *nameLabel;
+
+-(void)setColorScheme:(int) code;
 @end

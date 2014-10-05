@@ -8,6 +8,7 @@
 
 #import "GameViewControllerTableViewController.h"
 #import "ProfileViewTableViewCell.h"
+#import "FratBarButtonItem.h"
 
 
 @implementation GameViewControllerTableViewController
@@ -24,12 +25,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.tableView.backgroundColor = [UIColor blueAppColor];
+    [self.tableView setSeparatorColor:[UIColor clearColor]];
+    self.navigationController.title = @"Category";
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    //Back Button
+    FratBarButtonItem *newGameButton= [[FratBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:nil action:nil];
+    self.navigationItem.backBarButtonItem = newGameButton;
+
 }
 
 - (void)didReceiveMemoryWarning
@@ -64,7 +67,9 @@
     // The header View is actually a UITableViewCell defined in the Storyboard
 	static NSString *ImageCellIdentifier = @"ImageCell";
     ProfileViewTableViewCell *imageCell = (ProfileViewTableViewCell *)[tableView dequeueReusableCellWithIdentifier:ImageCellIdentifier];
-    
+    if (imageCell == nil) {
+        imageCell = [[ProfileViewTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ImageCellIdentifier];
+    }
   
     
     return imageCell;

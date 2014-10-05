@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "LoginScreenViewController.h"
+#import "FratBarButtonItem.h"
 
 
 @implementation AppDelegate
@@ -27,6 +28,9 @@
     LoginScreenViewController *rootViewController = [[LoginScreenViewController alloc] init];
     
     UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:rootViewController];
+    
+    //Need to set navigation bar item color here. Since this is the big one i guess
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     
     [self.window makeKeyAndVisible];
     [self.window addSubview:navController.view];

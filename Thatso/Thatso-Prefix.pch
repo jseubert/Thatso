@@ -10,7 +10,6 @@
 #import "UserGames.h"
 #import <Parse/Parse.h>
 #import <FacebookSDK/FacebookSDK.h>
-#import <ParseFacebookUtils/PFFacebookUtils.h>
 #import "UIColor+AppColors.h"
 #import "UIFont+AppFonts.h"
 

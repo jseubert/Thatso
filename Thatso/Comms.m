@@ -21,8 +21,7 @@ NSString * const N_ProfilePictureLoaded = @"N_ProfilePictureLoaded";
     [[DataStore instance] reset];
     [[UserGames instance] reset];
     
-	// Basic User information and your friends are part of the standard per
-    /*missions
+	// Basic User information and your friends are part of the standard permissions
 	// so there is no reason to ask for additional permissions
 	[PFFacebookUtils logInWithPermissions:[NSArray arrayWithObjects:@"user_friends", nil] block:^(PFUser *user, NSError *error) {
 		// Was login successful ?
@@ -111,10 +110,10 @@ NSString * const N_ProfilePictureLoaded = @"N_ProfilePictureLoaded";
                 }];
             }];
 		}
-	}];*/
+	}];
     
     //Offline Testing
-    [delegate commsDidLogin:YES];
+    //[delegate commsDidLogin:YES];
 }
 
 + (void) startNewGameWithUsers: (NSMutableArray *)fbFriendsInGame forDelegate:(id<CommsDelegate>)delegate

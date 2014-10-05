@@ -7,6 +7,9 @@
 //
 
 #import "NewGameTableViewController.h"
+#import "FratBarButtonItem.h"
+#import "ProfileViewTableViewCell.h"
+#import "UIImage+Scaling.h"
 
 @interface NewGameTableViewController () <CommsDelegate>
 
@@ -18,7 +21,7 @@
 {
     self = [super initWithStyle:style];
     if (self) {
-        // Custom initialization
+        
     }
     return self;
 }
@@ -27,10 +30,15 @@
 {
     [super viewDidLoad];
     
-    UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithTitle:@"Start Game" style:UIBarButtonItemStyleBordered target:self action:@selector(startGame:)];
-    self.navigationItem.rightBarButtonItem = barButton;
+    self.tableView.backgroundColor = [UIColor blueAppColor];
+    [self.tableView setSeparatorColor:[UIColor clearColor]];
+    self.navigationController.title = @"Category";
     
-    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    //New Game Button
+    FratBarButtonItem *startButton  = [[FratBarButtonItem alloc] initWithTitle:@"Start Game" style:UIBarButtonItemStyleBordered target:self action:@selector(startGame:)];
+    self.navigationItem.rightBarButtonItem = startButton;
+    
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     self.activityIndicator.frame = CGRectMake(self.view.frame.size.width/2 - 40, self.view.frame.size.height/2 -40, 80, 80);
     [self.view addSubview:self.activityIndicator];
     
@@ -54,35 +62,55 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
+    //return [DataStore instance].fbFriendsArray.count;
     return [DataStore instance].fbFriendsArray.count;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 44;
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *cellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    ProfileViewTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        cell = [[ProfileViewTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
-    NSLog(@"Freind in row: %ld, %@",(long)indexPath.row, [[DataStore instance].fbFriendsArray objectAtIndex:indexPath.row]);
+   
+    NSLog(@"Row count: %ld, %lu",(long)indexPath.row, (unsigned long)[DataStore instance].fbFriendsArray.count);
     
     if([DataStore instance].fbFriendsArray.count <= 0)
     {
-        [cell.textLabel setText:@"No Friends :("];
-    }else{
-        [cell.textLabel setText:[[[DataStore instance].fbFriendsArray objectAtIndex:indexPath.row] objectForKey:@"name"]];
+        [cell.nameLabel setText:@"No Friends :("];
+    }else if (indexPath.row < [DataStore instance].fbFriendsArray.count){
+        NSLog(@"Inside");
+        
+        [cell.nameLabel setText:[[[DataStore instance].fbFriendsArray objectAtIndex:indexPath.row] objectForKey:@"name"]];
+        UIImage *fbProfileImage = [[[DataStore instance].fbFriendsArray objectAtIndex:indexPath.row] objectForKey:@"fbProfilePicture"];
+        [cell.profilePicture setImage:[fbProfileImage imageScaledToFitSize:CGSizeMake(cell.frame.size.height, cell.frame.size.height)]];
+        NSLog(@"Done");
+        
     }
+    [cell setColorScheme:indexPath.row];
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryCheckmark;
+    if(indexPath.row < [DataStore instance].fbFriendsArray.count)
+    {
+        [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryCheckmark;
+    }
 }
 
-- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryNone;
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if(indexPath.row < [DataStore instance].fbFriendsArray.count)
+    {
+        [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryNone;
+    }
 }
 
 
