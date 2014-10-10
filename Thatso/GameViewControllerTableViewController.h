@@ -9,6 +9,12 @@
 #import <UIKit/UIKit.h>
 
 
-@interface GameViewControllerTableViewController : UITableViewController
+
+@interface GameViewControllerTableViewController : UITableViewController <CommsDelegate>
+{
+    NSDateFormatter *_dateFormatter;
+}
+
+@property(nonatomic) Game *currentGame;
 
 @end

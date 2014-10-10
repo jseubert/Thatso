@@ -30,7 +30,7 @@
     return self;
 }
 
--(void)setColorScheme:(int) code
+-(void)setColorScheme:(NSInteger) code
 {
     switch(code%6)
     {

@@ -38,4 +38,9 @@ static DataStore *instance = nil;
 
 }
 
++ (NSDictionary *) getFriendWithId: (NSString *) fbId
+{
+    return [[DataStore instance].fbFriends objectForKey:fbId];
+}
+
 @end

@@ -16,5 +16,6 @@
 
 + (DataStore *) instance;
 - (void) reset;
++ (NSDictionary *) getFriendWithId: (NSString *) fbId;
 
 @end

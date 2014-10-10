@@ -36,7 +36,7 @@
     // Configure the view for the selected state
 }
 
--(void)setColorScheme:(int) code
+-(void)setColorScheme:(NSInteger) code
 {
     switch(code%6)
     {

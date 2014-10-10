@@ -44,6 +44,8 @@
 		9A428A4319DF7D7900C80EE7 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A428A4219DF7D7900C80EE7 /* Parse.framework */; };
 		9A428A4619DF894900C80EE7 /* FratBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A428A4519DF894900C80EE7 /* FratBarButtonItem.m */; };
 		9A428A4A19DFA84B00C80EE7 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A428A4919DFA84B00C80EE7 /* UIImage+Scaling.m */; };
+		9A428A4D19E7AAF500C80EE7 /* StringUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A428A4C19E7AAF500C80EE7 /* StringUtils.m */; };
+		9A428A5119E7C4A000C80EE7 /* CommentTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A428A5019E7C4A000C80EE7 /* CommentTableViewCell.m */; };
 		9AFBF0CF19CD4826004F6550 /* GameViewControllerTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFBF0CE19CD4826004F6550 /* GameViewControllerTableViewController.m */; };
 		9AFBF0D319CD4B19004F6550 /* ProfileViewTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFBF0D219CD4B19004F6550 /* ProfileViewTableViewCell.m */; };
 /* End PBXBuildFile section */
@@ -111,6 +113,10 @@
 		9A428A4519DF894900C80EE7 /* FratBarButtonItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FratBarButtonItem.m; sourceTree = "<group>"; };
 		9A428A4819DFA84B00C80EE7 /* UIImage+Scaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+Scaling.h"; path = "../UIImage+Scaling.h"; sourceTree = "<group>"; };
 		9A428A4919DFA84B00C80EE7 /* UIImage+Scaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+Scaling.m"; path = "../UIImage+Scaling.m"; sourceTree = "<group>"; };
+		9A428A4C19E7AAF500C80EE7 /* StringUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringUtils.m; sourceTree = "<group>"; };
+		9A428A4E19E7AE2800C80EE7 /* StringUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StringUtils.h; sourceTree = "<group>"; };
+		9A428A4F19E7C4A000C80EE7 /* CommentTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentTableViewCell.h; sourceTree = "<group>"; };
+		9A428A5019E7C4A000C80EE7 /* CommentTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentTableViewCell.m; sourceTree = "<group>"; };
 		9AFBF0CD19CD4826004F6550 /* GameViewControllerTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameViewControllerTableViewController.h; sourceTree = "<group>"; };
 		9AFBF0CE19CD4826004F6550 /* GameViewControllerTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameViewControllerTableViewController.m; sourceTree = "<group>"; };
 		9AFBF0D119CD4B19004F6550 /* ProfileViewTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileViewTableViewCell.h; sourceTree = "<group>"; };
@@ -224,6 +230,7 @@
 		9A2C6F6C19A8324200DCF2B7 /* Thatso */ = {
 			isa = PBXGroup;
 			children = (
+				9A428A4B19E7AAC600C80EE7 /* Utils */,
 				95881E8919D90722001202AB /* Extensions */,
 				9A38E83519CD261D0063242D /* Data */,
 				9A38E83419CD25F30063242D /* Comms */,
@@ -286,6 +293,15 @@
 			name = Data;
 			sourceTree = "<group>";
 		};
+		9A428A4B19E7AAC600C80EE7 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				9A428A4E19E7AE2800C80EE7 /* StringUtils.h */,
+				9A428A4C19E7AAF500C80EE7 /* StringUtils.m */,
+			);
+			name = Utils;
+			sourceTree = "<group>";
+		};
 		9AFBF0D019CD4A76004F6550 /* TableCells */ = {
 			isa = PBXGroup;
 			children = (
@@ -293,6 +309,8 @@
 				9AFBF0D219CD4B19004F6550 /* ProfileViewTableViewCell.m */,
 				953D496F19DF59C700596E7B /* SelectGameTableViewCell.h */,
 				953D497019DF59C700596E7B /* SelectGameTableViewCell.m */,
+				9A428A4F19E7C4A000C80EE7 /* CommentTableViewCell.h */,
+				9A428A5019E7C4A000C80EE7 /* CommentTableViewCell.m */,
 			);
 			name = TableCells;
 			sourceTree = "<group>";
@@ -393,10 +411,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A2C6F7719A8324200DCF2B7 /* AppDelegate.m in Sources */,
+				9A428A5119E7C4A000C80EE7 /* CommentTableViewCell.m in Sources */,
 				9A2C6F7319A8324200DCF2B7 /* main.m in Sources */,
 				95881E8F19D90B32001202AB /* UIColor+AppColors.m in Sources */,
 				9AFBF0CF19CD4826004F6550 /* GameViewControllerTableViewController.m in Sources */,
 				9A2C6FD619A85EF300DCF2B7 /* NewGameTableViewController.m in Sources */,
+				9A428A4D19E7AAF500C80EE7 /* StringUtils.m in Sources */,
 				953D497119DF59C700596E7B /* SelectGameTableViewCell.m in Sources */,
 				9A2C6FD019A85D5800DCF2B7 /* NSOperationQueue+NSoperationQueue_SharedQueue.m in Sources */,
 				9A428A4619DF894900C80EE7 /* FratBarButtonItem.m in Sources */,

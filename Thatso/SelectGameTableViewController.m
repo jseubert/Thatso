@@ -11,6 +11,7 @@
 #import "GameViewControllerTableViewController.h"
 #import "SelectGameTableViewCell.h"
 #import "FratBarButtonItem.h"
+#import "StringUtils.h"
 #import <math.h>
 
 @interface SelectGameTableViewController () <CommsDelegate>
@@ -24,6 +25,7 @@
     self = [super initWithStyle:style];
     if (self) {
         // Custom initialization
+        initialLoad = true;
         
     }
     return self;
@@ -65,7 +67,7 @@
         UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
         
         
-        refreshControl.attributedTitle = [self makeRefreshText:@"Pull to refresh"];
+        refreshControl.attributedTitle = [StringUtils makeRefreshText:@"Pull to refresh"];
         [refreshControl addTarget:self action:@selector(refreshGames:) forControlEvents:UIControlEventValueChanged];
         [refreshControl setTintColor:[UIColor whiteColor]];
     
@@ -81,15 +83,6 @@
     
     
 
-}
-
--(NSAttributedString *) makeRefreshText:(NSString *) string
-{
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:string];
-    [attributedString addAttribute:NSForegroundColorAttributeName value:[UIColor whiteColor] range:NSMakeRange(0, string.length)];
-    [attributedString addAttribute:NSFontAttributeName value:[UIFont defaultAppFontWithSize:14.0] range:NSMakeRange(0, string.length)];
-    
-    return attributedString;
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -131,20 +124,6 @@
 
 }
 
-
-    /*
- NSString *title = [[NSString alloc] init];
- Game* game = [[UserGames instance].games objectAtIndex:indexPath.row];
- NSArray *players = game.players;
- for(int i; i < players.count;i ++)
- {
-     NSString *name = [[[DataStore instance].fbFriends objectForKey:[players objectAtIndex:i]] objectForKey:@"name"];
-     title = [title stringByAppendingString:name];
- }
- 
- 
-*/
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *cellIdentifier = @"Cell";
@@ -155,18 +134,43 @@
     
     if([[UserGames instance].games count] <= 0 && indexPath.row == 0)
     {
-        cell.namesLabel.text = @"No Games Found.";
+        if(initialLoad)
+        {
+            cell.namesLabel.text = @"Loading games...";
+        } else
+        {
+             cell.namesLabel.text = @"No Games Found.";
+        }
 
     }else if([[UserGames instance].games count] > 0)
     {
      
-        NSString *title = [[NSString alloc] init];
         Game* game = [[UserGames instance].games objectAtIndex:indexPath.row];
         NSArray *players = game.players;
+        NSString *title = [[NSString alloc] init];
+        
+        NSString *lastName = @"";
         for(int i = 0; i < players.count;i ++)
         {
-            NSString *name = [[[DataStore instance].fbFriends objectForKey:[players objectAtIndex:i]] objectForKey:@"name"];
-            title = [title stringByAppendingString:[NSString stringWithFormat:@"%@\n", name]];
+            //Don't add your own name
+            NSLog(@"Current:%@ User: %@",[players objectAtIndex:i], [[PFUser currentUser] objectForKey:@"fbId"] );
+            if(![((NSString *)[players objectAtIndex:i]) isEqualToString:(NSString *)[[PFUser currentUser] objectForKey:@"fbId"]])
+            {
+                if([lastName length] != 0)
+                {
+                    title = [title stringByAppendingString:[NSString stringWithFormat:@"%@, ", lastName]];
+                }
+                lastName = [[[DataStore instance].fbFriends objectForKey:[players objectAtIndex:i]] objectForKey:@"first_name"];
+
+            
+            }
+        }
+        if(players.count == 2)
+        {
+            title = [title stringByAppendingString:[NSString stringWithFormat:@"%@", lastName]];
+        } else
+        {
+             title = [title stringByAppendingString:[NSString stringWithFormat:@"and %@", lastName]];
         }
         [cell.namesLabel setText:title];
         
@@ -183,6 +187,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     GameViewControllerTableViewController *vc = [[GameViewControllerTableViewController alloc] init];
+    vc.currentGame = [[UserGames instance].games objectAtIndex:indexPath.row];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -205,7 +210,7 @@
 - (void) refreshGames:(UIRefreshControl *)refreshControl
 {
 	if (refreshControl) {
-		[refreshControl setAttributedTitle:[[NSAttributedString alloc] initWithString:@"Refreshing data..."]];
+		[refreshControl setAttributedTitle:[StringUtils makeRefreshText:@"Refreshing data..."]];
 		[refreshControl setEnabled:NO];
 	}
     
@@ -215,14 +220,14 @@
 
 //Call back delegate for new images finished
 - (void) commsDidGetUserGames{
-	
+
 	// Refresh the table data to show the new games
 	[self.tableView reloadData];
     
     // Update the refresh control if we have one
 	if (self.refreshControl) {
 		NSString *lastUpdated = [NSString stringWithFormat:@"Last updated on %@", [_dateFormatter stringFromDate:[NSDate date]]];
-		[self.refreshControl setAttributedTitle:[self makeRefreshText:lastUpdated]];
+		[self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:lastUpdated]];
         [self.refreshControl setTintColor:[UIColor whiteColor]];
         
 		[self.refreshControl endRefreshing];
@@ -231,6 +236,7 @@
 
 //Notificaiton call backs
 - (void) gamesDownloaded:(NSNotification *)notification {
+    initialLoad = false;
 	[self.tableView reloadData];
 }
 

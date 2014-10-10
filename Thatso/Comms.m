@@ -138,20 +138,16 @@ NSString * const N_ProfilePictureLoaded = @"N_ProfilePictureLoaded";
         //Check if this game already exists
         else if(objects != NULL && [objects count] > 0)
         {
-            if([objects count] == 1)
+            //Check each game returned. If a game has a same amount of players as the original ID's passed, then it is a duplicate game
+            for(int i = 0; i < [objects count]; i ++)
             {
-                if([fbFriendsInGame count] == [[[objects objectAtIndex:0] objectForKey:@"players"] count])
+                if([fbFriendsInGame count] == [[[objects objectAtIndex:i] objectForKey:@"players"] count])
                 {
                     if ([delegate respondsToSelector:@selector(newGameUploadedToServer:info:)]) {
-                        [delegate newGameUploadedToServer:NO info:@"A game with these users already exits!"];
+                        [delegate newGameUploadedToServer:NO info:@"A game with these users already exists!"];
                     }
                     return;
                 }
-            }else{
-                if ([delegate respondsToSelector:@selector(newGameUploadedToServer:info:)]) {
-                    [delegate newGameUploadedToServer:NO info:@"A game with these users already exits!"];
-                }
-                return;
             }
         }
         
@@ -166,7 +162,7 @@ NSString * const N_ProfilePictureLoaded = @"N_ProfilePictureLoaded";
                     [delegate newGameUploadedToServer:YES info:@"Success"];
                 }
             } else {
-                    // 6 If there was an error saving the Wall Image Parse object, report the failure back to the delegate class.
+                    // 6 If there was an error saving the new game object, report the error
                 if ([delegate respondsToSelector:@selector(newGameUploadedToServer:info:)]) {
                     [delegate newGameUploadedToServer:NO info:error.fberrorUserMessage];
                 }
@@ -194,8 +190,9 @@ NSString * const N_ProfilePictureLoaded = @"N_ProfilePictureLoaded";
             [[UserGames instance] reset];
             [objects enumerateObjectsUsingBlock:^(PFObject *game, NSUInteger idx, BOOL *stop) {
                 Game *newGame = [[Game alloc] init];
+                newGame.objectId = game[@"objectId"];
                 newGame.players = game[@"players"];
-               // newGame.rounds = game[@"rounds"];
+                newGame.rounds = game[@"rounds"];
                 newGame.objectId = game.objectId;
                 NSLog(@"Found Game: %@", newGame.players);
                 

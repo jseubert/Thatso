@@ -12,5 +12,5 @@
 @property (nonatomic, strong) IBOutlet UIImageView *profilePicture;
 @property (nonatomic, strong) IBOutlet UILabel *nameLabel;
 
--(void)setColorScheme:(int) code;
+-(void)setColorScheme:(NSInteger) code;
 @end

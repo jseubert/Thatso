@@ -11,6 +11,7 @@
 @interface SelectGameTableViewController : UITableViewController
 {
     NSDateFormatter *_dateFormatter;
+    BOOL initialLoad; 
 }
 
 @end
