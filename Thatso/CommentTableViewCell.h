@@ -11,7 +11,6 @@
 @interface CommentTableViewCell : UITableViewCell
 
 @property (nonatomic, strong) UILabel *commentLabel;
-
--(void)setColorScheme:(NSInteger) code;
+@property (nonatomic, strong) UIView *circle;
 
 @end

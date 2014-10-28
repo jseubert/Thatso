@@ -9,11 +9,13 @@
 #import <Foundation/Foundation.h>
 
 @interface Comment : NSObject
-@property id objectId;
-@property int toUserID;
-@property int fromUserID;
-@property int roundNumber;
-@property (nonatomic, strong) NSString *comment;
+@property (nonatomic, strong) NSString* objectId;
+@property (nonatomic, strong) NSString* toUserID;
+@property (nonatomic, strong) NSString* fromUserID;
+@property (nonatomic, strong) NSString* roundNumber;
+@property (nonatomic, strong) NSString* comment;
+@property (nonatomic, strong) NSString* category;
+@property (nonatomic, strong) NSString* gameId;
 
 @end
 
@@ -37,4 +39,11 @@
 @property (nonatomic, strong) NSMutableArray *games;
 +(UserGames *) instance;
 - (void) reset;
+@end
+
+@interface CurrentRound : NSObject
+@property (nonatomic, strong) NSMutableDictionary* currentComments;
++(CurrentRound *) instance;
+-(void) setComments: (NSMutableDictionary *)comments;
+-(void) reset;
 @end

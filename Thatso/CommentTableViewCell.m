@@ -16,16 +16,25 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // configure control(s)
-        self.commentLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, self.frame.size.width -10, self.frame.size.height-20)];
+        [self setBackgroundColor:[UIColor blueAppColor]];
+        
+        self.circle = [[UIView alloc] initWithFrame:CGRectMake(10, 10, self.frame.size.height - 20, self.frame.size.height - 20)];
+        self.circle.backgroundColor = [UIColor whiteColor];
+        self.circle.layer.borderColor = [UIColor lightBlueAppColor].CGColor;
+        self.circle.layer.borderWidth = 2;
+        [self addSubview:self.circle];
+                
+                       
+        self.commentLabel = [[UILabel alloc] initWithFrame:CGRectMake(10 + self.circle.frame.size.width + self.circle.frame.origin.x, 10, self.frame.size.width - 10, self.frame.size.height - 20)];
         self.commentLabel.font = [UIFont defaultAppFontWithSize:16.0];
         self.commentLabel.textColor = [UIColor whiteColor];
         self.commentLabel.text = @"";
-        
-        [self setBackgroundColor:[UIColor blueAppColor]];
         [self addSubview:self.commentLabel];
+        
     }
     return self;
-    
 }
+
+
 
 @end

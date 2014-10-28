@@ -49,3 +49,36 @@ static UserGames *instance = nil;
 }
 
 @end
+
+@implementation CurrentRound
+static CurrentRound *currentRound = nil;
++ (CurrentRound *) instance
+{
+    @synchronized (self) {
+        if (currentRound == nil) {
+            currentRound = [[CurrentRound alloc] init];
+        }
+    }
+    return currentRound;
+}
+- (id) init
+{
+    self = [super init];
+    if (self) {
+        self.currentComments  = [[NSMutableDictionary alloc] init];
+    }
+    return self;
+}
+
+-(void) setComments: (NSMutableDictionary *)comments{
+
+    self.currentComments= [[NSMutableDictionary alloc] init];
+    self.currentComments = comments; 
+}
+
+- (void) reset
+{
+    [self.currentComments removeAllObjects];
+}
+
+@end

@@ -10,11 +10,12 @@
 
 
 
-@interface GameViewControllerTableViewController : UITableViewController <CommsDelegate>
+@interface GameViewControllerTableViewController : UITableViewController <CommsDelegate, UITextFieldDelegate>
 {
     NSDateFormatter *_dateFormatter;
 }
 
 @property(nonatomic) Game *currentGame;
+@property(nonatomic) NSMutableDictionary* comments; 
 
 @end

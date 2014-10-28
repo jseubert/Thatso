@@ -46,6 +46,9 @@
 		9A428A4A19DFA84B00C80EE7 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A428A4919DFA84B00C80EE7 /* UIImage+Scaling.m */; };
 		9A428A4D19E7AAF500C80EE7 /* StringUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A428A4C19E7AAF500C80EE7 /* StringUtils.m */; };
 		9A428A5119E7C4A000C80EE7 /* CommentTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A428A5019E7C4A000C80EE7 /* CommentTableViewCell.m */; };
+		9ADD437B19F751AF00AFD160 /* UserCommentTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ADD437A19F751AF00AFD160 /* UserCommentTableViewCell.m */; };
+		9ADD437F19F7565700AFD160 /* UIButton+CustomButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ADD437E19F7565700AFD160 /* UIButton+CustomButtons.m */; };
+		9ADD438219F75A6B00AFD160 /* UserCommentTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ADD438119F75A6B00AFD160 /* UserCommentTextField.m */; };
 		9AFBF0CF19CD4826004F6550 /* GameViewControllerTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFBF0CE19CD4826004F6550 /* GameViewControllerTableViewController.m */; };
 		9AFBF0D319CD4B19004F6550 /* ProfileViewTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFBF0D219CD4B19004F6550 /* ProfileViewTableViewCell.m */; };
 /* End PBXBuildFile section */
@@ -117,6 +120,12 @@
 		9A428A4E19E7AE2800C80EE7 /* StringUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StringUtils.h; sourceTree = "<group>"; };
 		9A428A4F19E7C4A000C80EE7 /* CommentTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentTableViewCell.h; sourceTree = "<group>"; };
 		9A428A5019E7C4A000C80EE7 /* CommentTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentTableViewCell.m; sourceTree = "<group>"; };
+		9ADD437919F751AF00AFD160 /* UserCommentTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserCommentTableViewCell.h; sourceTree = "<group>"; };
+		9ADD437A19F751AF00AFD160 /* UserCommentTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserCommentTableViewCell.m; sourceTree = "<group>"; };
+		9ADD437D19F7560100AFD160 /* UIButton+CustomButtons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+CustomButtons.h"; sourceTree = "<group>"; };
+		9ADD437E19F7565700AFD160 /* UIButton+CustomButtons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+CustomButtons.m"; sourceTree = "<group>"; };
+		9ADD438019F75A6B00AFD160 /* UserCommentTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserCommentTextField.h; sourceTree = "<group>"; };
+		9ADD438119F75A6B00AFD160 /* UserCommentTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserCommentTextField.m; sourceTree = "<group>"; };
 		9AFBF0CD19CD4826004F6550 /* GameViewControllerTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameViewControllerTableViewController.h; sourceTree = "<group>"; };
 		9AFBF0CE19CD4826004F6550 /* GameViewControllerTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameViewControllerTableViewController.m; sourceTree = "<group>"; };
 		9AFBF0D119CD4B19004F6550 /* ProfileViewTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileViewTableViewCell.h; sourceTree = "<group>"; };
@@ -166,6 +175,8 @@
 			children = (
 				9A428A4419DF894900C80EE7 /* FratBarButtonItem.h */,
 				9A428A4519DF894900C80EE7 /* FratBarButtonItem.m */,
+				9ADD438019F75A6B00AFD160 /* UserCommentTextField.h */,
+				9ADD438119F75A6B00AFD160 /* UserCommentTextField.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -179,6 +190,8 @@
 				95881E8E19D90B32001202AB /* UIColor+AppColors.m */,
 				95881E9019D91117001202AB /* UIFont+AppFonts.h */,
 				95881E9119D91117001202AB /* UIFont+AppFonts.m */,
+				9ADD437D19F7560100AFD160 /* UIButton+CustomButtons.h */,
+				9ADD437E19F7565700AFD160 /* UIButton+CustomButtons.m */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -311,6 +324,8 @@
 				953D497019DF59C700596E7B /* SelectGameTableViewCell.m */,
 				9A428A4F19E7C4A000C80EE7 /* CommentTableViewCell.h */,
 				9A428A5019E7C4A000C80EE7 /* CommentTableViewCell.m */,
+				9ADD437919F751AF00AFD160 /* UserCommentTableViewCell.h */,
+				9ADD437A19F751AF00AFD160 /* UserCommentTableViewCell.m */,
 			);
 			name = TableCells;
 			sourceTree = "<group>";
@@ -421,12 +436,15 @@
 				9A2C6FD019A85D5800DCF2B7 /* NSOperationQueue+NSoperationQueue_SharedQueue.m in Sources */,
 				9A428A4619DF894900C80EE7 /* FratBarButtonItem.m in Sources */,
 				9AFBF0D319CD4B19004F6550 /* ProfileViewTableViewCell.m in Sources */,
+				9ADD438219F75A6B00AFD160 /* UserCommentTextField.m in Sources */,
 				9A428A4A19DFA84B00C80EE7 /* UIImage+Scaling.m in Sources */,
 				9A2C6F9719A832CC00DCF2B7 /* LoginScreenViewController.m in Sources */,
 				9A2C6FCA19A852D200DCF2B7 /* Comms.m in Sources */,
 				9A2C6F9A19A835CD00DCF2B7 /* SelectGameTableViewController.m in Sources */,
 				95881E9219D91117001202AB /* UIFont+AppFonts.m in Sources */,
 				9A2C6FCD19A85BC600DCF2B7 /* DataStore.m in Sources */,
+				9ADD437F19F7565700AFD160 /* UIButton+CustomButtons.m in Sources */,
+				9ADD437B19F751AF00AFD160 /* UserCommentTableViewCell.m in Sources */,
 				9A2C6FD919AC526500DCF2B7 /* UserGames.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

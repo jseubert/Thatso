@@ -13,6 +13,9 @@
 
 NSString * const N_GamesDownloaded = @"N_GamesDownloaded";
 NSString * const N_ProfilePictureLoaded = @"N_ProfilePictureLoaded";
+NSString * const N_CommentUploaded = @"N_CommentUploaded";
+NSString * const N_CommentsDownloaded = @"N_CommentsDownloaded";
+
 
 + (void) login:(id<CommsDelegate>)delegate
 {
@@ -192,11 +195,11 @@ NSString * const N_ProfilePictureLoaded = @"N_ProfilePictureLoaded";
                 Game *newGame = [[Game alloc] init];
                 newGame.objectId = game[@"objectId"];
                 newGame.players = game[@"players"];
-                newGame.rounds = game[@"rounds"];
+                //newGame.rounds = game[@"rounds"];
                 newGame.objectId = game.objectId;
                 NSLog(@"Found Game: %@", newGame.players);
                 
-                [[UserGames instance].games addObject:newGame];
+                [[[UserGames instance] games] addObject:newGame];
                 
                 
             }];
@@ -210,9 +213,111 @@ NSString * const N_ProfilePictureLoaded = @"N_ProfilePictureLoaded";
     if ([delegate respondsToSelector:@selector(commsDidGetUserGames)]) {
         [delegate commsDidGetUserGames];
     }
-     
-    
+}
 
++ (void) getCommentsForGameId:(NSString *)gameId inRound:(NSString *)round forDelegate:(id<CommsDelegate>)delegate
+{
+    NSMutableDictionary* comments = [[NSMutableDictionary alloc] init];
+    PFQuery *query = [PFQuery queryWithClassName:@"Comment"];
+    [query whereKey:@"gameID" equalTo:gameId];
+    [query whereKey:@"round" equalTo:round];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (error) {
+            NSLog(@"Objects error: %@", error.localizedDescription);
+        } else {
+           // [UserGames insta]
+            [[CurrentRound instance] reset];
+               [objects enumerateObjectsUsingBlock:^(PFObject *comment, NSUInteger idx, BOOL *stop) {
+               
+                
+                
+                Comment *newComment = [[Comment alloc] init];
+                
+                newComment.objectId = comment.objectId;
+                newComment.gameId = comment[@"gameID"];
+                newComment.toUserID = comment[@"toFBId"];
+                newComment.fromUserID = comment[@"fromFBId"];
+                newComment.roundNumber = comment[@"round"];
+                newComment.comment = comment[@"comment"];
+                newComment.category = comment[@"category"];
+                
+                NSLog(@"Found Comments: %@", newComment.comment);
+                
+                if([comments objectForKey:newComment.toUserID] == nil)
+                {
+                    NSMutableArray *commentsForId = [[NSMutableArray alloc] init];
+                    [commentsForId addObject:newComment];
+                    [comments setObject:commentsForId forKey:newComment.toUserID];
+                }else
+                {
+                    [(NSMutableArray *)[comments objectForKey:newComment.toUserID] addObject:newComment];
+                }
+                   
+                [[CurrentRound instance] setComments:comments];
+                //[[UserGames instance]addComment:newComment];
+                
+                
+            }];
+            
+            // Notify - Image Downloaded from Parse
+            [[NSNotificationCenter defaultCenter] postNotificationName:N_CommentsDownloaded object:nil];
+            
+        }
+    }];
+    // Callback
+    if ([delegate respondsToSelector:@selector(commsDidGetComments:)]) {
+        [delegate commsDidGetComments:comments];
+    }
+}
+
+
++ (void) addComment:(NSString *)comment to:(NSString *)toFBId toGameId:(NSString *)gameId inRound:(NSString *)round withCategory:(NSString *)category
+{
+  
+    //Check to see if the comment exists already
+    PFQuery *query = [PFQuery queryWithClassName:@"Comment"];
+    [query whereKey:@"toFBId" equalTo:toFBId];
+    [query whereKey:@"fromFBId" equalTo:[[PFUser currentUser] objectForKey:@"fbId"]];
+    [query whereKey:@"gameID" equalTo:gameId];
+    [query whereKey:@"round" equalTo:@"1"];
+    
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        if (!object) {
+            NSLog(@"The getFirstObject request failed.");
+            PFObject *commentObject = [PFObject objectWithClassName:@"Comment"];
+            commentObject[@"toFBId"] = toFBId;
+            commentObject[@"fromFBId"] = [[PFUser currentUser] objectForKey:@"fbId"];
+            commentObject[@"comment"] = comment;
+            commentObject[@"category"] = category;
+            commentObject[@"gameID"] = gameId;
+            commentObject[@"round"] = @"1";
+            [commentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                if (succeeded) {
+                    // Notify that the Comment has been uploaded, using NSNotificationCenter
+                    [[NSNotificationCenter defaultCenter] postNotificationName:N_CommentUploaded object:nil];
+                    NSLog(@"Uploaded New comment");
+                }
+                else{
+                    NSLog(@"Uploaded New comment failed: %@",error.localizedDescription);
+                }
+            }];
+            
+        } else {
+            // The find succeeded.
+            NSLog(@"Successfully retrieved the object.");
+            object[@"comment"] = comment;
+            [object saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                if (succeeded) {
+                    // Notify that the Comment has been uploaded, using NSNotificationCenter
+                    [[NSNotificationCenter defaultCenter] postNotificationName:N_CommentUploaded object:nil];
+                    NSLog(@"Updated comment");
+                }
+                else{
+                     NSLog(@"Updated comment failed: %@",error.localizedDescription);
+                }
+            }];
+        }
+    }];
 }
 
 
