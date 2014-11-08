@@ -11,10 +11,8 @@
 
 @implementation Comms
 
-NSString * const N_GamesDownloaded = @"N_GamesDownloaded";
-NSString * const N_ProfilePictureLoaded = @"N_ProfilePictureLoaded";
-NSString * const N_CommentUploaded = @"N_CommentUploaded";
-NSString * const N_CommentsDownloaded = @"N_CommentsDownloaded";
+
+//Notifications 
 
 
 + (void) login:(id<CommsDelegate>)delegate
@@ -51,7 +49,7 @@ NSString * const N_CommentsDownloaded = @"N_CommentsDownloaded";
                 if (!error) {
                     NSDictionary<FBGraphUser> *me = (NSDictionary<FBGraphUser> *)result;
                     // Store the Facebook Id
-                    [[PFUser currentUser] setObject:me.objectID forKey:@"fbId"];
+                    [[PFUser currentUser] setObject:me.objectID forKey:User_FacebookID];
                     NSLog(@"Added you: %@", me.name);
                     [[PFUser currentUser] saveInBackground];
                     
@@ -63,7 +61,7 @@ NSString * const N_CommentsDownloaded = @"N_CommentsDownloaded";
                         UIImage *profilePicture = [UIImage imageWithData:profilePictureData];
                         
                         // Set the profile picture into the user object
-                        if (profilePicture) [me setObject:profilePicture forKey:@"fbProfilePicture"];
+                        if (profilePicture) [me setObject:profilePicture forKey:User_FacebookProfilePicture];
                         
                         // Notify that the profile picture has been downloaded, using NSNotificationCenter
                         [[NSNotificationCenter defaultCenter] postNotificationName:N_ProfilePictureLoaded object:nil];
@@ -93,7 +91,7 @@ NSString * const N_CommentsDownloaded = @"N_CommentsDownloaded";
                             UIImage *profilePicture = [UIImage imageWithData:profilePictureData];
                             
                             // Set the profile picture into the user object
-                            if (profilePicture) [friend setObject:profilePicture forKey:@"fbProfilePicture"];
+                            if (profilePicture) [friend setObject:profilePicture forKey:User_FacebookProfilePicture];
                             
                             // Notify that the profile picture has been downloaded, using NSNotificationCenter
                             //[[NSNotificationCenter defaultCenter] postNotificationName:N_ProfilePictureLoaded object:nil];
@@ -123,7 +121,7 @@ NSString * const N_CommentsDownloaded = @"N_CommentsDownloaded";
 {
     NSLog(@"startNewGameWithUsers: " );
     // 1 Add this user to the players
-    [fbFriendsInGame addObject:[[PFUser currentUser] objectForKey:@"fbId"]];
+    [fbFriendsInGame addObject:[[PFUser currentUser] objectForKey:User_FacebookID]];
     NSLog(@"fbFriendsInGame: %@", fbFriendsInGame );
     
     //Check if this game already exists
@@ -194,7 +192,7 @@ NSString * const N_CommentsDownloaded = @"N_CommentsDownloaded";
             [objects enumerateObjectsUsingBlock:^(PFObject *game, NSUInteger idx, BOOL *stop) {
                 Game *newGame = [[Game alloc] init];
                 newGame.objectId = game[@"objectId"];
-                newGame.players = game[@"players"];
+                newGame.players = [[NSMutableArray alloc] initWithArray: game[@"players"]];
                 //newGame.rounds = game[@"rounds"];
                 newGame.objectId = game.objectId;
                 NSLog(@"Found Game: %@", newGame.players);

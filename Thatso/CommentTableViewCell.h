@@ -8,9 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+extern NSInteger const CommentTableViewCellIconSize;
+
 @interface CommentTableViewCell : UITableViewCell
 
 @property (nonatomic, strong) UILabel *commentLabel;
 @property (nonatomic, strong) UIView *circle;
 
+-(void) selectedTableCell: (BOOL) selected;
+-(void) setCommentLabelText: (NSString *) comment;
++ (CGSize) sizeWithFontAttribute:(UIFont *)font constrainedToSize:(CGSize)size withText: (NSString *)text;
 @end

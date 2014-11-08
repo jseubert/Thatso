@@ -13,9 +13,9 @@
 @interface GameViewControllerTableViewController : UITableViewController <CommsDelegate, UITextFieldDelegate>
 {
     NSDateFormatter *_dateFormatter;
+    NSMutableArray* nonUserPlayers;
 }
 
 @property(nonatomic) Game *currentGame;
-@property(nonatomic) NSMutableDictionary* comments; 
-
+@property(nonatomic) NSMutableDictionary* comments;
 @end

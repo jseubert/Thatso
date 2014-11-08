@@ -11,6 +11,7 @@
 		95881E8419D54891001202AB /* FBUserSettingsViewResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 95881E8319D54891001202AB /* FBUserSettingsViewResources.bundle */; };
 		95881E8F19D90B32001202AB /* UIColor+AppColors.m in Sources */ = {isa = PBXBuildFile; fileRef = 95881E8E19D90B32001202AB /* UIColor+AppColors.m */; };
 		95881E9219D91117001202AB /* UIFont+AppFonts.m in Sources */ = {isa = PBXBuildFile; fileRef = 95881E9119D91117001202AB /* UIFont+AppFonts.m */; };
+		9A1FFC961A0AAF9400A82788 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A1FFC951A0AAF9400A82788 /* Constants.m */; };
 		9A2C6F6719A8324200DCF2B7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A2C6F6619A8324200DCF2B7 /* Foundation.framework */; };
 		9A2C6F6919A8324200DCF2B7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A2C6F6819A8324200DCF2B7 /* CoreGraphics.framework */; };
 		9A2C6F6B19A8324200DCF2B7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A2C6F6A19A8324200DCF2B7 /* UIKit.framework */; };
@@ -71,6 +72,8 @@
 		95881E8E19D90B32001202AB /* UIColor+AppColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+AppColors.m"; sourceTree = "<group>"; };
 		95881E9019D91117001202AB /* UIFont+AppFonts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+AppFonts.h"; sourceTree = "<group>"; };
 		95881E9119D91117001202AB /* UIFont+AppFonts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+AppFonts.m"; sourceTree = "<group>"; };
+		9A1FFC951A0AAF9400A82788 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
+		9A1FFC971A0AAFA500A82788 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		9A2C6F6319A8324200DCF2B7 /* Thatso.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thatso.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A2C6F6619A8324200DCF2B7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		9A2C6F6819A8324200DCF2B7 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -120,6 +123,8 @@
 		9A428A4E19E7AE2800C80EE7 /* StringUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StringUtils.h; sourceTree = "<group>"; };
 		9A428A4F19E7C4A000C80EE7 /* CommentTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentTableViewCell.h; sourceTree = "<group>"; };
 		9A428A5019E7C4A000C80EE7 /* CommentTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentTableViewCell.m; sourceTree = "<group>"; };
+		9A893F081A0EC317002F6EEF /* NSString+FontSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+FontSize.m"; sourceTree = "<group>"; };
+		9A893F091A0EC366002F6EEF /* NSString+FontSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+FontSize.h"; sourceTree = "<group>"; };
 		9ADD437919F751AF00AFD160 /* UserCommentTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserCommentTableViewCell.h; sourceTree = "<group>"; };
 		9ADD437A19F751AF00AFD160 /* UserCommentTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserCommentTableViewCell.m; sourceTree = "<group>"; };
 		9ADD437D19F7560100AFD160 /* UIButton+CustomButtons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+CustomButtons.h"; sourceTree = "<group>"; };
@@ -192,6 +197,8 @@
 				95881E9119D91117001202AB /* UIFont+AppFonts.m */,
 				9ADD437D19F7560100AFD160 /* UIButton+CustomButtons.h */,
 				9ADD437E19F7565700AFD160 /* UIButton+CustomButtons.m */,
+				9A893F091A0EC366002F6EEF /* NSString+FontSize.h */,
+				9A893F081A0EC317002F6EEF /* NSString+FontSize.m */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -252,6 +259,8 @@
 				9A2C6F7619A8324200DCF2B7 /* AppDelegate.m */,
 				9A2C6F7819A8324200DCF2B7 /* Images.xcassets */,
 				9A2C6F6D19A8324200DCF2B7 /* Supporting Files */,
+				9A1FFC971A0AAFA500A82788 /* Constants.h */,
+				9A1FFC951A0AAF9400A82788 /* Constants.m */,
 			);
 			path = Thatso;
 			sourceTree = "<group>";
@@ -436,6 +445,7 @@
 				9A2C6FD019A85D5800DCF2B7 /* NSOperationQueue+NSoperationQueue_SharedQueue.m in Sources */,
 				9A428A4619DF894900C80EE7 /* FratBarButtonItem.m in Sources */,
 				9AFBF0D319CD4B19004F6550 /* ProfileViewTableViewCell.m in Sources */,
+				9A1FFC961A0AAF9400A82788 /* Constants.m in Sources */,
 				9ADD438219F75A6B00AFD160 /* UserCommentTextField.m in Sources */,
 				9A428A4A19DFA84B00C80EE7 /* UIImage+Scaling.m in Sources */,
 				9A2C6F9719A832CC00DCF2B7 /* LoginScreenViewController.m in Sources */,

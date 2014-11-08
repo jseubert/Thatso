@@ -21,6 +21,15 @@
     return (int)[self.rounds count];
 }
 
+- (id)copyWithZone:(NSZone *)zone 
+{
+    Game *gameCopy = [[Game alloc] init];
+    gameCopy.objectId = self.objectId;
+    gameCopy.players = [self.players copyWithZone:zone];
+   // [gameCopy.rounds addObjectsFromArray:self.rounds];
+    return gameCopy;
+}
+
 @end
 
 @implementation UserGames

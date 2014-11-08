@@ -8,6 +8,8 @@
 
 #import "ProfileViewTableViewCell.h"
 
+NSInteger const ProfileViewTableViewCellHeight = 54;
+
 @implementation ProfileViewTableViewCell
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -15,10 +17,12 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
-        self.profilePicture = [[UIImageView alloc] initWithFrame:(CGRectMake(0, 0, self.frame.size.height, self.frame.size.height))];
+        self.profilePicture = [[UIImageView alloc] initWithFrame:(CGRectMake(5, 5, self.frame.size.height, self.frame.size.height))];
+        [[self.profilePicture  layer] setCornerRadius:self.profilePicture.frame.size.height/2];
+        [self.profilePicture setClipsToBounds:YES];
         [self addSubview:self.profilePicture];
         
-        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.frame.size.height + 10, 0, self.frame.size.width - self.frame.size.height - 10, self.frame.size.height)];
+        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.profilePicture.frame.origin.x + self.profilePicture.frame.size.width + 10, 10, self.frame.size.width - self.profilePicture.frame.origin.x + self.profilePicture.frame.size.width + 10, self.frame.size.height - 10)];
         self.nameLabel.font = [UIFont defaultAppFontWithSize:16.0];
         [self addSubview:self.nameLabel];
         

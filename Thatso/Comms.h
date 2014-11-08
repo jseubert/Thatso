@@ -8,11 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString * const N_GamesDownloaded;
-extern NSString * const N_ProfilePictureLoaded;
-extern NSString * const N_CommentUploaded;
-extern NSString * const N_CommentsDownloaded;
-
 @protocol CommsDelegate <NSObject>
 @optional
 - (void) commsDidLogin:(BOOL)loggedIn;

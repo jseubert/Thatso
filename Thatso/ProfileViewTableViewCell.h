@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+extern NSInteger const ProfileViewTableViewCellHeight;
+
 @interface ProfileViewTableViewCell : UITableViewCell
 @property (nonatomic, strong) IBOutlet UIImageView *profilePicture;
 @property (nonatomic, strong) IBOutlet UILabel *nameLabel;

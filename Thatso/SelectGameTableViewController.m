@@ -146,7 +146,7 @@
     {
      
         Game* game = [[UserGames instance].games objectAtIndex:indexPath.row];
-        NSArray *players = game.players;
+        NSMutableArray *players = game.players;
         NSString *title = [[NSString alloc] init];
         
         NSString *lastName = @"";
@@ -187,7 +187,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     GameViewControllerTableViewController *vc = [[GameViewControllerTableViewController alloc] init];
-    vc.currentGame = [[UserGames instance].games objectAtIndex:indexPath.row];
+    vc.currentGame = [[[UserGames instance].games objectAtIndex:indexPath.row] copyWithZone:NULL];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
