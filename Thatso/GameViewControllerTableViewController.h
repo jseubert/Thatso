@@ -23,4 +23,5 @@
 
 @property(nonatomic) Game *currentGame;
 @property(nonatomic) NSMutableDictionary* comments;
+@property(nonatomic) NSMutableDictionary* votedForComments;
 @end

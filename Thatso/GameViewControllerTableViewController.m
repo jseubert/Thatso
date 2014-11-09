@@ -21,7 +21,7 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
+        self.votedForComments = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -271,31 +271,33 @@
     Comment *comment = [commentsForId objectAtIndex:indexPath.row];
     
     [cell setCommentLabelText:comment.comment];
-    [cell setSelectionStyle:UITableViewCellSelectionStyleBlue];
+    [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
     return cell;
 }
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    
-    if([[tableView cellForRowAtIndexPath:indexPath] isKindOfClass:[CommentTableViewCell class]]) {
-        CommentTableViewCell *cell  = (CommentTableViewCell *)[tableView cellForRowAtIndexPath:indexPath];
-        [cell selectedTableCell:YES];
+/*
+- (NSIndexPath*)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath*)indexPath {
+    for (NSIndexPath* selectedIndexPath in tableView.indexPathsForSelectedRows ) {
+        if (selectedIndexPath.section == indexPath.section )
+        {
+            [tableView deselectRowAtIndexPath:selectedIndexPath animated:YES] ;
+        }
     }
-    
-    return;
-}
+    return indexPath ;
+}*/
 
-- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if([[tableView cellForRowAtIndexPath:indexPath] isKindOfClass:[CommentTableViewCell class]]) {
-        CommentTableViewCell *cell  = (CommentTableViewCell *)[tableView cellForRowAtIndexPath:indexPath];
-        [cell selectedTableCell:NO];
-    }
-
-    return;
-        //if([tableView cellForRowAtIndexPath:indexPath] isKindOfClass:<#(__unsafe_unretained Class)#>
-    
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+   if([[tableView cellForRowAtIndexPath:indexPath] isKindOfClass:[CommentTableViewCell class]])
+   {
+       NSIndexPath *previouslySelectedIndex = [self.votedForComments objectForKey:[NSNumber numberWithInteger:indexPath.section]];
+       if(previouslySelectedIndex != nil)
+       {
+           [((CommentTableViewCell *)[tableView cellForRowAtIndexPath:previouslySelectedIndex]) selectedTableCell:NO];
+       }
+       //if([self.votedForComments objectForKey:indexPath.section]
+       [((CommentTableViewCell *)[tableView cellForRowAtIndexPath:indexPath]) selectedTableCell:YES];
+       [self.votedForComments setObject:indexPath forKey:[NSNumber numberWithInteger:indexPath.section]];
+       
+   }
 }
 
 
