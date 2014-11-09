@@ -54,10 +54,6 @@
     [self.view addSubview:self.activityIndicator];
     
     [self.view setBackgroundColor:[UIColor blueAppColor]];
-     
-
-    
-    
     
 }
 

@@ -10,11 +10,16 @@
 
 
 
-@interface GameViewControllerTableViewController : UITableViewController <CommsDelegate, UITextFieldDelegate>
+@interface GameViewControllerTableViewController : UIViewController <CommsDelegate, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate>
 {
     NSDateFormatter *_dateFormatter;
     NSMutableArray* nonUserPlayers;
 }
+
+
+@property (strong, nonatomic) IBOutlet UILabel *headerView;
+@property (strong, nonatomic) IBOutlet UITableView *tableView;
+@property (strong, nonatomic) IBOutlet UIRefreshControl *refreshControl;
 
 @property(nonatomic) Game *currentGame;
 @property(nonatomic) NSMutableDictionary* comments;

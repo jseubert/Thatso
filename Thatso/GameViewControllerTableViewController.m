@@ -17,21 +17,41 @@
 
 @implementation GameViewControllerTableViewController
 
-- (id)initWithStyle:(UITableViewStyle)style
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
-    self = [super initWithStyle:style];
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
     }
     return self;
 }
 
+
+
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.navigationController.title = @"Category";
+    
+    //setup Subviews
+    self.headerView = [[UILabel alloc] initWithFrame:CGRectMake(0,
+                                                                self.navigationController.navigationBar.frame.size.height + 20 ,
+                                                                self.view.bounds.size.width,
+                                                                ProfileViewTableViewCellHeight)];
+    [self setupHeader];
+    [self.view addSubview:self.headerView];
+    
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0,
+                                                                   self.headerView.frame.size.height + self.headerView.frame.origin.y,
+                                                                   self.view.bounds.size.width,
+                                                                   self.view.bounds.size.height - self.headerView.frame.size.height)];
+    
+    [self.tableView setDelegate:self];
+    [self.tableView setDataSource:self];
     self.tableView.backgroundColor = [UIColor blueAppColor];
     [self.tableView setSeparatorColor:[UIColor clearColor]];
-    self.navigationController.title = @"Category";
+    [self.view addSubview:self.tableView];
     
     // Create a re-usable NSDateFormatter
     _dateFormatter = [[NSDateFormatter alloc] init];
@@ -43,14 +63,14 @@
     
     // If we are using iOS 6+, put a pull to refresh control in the table
     if (NSClassFromString(@"UIRefreshControl") != Nil) {
-        UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+        self.refreshControl = [[UIRefreshControl alloc] init];
         
         
-        refreshControl.attributedTitle = [StringUtils makeRefreshText:@"Pull to refresh"];
-        [refreshControl addTarget:self action:@selector(refreshGame:) forControlEvents:UIControlEventValueChanged];
-        [refreshControl setTintColor:[UIColor whiteColor]];
+        self.refreshControl.attributedTitle = [StringUtils makeRefreshText:@"Pull to refresh"];
+        [self.refreshControl addTarget:self action:@selector(refreshGame:) forControlEvents:UIControlEventValueChanged];
+        [self.refreshControl setTintColor:[UIColor whiteColor]];
         
-        self.refreshControl = refreshControl;
+        [self.tableView addSubview:self.refreshControl];
         
     }
     
@@ -70,6 +90,19 @@
     nonUserPlayers = [[NSMutableArray alloc] initWithArray:self.currentGame.players];
     [nonUserPlayers removeObject:[[DataStore instance].user objectForKey:User_FacebookID]];
 
+}
+
+-(void) setupHeader
+{
+    [self.headerView setText:@"What's the first thing they'd do after a one night stand?"];
+    [self.headerView setBackgroundColor:[UIColor pinkAppColor]];
+    [self.headerView setNumberOfLines:0];
+    [self.headerView setLineBreakMode:NSLineBreakByWordWrapping];
+    [self.headerView setTextColor:[UIColor whiteColor]];
+    [self.headerView setTextAlignment:NSTextAlignmentCenter];
+    [[self.headerView  layer] setBorderWidth:2.0f];
+    [[self.headerView  layer] setBorderColor:[UIColor whiteColor].CGColor];
+    
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -159,7 +192,7 @@
     if(section == 0)
     {
         //Populate name and picture
-        [cell.nameLabel setText:[[DataStore instance].user objectForKey:User_FullName]];
+        [cell.nameLabel setText:@"You"];
         UIImage *fbProfileImage = [[DataStore instance].user objectForKey:User_FacebookProfilePicture];
         [cell.profilePicture setImage:[fbProfileImage imageScaledToFitSize:CGSizeMake(cell.frame.size.height, cell.frame.size.height)]];
 
