@@ -43,18 +43,18 @@
 -(IBAction)clickedSubmitComment:(id)sender
 {
     NSLog(@"clickedSubmitComment");
-    [self uploadComment];
+   // [self uploadComment];
 }
 
 - (BOOL) textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
-    [self uploadComment];
+ //   [self uploadComment];
     return YES;
 }
 
 -(void)uploadComment
 {
-    //ToDO. Check comment is a ok.
+    //ToO. Check comment is a ok.
     if(self.userCommentTextField.text == nil || self.userCommentTextField.text.length == 0)
     {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Can't Enter Empty Comment"

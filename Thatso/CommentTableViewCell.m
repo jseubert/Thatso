@@ -48,8 +48,9 @@ NSInteger const CommentTableViewCellIconSize = 20;
     return self;
 }
 
--(BOOL) setCommentLabelText: (Comment *) comment
+-(BOOL) setCommentLabelText: (PFObject *) comment
 {
+    /*
     NSLog(@"Font: %f Width: %f", self.bounds.size.width, self.commentLabel.frame.size.width);
     BOOL isSelected = NO;
     self.comment = [comment copyWithZone:nil];
@@ -86,7 +87,8 @@ NSInteger const CommentTableViewCellIconSize = 20;
         self.commentLabel.textColor = [UIColor whiteColor];
         [self setSelected:NO];
     }
-    return isSelected;
+    return isSelected;*/
+    return true;
 }
 
 
@@ -120,7 +122,7 @@ NSInteger const CommentTableViewCellIconSize = 20;
     }
     [self setSelected:selected];
     NSLog(@"About to voted with userId: %@", [DataStore instance].user);
-    [Comms user: [[DataStore instance].user objectForKey:User_ID] DidUpvote:selected forComment:self.comment.objectId];
+  //  [Comms user: [[DataStore instance].user objectForKey:User_ID] DidUpvote:selected forComment:self.comment.objectId];
 }
 
 

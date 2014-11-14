@@ -20,6 +20,10 @@
 - (void) newGameUploadedToServer:(BOOL)success info: (NSString *) info;
 @end
 
+@protocol GetGamesDelegate <NSObject>
+- (void) didGetGamesDelegate:(BOOL)success info: (NSString *) info;
+@end
+
 @protocol VoteForCommentDelegate <NSObject>
 -(void) votedForCommentNotFound;
 -(void) errorGettingVoteComment: (NSError *) error;

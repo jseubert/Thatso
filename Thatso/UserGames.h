@@ -8,33 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@interface Comment : NSObject <NSCopying>
-@property (nonatomic, strong) NSString* objectId;
-@property (nonatomic, strong) NSString* toUserID;
-@property (nonatomic, strong) NSString* fromUserID;
-@property (nonatomic, strong) NSString* roundNumber;
-@property (nonatomic, strong) NSString* comment;
-@property (nonatomic, strong) NSString* category;
-@property (nonatomic, strong) NSString* gameId;
-@property (nonatomic, strong) NSArray *votedForBy;
-
-@end
-
-@interface Round : NSObject
-@property int roundNumber;
-@property id objectId;
-@property (nonatomic, strong) NSString *category;
-@property (nonatomic, strong) NSMutableDictionary *comments;
-
-@end
-
-@interface Game : NSObject <NSCopying>
-@property NSString* objectId;
-@property (nonatomic, strong) NSMutableArray *players;
-@property (nonatomic, strong) NSMutableArray *rounds;
-- (int) numberOfRounds;
-
-@end
 
 @interface UserGames : NSObject
 @property (nonatomic, strong) NSMutableArray *games;
@@ -42,9 +15,9 @@
 - (void) reset;
 @end
 
-@interface CurrentRound : NSObject
+@interface CurrentRounds : NSObject
 @property (nonatomic, strong) NSMutableDictionary* currentComments;
-+(CurrentRound *) instance;
++(CurrentRounds *) instance;
 -(void) setComments: (NSMutableDictionary *)comments;
 -(void) reset;
 @end

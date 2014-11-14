@@ -21,7 +21,8 @@
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet UIRefreshControl *refreshControl;
 
-@property(nonatomic) Game *currentGame;
+@property(nonatomic) PFObject *currentGame;
+@property(nonatomic) PFObject *currentRound;
 @property(nonatomic) NSMutableDictionary* comments;
 @property(nonatomic) NSMutableDictionary* votedForComments;
 @end

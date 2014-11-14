@@ -141,19 +141,21 @@
         {
              cell.namesLabel.text = @"No Games Found.";
         }
-
     }else if([[UserGames instance].games count] > 0)
     {
      
         PFObject* game = [[UserGames instance].games objectAtIndex:indexPath.row];
-        NSMutableArray *players = game.players;
+        PFObject *currentRound = game[@"currentRound"];
+        [currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+            [cell.categoryLabel setText:currentRound[@"category"]];
+        }];
+        NSMutableArray *players = game[@"players"];
         NSString *title = [[NSString alloc] init];
         
         NSString *lastName = @"";
         for(int i = 0; i < players.count;i ++)
         {
             //Don't add your own name
-            NSLog(@"Current:%@ User: %@",[players objectAtIndex:i], [[PFUser currentUser] objectForKey:@"fbId"] );
             if(![((NSString *)[players objectAtIndex:i]) isEqualToString:(NSString *)[[PFUser currentUser] objectForKey:@"fbId"]])
             {
                 if([lastName length] != 0)
@@ -175,8 +177,7 @@
         [cell.namesLabel setText:title];
         
         cell.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
-        
-        [cell.categoryLabel setText:@"Category"];
+        [cell.categoryLabel setText:game[@"category"]];
     }
     
     [cell setColorScheme:indexPath.row];
@@ -187,7 +188,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     GameViewControllerTableViewController *vc = [[GameViewControllerTableViewController alloc] init];
-    vc.currentGame = [[[UserGames instance].games objectAtIndex:indexPath.row] copyWithZone:NULL];
+    vc.currentGame = [[UserGames instance].games objectAtIndex:indexPath.row];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -219,8 +220,11 @@
 }
 
 //Call back delegate for new images finished
-- (void) commsDidGetUserGames{
+- (void) didGetGamesDelegate:(BOOL)success info: (NSString *) info
+{
 
+    initialLoad = false;
+    
 	// Refresh the table data to show the new games
 	[self.tableView reloadData];
     
@@ -233,11 +237,11 @@
 		[self.refreshControl endRefreshing];
 	}
 }
-
+/*
 //Notificaiton call backs
 - (void) gamesDownloaded:(NSNotification *)notification {
     initialLoad = false;
 	[self.tableView reloadData];
-}
+}*/
 
 @end

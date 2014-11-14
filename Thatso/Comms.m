@@ -112,9 +112,7 @@
             }];
 		}
 	}];
-    
-    //Offline Testing
-    [delegate commsDidLogin:YES];
+  
 }
 
 + (void) startNewGameWithUsers: (NSArray *)fbFriendsInGame forDelegate:(id<CreateGameDelegate>)delegate
@@ -169,7 +167,7 @@
         gameObject[@"currentRound"] = roundObject;
         
         
-        [roundObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error)
+        [gameObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error)
         {
             if (succeeded) {
                 // 4 If the save was successful, save the comment in another new Parse object. Again, save the  user’s name and Facebook user ID along with the comment string.
@@ -183,44 +181,35 @@
     }];
 }
 
-+(void) getUsersGamesforDelegate:(id<CommsDelegate>)delegate
++(void) getUsersGamesforDelegate:(id<GetGamesDelegate>)delegate
 {
-    NSLog(@"getUsersGamesforDelegate");
     PFQuery *getGames = [PFQuery queryWithClassName:@"Game"];
+    
     [getGames orderByAscending:@"createdAt"];
-
     NSArray *user =[[NSArray alloc] initWithObjects:[[PFUser currentUser] objectForKey:@"fbId"], nil];
     
+    //find all games that have the current user as a player
     [getGames whereKey:@"players" containsAllObjectsInArray:user];
     
-    NSLog(@"getUsersGamesforDelegate: %@", user);
     [getGames findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (error) {
-			NSLog(@"Objects error: %@", error.localizedDescription);
+            [delegate didGetGamesDelegate:NO info: error.localizedDescription];
 		} else {
             [[UserGames instance] reset];
-            [objects enumerateObjectsUsingBlock:^(PFObject *game, NSUInteger idx, BOOL *stop) {
-                Game *newGame = [[Game alloc] init];
-                newGame.objectId = game[@"objectId"];
-                newGame.players = [[NSMutableArray alloc] initWithArray: game[@"players"]];
-                //newGame.rounds = game[@"rounds"];
-                newGame.objectId = game.objectId;
-                NSLog(@"Found Game: %@", newGame.players);
-                
-                [[[UserGames instance] games] addObject:newGame];
-                
-                
-            }];
+            [[[UserGames instance] games] addObjectsFromArray:objects];
             
-            // Notify - Image Downloaded from Parse
-            [[NSNotificationCenter defaultCenter] postNotificationName:N_GamesDownloaded object:nil];
+            // Notify that all the current games have been downloaded
+            [delegate didGetGamesDelegate:YES info: nil];
+
+          //  [[NSNotificationCenter defaultCenter] postNotificationName:N_GamesDownloaded object:nil];
             
         }
     }];
+    /*
     // Callback
     if ([delegate respondsToSelector:@selector(commsDidGetUserGames)]) {
-        [delegate commsDidGetUserGames];
-    }
+        [delegate didGetGamesDelegate:(BOOL)success info: (NSString *) info;];
+    }*/
 }
 
 + (void) getCommentsForGameId:(NSString *)gameId inRound:(NSString *)round forDelegate:(id<CommsDelegate>)delegate
@@ -232,41 +221,14 @@
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (error) {
             NSLog(@"Objects error: %@", error.localizedDescription);
+            
         } else {
            // [UserGames insta]
-            [[CurrentRound instance] reset];
-               [objects enumerateObjectsUsingBlock:^(PFObject *comment, NSUInteger idx, BOOL *stop) {
-               
-                
-                
-                Comment *newComment = [[Comment alloc] init];
-                
-                newComment.objectId = comment.objectId;
-                newComment.gameId = comment[@"gameID"];
-                newComment.toUserID = comment[@"toFBId"];
-                newComment.fromUserID = comment[@"fromFBId"];
-                newComment.roundNumber = comment[@"round"];
-                newComment.comment = comment[@"comment"];
-                newComment.category = comment[@"category"];
-                newComment.votedForBy = comment[@"votedFor"];
-                
-                NSLog(@"Found Comments: %@", newComment.comment);
-                
-                if([comments objectForKey:newComment.toUserID] == nil)
-                {
-                    NSMutableArray *commentsForId = [[NSMutableArray alloc] init];
-                    [commentsForId addObject:newComment];
-                    [comments setObject:commentsForId forKey:newComment.toUserID];
-                }else
-                {
-                    [(NSMutableArray *)[comments objectForKey:newComment.toUserID] addObject:newComment];
-                }
-                   
-                [[CurrentRound instance] setComments:comments];
-                //[[UserGames instance]addComment:newComment];
-                
-                
-            }];
+            [[CurrentRounds instance] reset];
+            
+            
+            [[CurrentRounds instance] setComments:objects];
+
             
             // Notify - Image Downloaded from Parse
             [[NSNotificationCenter defaultCenter] postNotificationName:N_CommentsDownloaded object:nil];
