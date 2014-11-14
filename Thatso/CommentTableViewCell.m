@@ -48,14 +48,10 @@ NSInteger const CommentTableViewCellIconSize = 20;
     return self;
 }
 
--(BOOL) setCommentLabelText: (PFObject *) comment
+-(void) setCommentLabelText: (NSString *) comment
 {
-    /*
-    NSLog(@"Font: %f Width: %f", self.bounds.size.width, self.commentLabel.frame.size.width);
-    BOOL isSelected = NO;
-    self.comment = [comment copyWithZone:nil];
-    CGSize labelSize = [CommentTableViewCell sizeWithFontAttribute:self.commentLabel.font constrainedToSize:(CGSizeMake(self.bounds.size.width - (10 + self.circle.frame.size.width + self.circle.frame.origin.x) -10, self.bounds.size.width - (10 + self.circle.frame.size.width + self.circle.frame.origin.x) -10)) withText:comment.comment];
-    [self.commentLabel setText:comment.comment];
+    CGSize labelSize = [CommentTableViewCell sizeWithFontAttribute:self.commentLabel.font constrainedToSize:(CGSizeMake(self.bounds.size.width - (10 + self.circle.frame.size.width + self.circle.frame.origin.x) -10, self.bounds.size.width - (10 + self.circle.frame.size.width + self.circle.frame.origin.x) -10)) withText:comment];
+    [self.commentLabel setText:comment];
     [self.commentLabel setFrame:CGRectMake(self.commentLabel.frame.origin.x,
                                          10,
                                          labelSize.width,
@@ -63,32 +59,6 @@ NSInteger const CommentTableViewCellIconSize = 20;
     
     [self.circle setCenter:(CGPointMake(self.circle.center.x, (self.commentLabel.frame.size.height + 10 +10 )/2))];
     
-    
-    
-    NSLog(@"Check if need to select: %@ user: %@", comment.votedForBy, [[DataStore instance].user objectForKey:User_ID]);
-
-    if([comment.votedForBy containsObject:[[DataStore instance].user objectForKey:User_ID]] )
-    {
-        [self setBackgroundColor:[UIColor whiteColor]];
-        
-        self.circle.backgroundColor = [UIColor whiteColor];
-        self.circle.layer.borderColor = [UIColor lightBlueAppColor].CGColor;
-        
-        self.commentLabel.textColor = [UIColor blueAppColor];
-        [self setSelected:YES];
-        isSelected = YES;
-    }else
-    {
-        [self setBackgroundColor:[UIColor blueAppColor]];
-        
-        self.circle.backgroundColor = [UIColor lightBlueAppColor];
-        self.circle.layer.borderColor = [UIColor whiteColor].CGColor;
-        
-        self.commentLabel.textColor = [UIColor whiteColor];
-        [self setSelected:NO];
-    }
-    return isSelected;*/
-    return true;
 }
 
 

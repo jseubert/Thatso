@@ -75,6 +75,8 @@
         
     }
     
+    [self refreshGames:nil];
+    
     // Listen for image downloads so that we can refresh the image wall
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(gamesDownloaded:)
@@ -87,8 +89,7 @@
 
 -(void)viewDidAppear:(BOOL)animated
 {
-    // Get any new Games
-	[self refreshGames:nil];
+   //[self refreshGames:nil];
 }
 
 - (void)didReceiveMemoryWarning

@@ -21,7 +21,8 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        self.votedForComments = [[NSMutableDictionary alloc] init];
+        self.comments = [[NSMutableArray alloc] init];
+        self.votedForComments = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -99,6 +100,8 @@
     
     nonUserPlayers = [[NSMutableArray alloc] initWithArray:self.currentGame[@"players"]];
     [nonUserPlayers removeObject:[[DataStore instance].user objectForKey:User_ID]];
+    
+    [self refreshGame:nil];
 
 }
 
@@ -122,7 +125,7 @@
 -(void)viewDidAppear:(BOOL)animated
 {
     // Get any new Games
-    [self refreshGame:nil];
+ //   [self refreshGame:nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -149,7 +152,7 @@
         commentInputSection = 1;
     }
     
-    return commentInputSection;
+    return commentInputSection + self.comments.count;
     /*
     NSMutableArray* commentsForUserId;
     int commentSection;
@@ -201,7 +204,43 @@
         //1O padding on top and bottom
         return 10 + labelSize.height + 10;
     }*/
-    return UITableViewAutomaticDimension;
+    if([self isJudge])
+    {
+        PFObject* comment = [self.comments objectAtIndex:indexPath.row];
+        CGFloat width = tableView.frame.size.width
+        - 10    //left padding
+        - CommentTableViewCellIconSize
+        - 10    //padding between icon and text
+        - 10;   //padding on right
+        
+        //get the size of the label given the text
+        CGSize labelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:comment[@"comment"]];
+        
+        //1O padding on top and bottom
+        return 10 + labelSize.height + 10;
+    } else{
+        //Last one
+        if(self.comments.count == indexPath.row)
+        {
+            return UITableViewAutomaticDimension;
+            
+        }else{
+            PFObject* comment = [self.comments objectAtIndex:indexPath.row];
+            CGFloat width = tableView.frame.size.width
+            - 10    //left padding
+            - CommentTableViewCellIconSize
+            - 10    //padding between icon and text
+            - 10;   //padding on right
+            
+            //get the size of the label given the text
+            CGSize labelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:comment[@"comment"]];
+            
+            //1O padding on top and bottom
+            return 10 + labelSize.height + 10;
+        }
+    }
+   
+
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
@@ -264,18 +303,9 @@
         cell = [[UserCommentTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:userCommmentCellIdentifier];
     }
     
-    //populate Cell info
-    //cell.toUser = [nonUserPlayers objectAtIndex:indexPath.section - 1];
+    [cell.userCommentTextField setDelegate:self];
+    [cell.enterButton addTarget:self action:@selector(clickedSubmitComment:) forControlEvents:UIControlEventTouchUpInside];
     
-    //WTF, figure out later
-    // cell.roundNumber = [NSString stringWithFormat:@"%d", 1];
-   // cell.category = @"First";
-    //cell.gameID = self.currentGame.objectId;
-    
-    
-    [cell.userCommentTextField setPlaceholder:@"Enter response"];
-    // [cell.userCommentTextField setDelegate:self];
-    // [cell.enterButton addTarget:self action:@selector(clickedSubmitComment:) forControlEvents:UIControlEventTouchUpInside];
     [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
     return cell;
 }
@@ -288,13 +318,15 @@
     if (cell == nil) {
         cell = [[CommentTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:commentCellIdentifier];
     }
-    NSMutableArray* commentsForId;
-    if(indexPath.section == 0)
+    PFObject* comment = [self.comments objectAtIndex:indexPath.row];
+    if([comment[@"from"] isEqualToString:[[DataStore instance].user objectForKey:User_ID]])
     {
-        commentsForId = [self.comments objectForKey:[[DataStore instance].user objectForKey:User_ID]];
-    }else{
-        commentsForId = [self.comments objectForKey:[nonUserPlayers objectAtIndex:indexPath.section - 1]];
+        [cell setCommentLabelText:[NSString stringWithFormat:@"(Your Response) %@",comment[@"comment"]]];
+    } else
+    {
+        [cell setCommentLabelText:comment[@"comment"]];
     }
+    
     
     //get comment
    // Comment *comment = [commentsForId objectAtIndex:indexPath.row];
@@ -343,7 +375,7 @@
    }*/
 }
 
-
+/*
 - (void) commentUploaded:(NSNotification *)notification
 {
     [self refreshGame:nil];
@@ -361,28 +393,10 @@
     self.comments = [CurrentRounds instance].currentComments;
     NSLog(@"commentsDownloaded: %@", self.comments);
     [self.tableView reloadData];
-}
+}*/
 
-
-//Call back delegate for comments Downloaded 
-
-- (void) commsDidGetComments: (NSMutableDictionary *) comments {
-    NSLog(@"commsDidGetComments: %@", comments);
-    //Copy new comments over
-   
-    
-    // Refresh the table data to show the new games
-    [self.tableView reloadData];
-    
-    // Update the refresh control if we have one
-    if (self.refreshControl) {
-        NSString *lastUpdated = [NSString stringWithFormat:@"Last updated on %@", [_dateFormatter stringFromDate:[NSDate date]]];
-        [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:lastUpdated]];
-        [self.refreshControl setTintColor:[UIColor whiteColor]];
-        
-        [self.refreshControl endRefreshing];
-    }
-}
+#pragma Submitting getting comments
+//Call back delegate for comments Downloade
 
 //Pull to refresh method
 - (void) refreshGame:(UIRefreshControl *)refreshControl
@@ -392,9 +406,135 @@
         [refreshControl setEnabled:NO];
     }
     NSLog(@"refreshGame: GameID: %@", self.currentGame.objectId);
-    //[Comms getCommentsForGameId:self.currentGame.objectId inRound:@"1" forDelegate:self];
-    // Get any new Wall Images since the last update
-    //[Comms getUsersGamesforDelegate:self];
+    [Comms getActiveCommentsForGame:self.currentGame inRound:self.currentRound forDelegate:self];
 }
+
+- (void) didGetComments:(BOOL)success info: (NSString *) info{
+    if(success)
+    {
+    
+        self.comments = [[CurrentRounds instance].currentComments objectForKey:self.currentGame.objectId];
+        // Update the refresh control if we have one
+        if (self.refreshControl) {
+            NSString *lastUpdated = [NSString stringWithFormat:@"Last updated on %@", [_dateFormatter stringFromDate:[NSDate date]]];
+            [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:lastUpdated]];
+            [self.refreshControl setTintColor:[UIColor whiteColor]];
+        
+            [self.refreshControl endRefreshing];
+        }
+        // Refresh the table data to show the new games
+        [self.tableView reloadData];
+    
+    }else{
+        if (self.refreshControl) {
+            NSString *lastUpdated = [NSString stringWithFormat:@"Last updated on %@", [_dateFormatter stringFromDate:[NSDate date]]];
+            [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:lastUpdated]];
+            [self.refreshControl setTintColor:[UIColor whiteColor]];
+            
+            [self.refreshControl endRefreshing];
+        }
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error!"
+                                                        message:info
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+        
+    }
+}
+
+
+#pragma Submitting a commment
+
+-(IBAction)clickedSubmitComment:(id)sender
+{
+    [self uploadComment:((UITextField *)sender).text];
+    [((UITextField *)sender) setText:@""];
+}
+
+- (BOOL) textFieldShouldReturn:(UITextField *)textField {
+    [textField resignFirstResponder];
+    [self uploadComment: textField.text];
+    [textField setText:@""];
+    return YES;
+}
+
+-(void)uploadComment:(NSString *)commentText
+{
+    //ToO. Check comment is a ok.
+    if(commentText == nil || commentText.length == 0)
+    {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Can't Enter Empty Comment"
+                                                        message:@"Think of something hurtful to say."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+        return;
+    }
+    
+    PFObject *comment;
+    BOOL newObject = YES;
+    for(int i = 0; i < self.comments.count; i ++)
+    {
+        comment = [self.comments objectAtIndex:i];
+        if([comment[@"from"] isEqualToString:[[DataStore instance].user objectForKey:User_ID]])
+        {
+            self.previousComment = [NSString stringWithString:comment[@"comment"]];
+            comment[@"comment"] = commentText;
+            newObject = NO;
+            break;
+        }
+    }
+    if(newObject)
+    {
+        
+        NSLog(@"Self.CurrentGame: %@", self.currentGame);
+        comment = [PFObject objectWithClassName:@"ActiveComments"];
+        comment[@"comment"] = commentText;
+        comment[@"gameId"] = self.currentGame.objectId;
+        comment[@"roundId"] = self.currentRound.objectId;
+        comment[@"from"] = [[DataStore instance].user objectForKey:User_ID];
+        
+        [self.comments addObject:comment];
+    }
+    
+    [self.tableView reloadData];
+    
+    [Comms addComment:comment forDelegate:self];
+   
+}
+
+//callback
+- (void) didAddComment:(BOOL)success info: (NSString *) info{
+    if(!success)
+    {
+        PFObject *comment;
+        for(int i = 0; i < self.comments.count; i ++)
+        {
+            comment = [self.comments objectAtIndex:i];
+            if([comment[@"from"] isEqualToString:[[DataStore instance].user objectForKey:User_ID]])
+            {
+                if(self.previousComment.length > 0 && self.previousComment != nil)
+                {
+                    comment[@"comment"] = self.previousComment;
+                    self.previousComment = nil;
+                } else{
+                    [self.comments removeObjectAtIndex:i];
+                }
+                break;
+            }
+        }
+        [self.tableView reloadData];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error!"
+                                                        message:info
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+    }
+}
+
 
 @end

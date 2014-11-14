@@ -18,6 +18,6 @@
 @interface CurrentRounds : NSObject
 @property (nonatomic, strong) NSMutableDictionary* currentComments;
 +(CurrentRounds *) instance;
--(void) setComments: (NSMutableDictionary *)comments;
+-(void) setComments: (NSArray*)comments forGameId: (NSString *) gameId;
 -(void) reset;
 @end

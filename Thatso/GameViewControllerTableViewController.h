@@ -10,7 +10,7 @@
 
 
 
-@interface GameViewControllerTableViewController : UIViewController <CommsDelegate, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate>
+@interface GameViewControllerTableViewController : UIViewController <CommsDelegate,DidAddCommentDelegate, DidGetCommentsDelegate, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate>
 {
     NSDateFormatter *_dateFormatter;
     NSMutableArray* nonUserPlayers;
@@ -23,6 +23,7 @@
 
 @property(nonatomic) PFObject *currentGame;
 @property(nonatomic) PFObject *currentRound;
-@property(nonatomic) NSMutableDictionary* comments;
-@property(nonatomic) NSMutableDictionary* votedForComments;
+@property(nonatomic) NSMutableArray* comments;
+@property(nonatomic) NSString* previousComment;
+@property(nonatomic) NSMutableArray* votedForComments;
 @end

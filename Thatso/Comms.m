@@ -6,15 +6,10 @@
 //  Copyright (c) 2014 John Seubert. All rights reserved.
 //
 
-#import "Comms.h"
 #import "NSOperationQueue+NSoperationQueue_SharedQueue.h"
 
 @implementation Comms
-
-
 //Notifications 
-
-
 + (void) login:(id<CommsDelegate>)delegate
 {
     // Reset the DataStore so that we are starting from a fresh Login
@@ -212,137 +207,68 @@
     }*/
 }
 
-+ (void) getCommentsForGameId:(NSString *)gameId inRound:(NSString *)round forDelegate:(id<CommsDelegate>)delegate
-{
-    NSMutableDictionary* comments = [[NSMutableDictionary alloc] init];
-    PFQuery *query = [PFQuery queryWithClassName:@"Comment"];
-    [query whereKey:@"gameID" equalTo:gameId];
-    [query whereKey:@"round" equalTo:round];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        if (error) {
-            NSLog(@"Objects error: %@", error.localizedDescription);
-            
-        } else {
-           // [UserGames insta]
-            [[CurrentRounds instance] reset];
-            
-            
-            [[CurrentRounds instance] setComments:objects];
 
-            
-            // Notify - Image Downloaded from Parse
-            [[NSNotificationCenter defaultCenter] postNotificationName:N_CommentsDownloaded object:nil];
-            
-        }
-    }];
-    // Callback
-    if ([delegate respondsToSelector:@selector(commsDidGetComments:)]) {
-        [delegate commsDidGetComments:comments];
++ (void) addComment:(PFObject*)comment forDelegate:(id<DidAddCommentDelegate>)delegate{
+    if(comment.objectId == nil)
+    {
+        
     }
-}
-
-
-+ (void) addComment:(NSString *)comment to:(NSString *)toFBId toGameId:(NSString *)gameId inRound:(NSString *)round withCategory:(NSString *)category
-{
-  
     //Check to see if the comment exists already
-    PFQuery *query = [PFQuery queryWithClassName:@"Comment"];
-    [query whereKey:@"toFBId" equalTo:toFBId];
-    [query whereKey:@"fromFBId" equalTo:[[PFUser currentUser] objectForKey:@"fbId"]];
-    [query whereKey:@"gameID" equalTo:gameId];
-    [query whereKey:@"round" equalTo:@"1"];
+    PFQuery *query = [PFQuery queryWithClassName:@"ActiveComments"];
+
+    [query whereKey:@"gameId" equalTo:comment[@"gameId"]];
+    [query whereKey:@"roundId" equalTo:comment[@"roundId"]];
+    [query whereKey:@"from" equalTo:comment[@"from"]];
     
     [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-        if (!object) {
-            NSLog(@"The getFirstObject request failed.");
-            PFObject *commentObject = [PFObject objectWithClassName:@"Comment"];
-            commentObject[@"toFBId"] = toFBId;
-            commentObject[@"fromFBId"] = [[PFUser currentUser] objectForKey:@"fbId"];
-            commentObject[@"comment"] = comment;
-            commentObject[@"category"] = category;
-            commentObject[@"gameID"] = gameId;
-            commentObject[@"round"] = @"1";
-            commentObject[@"votedFor"] = [[NSArray alloc] init];
-            [commentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        //Comment does not exist. Add it.
+        if(!object)
+        {
+            [comment saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                 if (succeeded) {
                     // Notify that the Comment has been uploaded, using NSNotificationCenter
-                    [[NSNotificationCenter defaultCenter] postNotificationName:N_CommentUploaded object:nil];
-                    NSLog(@"Uploaded New comment");
-                }
+                    [delegate didAddComment:YES info:nil];
+                                   }
                 else{
-                    NSLog(@"Uploaded New comment failed: %@",error.localizedDescription);
+                    [delegate didAddComment:NO info:error.localizedDescription];
                 }
             }];
             
         } else {
-            // The find succeeded.
-            NSLog(@"Successfully retrieved the object.");
-            object[@"comment"] = comment;
+            object[@"comment"] = comment[@"comment"];
             [object saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                 if (succeeded) {
                     // Notify that the Comment has been uploaded, using NSNotificationCenter
-                    [[NSNotificationCenter defaultCenter] postNotificationName:N_CommentUploaded object:nil];
-                    NSLog(@"Updated comment");
+                    [delegate didAddComment:YES info:@"Success"];
                 }
                 else{
-                     NSLog(@"Updated comment failed: %@",error.localizedDescription);
+                    [delegate didAddComment:NO info:error.localizedDescription];
                 }
             }];
         }
     }];
+    
 }
 
-+ (void) user:(NSString *)userId DidUpvote:(BOOL)voted forComment:(NSString *)commentId forDelegate:(id<VoteForCommentDelegate>)delegate
++ (void) getActiveCommentsForGame:(PFObject*)game inRound:(PFObject*)round forDelegate:(id<DidGetCommentsDelegate>)delegate;
 {
-    //Check to see if the comment exists already
-    PFQuery *query = [PFQuery queryWithClassName:@"Comment"];
-    [query whereKey:@"objectId" equalTo: commentId];
-    
-    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-        //No comment found
-        if (!object) {
-            [delegate votedForCommentNotFound];
-        //Error with found comment
-        } if (error) {
-            [delegate errorGettingVoteComment:error];
+    NSMutableDictionary* comments = [[NSMutableDictionary alloc] init];
+    PFQuery *query = [PFQuery queryWithClassName:@"ActiveComments"];
+    [query whereKey:@"gameId" equalTo:game.objectId];
+    [query whereKey:@"roundId" equalTo:round.objectId];
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (error) {
+            NSLog(@"Objects error: %@", error.localizedDescription);
+            [delegate didGetComments:NO info:error.localizedDescription];
+            
         } else {
-            // The query succeeded.
-            NSMutableArray* votedFor = object[@"votedFor"];
-            BOOL changed = false;
-            if(voted)
-            {
-                if(![votedFor containsObject:userId])
-                {
-                    [votedFor addObject:userId];
-                    changed = true;
-                    
-                }
-            } else{
-                if([votedFor containsObject:userId])
-                {
-                    [votedFor removeObject:userId];
-                    changed = true;
-                }
-            }
-            if(changed)
-            {
-                object[@"votedFor"] = votedFor;
-                [object saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                    if (succeeded) {
-                        [delegate userSuccesffullyVotedForComment:voted];
-                    }
-                    else{
-                        [delegate errorSavingVoteForComment:error];
-                    }
-                }];
-            //Thes user did not change their vote, no update was made
-            }else{
-                [delegate userDidNotChangeVoteOnComment];
-            }
+            // [UserGames insta]
+            //Should merge later but for now just copy over
+            [[CurrentRounds instance] setComments:objects forGameId:game.objectId];
+            [delegate didGetComments:YES info:nil];
+            
         }
     }];
+    
 }
-
-
-
 @end

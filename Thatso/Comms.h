@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import <Parse/Parse.h>
 @protocol CommsDelegate <NSObject>
 @optional
 - (void) commsDidLogin:(BOOL)loggedIn;
@@ -15,6 +15,11 @@
 - (void) commsDidGetUserGames;
 - (void) commsDidGetComments: (NSMutableDictionary *) comments;
 @end
+
+
+
+
+
 
 @protocol CreateGameDelegate <NSObject>
 - (void) newGameUploadedToServer:(BOOL)success info: (NSString *) info;
@@ -24,21 +29,21 @@
 - (void) didGetGamesDelegate:(BOOL)success info: (NSString *) info;
 @end
 
-@protocol VoteForCommentDelegate <NSObject>
--(void) votedForCommentNotFound;
--(void) errorGettingVoteComment: (NSError *) error;
--(void) userDidNotChangeVoteOnComment;
--(void) userSuccesffullyVotedForComment: (BOOL)voted;
--(void) errorSavingVoteForComment: (NSError *) error;
+@protocol DidAddCommentDelegate <NSObject>
+- (void) didAddComment:(BOOL)success info: (NSString *) info;
 @end
+
+@protocol DidGetCommentsDelegate <NSObject>
+- (void) didGetComments:(BOOL)success info: (NSString *) info;
+@end
+
 
 
 @interface Comms : NSObject
 + (void) login:(id<CommsDelegate>)delegate;
-+ (void) startNewGameWithUsers: (NSMutableArray *)fbFriendsInGame forDelegate:(id<CommsDelegate>)delegate;
-+ (void) getUsersGamesforDelegate:(id<CommsDelegate>)delegate;
-+ (void) addComment:(NSString *)comment to:(NSString *)toFBId toGameId:(NSString *)gameId inRound:(NSString *)round withCategory:(NSString *)category;
-+ (void) getCommentsForGameId:(NSString *)gameId inRound:(NSString *)round forDelegate:(id<CommsDelegate>)delegate;
-+ (void) user:(NSString *)userId DidUpvote:(BOOL)voted forComment:(NSString *)commentId;
++ (void) startNewGameWithUsers: (NSMutableArray *)fbFriendsInGame forDelegate:(id<CreateGameDelegate>)delegate;
++ (void) getUsersGamesforDelegate:(id<GetGamesDelegate>)delegate;
++ (void) addComment:(PFObject*)comment forDelegate:(id<DidAddCommentDelegate>)delegate;
++ (void) getActiveCommentsForGame:(PFObject*)game inRound:(PFObject*)round forDelegate:(id<DidGetCommentsDelegate>)delegate;
 @end
 

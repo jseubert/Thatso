@@ -55,10 +55,8 @@ static CurrentRounds *currentRound = nil;
     return self;
 }
 
--(void) setComments: (NSMutableDictionary *)comments{
-
-    self.currentComments= [[NSMutableDictionary alloc] init];
-    self.currentComments = [comments copyWithZone:nil];
+-(void) setComments: (NSArray*)comments forGameId: (NSString *) gameId{
+    [self.currentComments setObject:comments forKey:gameId];
 }
 
 - (void) reset
