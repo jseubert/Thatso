@@ -14,8 +14,10 @@ NSString * const N_GamesDownloaded = @"N_GamesDownloaded";
 NSString * const N_ProfilePictureLoaded = @"N_ProfilePictureLoaded";
 NSString * const N_CommentUploaded = @"N_CommentUploaded";
 NSString * const N_CommentsDownloaded = @"N_CommentsDownloaded";
+NSString * const N_VotedForComment = @"N_VotedForComment";
 
 #pragma mark user fields
+NSString * const User_ID = @"id";
 NSString * const User_ObjectID = @"objectID";
 NSString * const User_FacebookID = @"fbId";
 NSString * const User_FirstName = @"first_name";

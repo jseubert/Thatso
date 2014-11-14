@@ -7,8 +7,20 @@
 //
 
 #import "UserGames.h"
-
 @implementation Comment
+- (id)copyWithZone:(NSZone *)zone
+{
+    Comment *comentCopy = [[Comment alloc] init];
+    comentCopy.objectId = self.objectId;
+    comentCopy.toUserID = self.toUserID;
+    comentCopy.fromUserID = self.fromUserID;
+    comentCopy.roundNumber = self.roundNumber;
+    comentCopy.comment = self.comment;
+    comentCopy.category = self.category;
+    comentCopy.gameId = self.gameId;
+    comentCopy.votedForBy = [self.votedForBy copyWithZone:zone];
+    return comentCopy;
+}
 @end
 
 @implementation Round
@@ -82,7 +94,7 @@ static CurrentRound *currentRound = nil;
 -(void) setComments: (NSMutableDictionary *)comments{
 
     self.currentComments= [[NSMutableDictionary alloc] init];
-    self.currentComments = comments; 
+    self.currentComments = [comments copyWithZone:nil];
 }
 
 - (void) reset

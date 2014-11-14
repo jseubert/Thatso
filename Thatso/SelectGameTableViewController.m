@@ -145,7 +145,7 @@
     }else if([[UserGames instance].games count] > 0)
     {
      
-        Game* game = [[UserGames instance].games objectAtIndex:indexPath.row];
+        PFObject* game = [[UserGames instance].games objectAtIndex:indexPath.row];
         NSMutableArray *players = game.players;
         NSString *title = [[NSString alloc] init];
         

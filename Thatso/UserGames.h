@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface Comment : NSObject
+@interface Comment : NSObject <NSCopying>
 @property (nonatomic, strong) NSString* objectId;
 @property (nonatomic, strong) NSString* toUserID;
 @property (nonatomic, strong) NSString* fromUserID;
@@ -16,6 +16,7 @@
 @property (nonatomic, strong) NSString* comment;
 @property (nonatomic, strong) NSString* category;
 @property (nonatomic, strong) NSString* gameId;
+@property (nonatomic, strong) NSArray *votedForBy;
 
 @end
 
@@ -23,7 +24,7 @@
 @property int roundNumber;
 @property id objectId;
 @property (nonatomic, strong) NSString *category;
-@property (nonatomic, strong) NSMutableArray *comments;
+@property (nonatomic, strong) NSMutableDictionary *comments;
 
 @end
 

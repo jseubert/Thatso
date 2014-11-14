@@ -165,10 +165,10 @@
 */
 
 -(IBAction)startGame:(id)sender{
-    NSLog(@"startGame");
-    if([self.tableView indexPathsForSelectedRows].count <= 0){
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No Friends Selected"
-                                                        message:@"You must pick at least one friend."
+NSLog(@"startGame");
+   if([self.tableView indexPathsForSelectedRows].count < 2) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Not enough Friends Selected"
+                                                        message:@"Must choose at least 2 other people."
                                                        delegate:nil
                                               cancelButtonTitle:@"OK"
                                               otherButtonTitles:nil];

@@ -49,7 +49,7 @@
                 if (!error) {
                     NSDictionary<FBGraphUser> *me = (NSDictionary<FBGraphUser> *)result;
                     // Store the Facebook Id
-                    [[PFUser currentUser] setObject:me.objectID forKey:User_FacebookID];
+                    [[PFUser currentUser] setObject:me.objectID forKey:User_ID];
                     NSLog(@"Added you: %@", me.name);
                     [[PFUser currentUser] saveInBackground];
                     
@@ -114,27 +114,33 @@
 	}];
     
     //Offline Testing
-    //[delegate commsDidLogin:YES];
+    [delegate commsDidLogin:YES];
 }
 
-+ (void) startNewGameWithUsers: (NSMutableArray *)fbFriendsInGame forDelegate:(id<CommsDelegate>)delegate
++ (void) startNewGameWithUsers: (NSArray *)fbFriendsInGame forDelegate:(id<CreateGameDelegate>)delegate
 {
-    NSLog(@"startNewGameWithUsers: " );
-    // 1 Add this user to the players
-    [fbFriendsInGame addObject:[[PFUser currentUser] objectForKey:User_FacebookID]];
-    NSLog(@"fbFriendsInGame: %@", fbFriendsInGame );
+
+    // Add Current User to the Game
+    NSMutableArray *allPlayersInGame = [[NSMutableArray alloc] initWithArray:fbFriendsInGame];
+    [allPlayersInGame addObject:[[PFUser currentUser] objectForKey:User_FacebookID]];
+    //Must Have more than 3 users
+    if(allPlayersInGame.count < 3)
+    {
+        //Return Error
+        [delegate newGameUploadedToServer:NO info:@"Not Enough Players in Game!"];
+        return;
+    }
     
     //Check if this game already exists
     //Query returns all games that contain the players above
     PFQuery *checkIfGameExistsQuery = [PFQuery queryWithClassName:@"Game"];
-    [checkIfGameExistsQuery whereKey:@"players" containsAllObjectsInArray:fbFriendsInGame];
+    [checkIfGameExistsQuery whereKey:@"players" containsAllObjectsInArray:allPlayersInGame];
     [checkIfGameExistsQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
     {
+        //Error With Query
         if(error)
         {
-            if ([delegate respondsToSelector:@selector(newGameUploadedToServer:info:)]) {
-                [delegate newGameUploadedToServer:NO info:error.fberrorUserMessage];
-            }
+            [delegate newGameUploadedToServer:NO info:error.fberrorUserMessage];
         }
         //Check if this game already exists
         else if(objects != NULL && [objects count] > 0)
@@ -142,31 +148,35 @@
             //Check each game returned. If a game has a same amount of players as the original ID's passed, then it is a duplicate game
             for(int i = 0; i < [objects count]; i ++)
             {
-                if([fbFriendsInGame count] == [[[objects objectAtIndex:i] objectForKey:@"players"] count])
+                if([allPlayersInGame count] == [[[objects objectAtIndex:i] objectForKey:@"players"] count])
                 {
-                    if ([delegate respondsToSelector:@selector(newGameUploadedToServer:info:)]) {
-                        [delegate newGameUploadedToServer:NO info:@"A game with these users already exists!"];
-                    }
+                    [delegate newGameUploadedToServer:NO info:@"A game with these users already exists!"];
                     return;
                 }
             }
         }
         
+        //Create the game
         PFObject *gameObject = [PFObject objectWithClassName:@"Game"];
-        gameObject[@"rounds"] = [NSNumber numberWithInt:0];
-        gameObject[@"players"] = fbFriendsInGame;
-        [gameObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error)
+        gameObject[@"rounds"] = @0;
+        gameObject[@"players"] = allPlayersInGame;
+        
+        //Create the first round for this Game
+        PFObject *roundObject = [PFObject objectWithClassName:@"CurrentRounds"];
+        roundObject[@"judge"] = [[PFUser currentUser] objectForKey:User_FacebookID];
+        roundObject[@"subject"] = [fbFriendsInGame objectAtIndex:0];
+        roundObject[@"category"] = @"What would be the first thing they would fo after a one night stand?";
+        gameObject[@"currentRound"] = roundObject;
+        
+        
+        [roundObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error)
         {
             if (succeeded) {
                 // 4 If the save was successful, save the comment in another new Parse object. Again, save the  user’s name and Facebook user ID along with the comment string.
-                if ([delegate respondsToSelector:@selector(newGameUploadedToServer:info:)]) {
                     [delegate newGameUploadedToServer:YES info:@"Success"];
-                }
             } else {
                     // 6 If there was an error saving the new game object, report the error
-                if ([delegate respondsToSelector:@selector(newGameUploadedToServer:info:)]) {
                     [delegate newGameUploadedToServer:NO info:error.fberrorUserMessage];
-                }
             }
         }];
         
@@ -238,6 +248,7 @@
                 newComment.roundNumber = comment[@"round"];
                 newComment.comment = comment[@"comment"];
                 newComment.category = comment[@"category"];
+                newComment.votedForBy = comment[@"votedFor"];
                 
                 NSLog(@"Found Comments: %@", newComment.comment);
                 
@@ -289,6 +300,7 @@
             commentObject[@"category"] = category;
             commentObject[@"gameID"] = gameId;
             commentObject[@"round"] = @"1";
+            commentObject[@"votedFor"] = [[NSArray alloc] init];
             [commentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                 if (succeeded) {
                     // Notify that the Comment has been uploaded, using NSNotificationCenter
@@ -314,6 +326,57 @@
                      NSLog(@"Updated comment failed: %@",error.localizedDescription);
                 }
             }];
+        }
+    }];
+}
+
++ (void) user:(NSString *)userId DidUpvote:(BOOL)voted forComment:(NSString *)commentId forDelegate:(id<VoteForCommentDelegate>)delegate
+{
+    //Check to see if the comment exists already
+    PFQuery *query = [PFQuery queryWithClassName:@"Comment"];
+    [query whereKey:@"objectId" equalTo: commentId];
+    
+    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        //No comment found
+        if (!object) {
+            [delegate votedForCommentNotFound];
+        //Error with found comment
+        } if (error) {
+            [delegate errorGettingVoteComment:error];
+        } else {
+            // The query succeeded.
+            NSMutableArray* votedFor = object[@"votedFor"];
+            BOOL changed = false;
+            if(voted)
+            {
+                if(![votedFor containsObject:userId])
+                {
+                    [votedFor addObject:userId];
+                    changed = true;
+                    
+                }
+            } else{
+                if([votedFor containsObject:userId])
+                {
+                    [votedFor removeObject:userId];
+                    changed = true;
+                }
+            }
+            if(changed)
+            {
+                object[@"votedFor"] = votedFor;
+                [object saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                    if (succeeded) {
+                        [delegate userSuccesffullyVotedForComment:voted];
+                    }
+                    else{
+                        [delegate errorSavingVoteForComment:error];
+                    }
+                }];
+            //Thes user did not change their vote, no update was made
+            }else{
+                [delegate userDidNotChangeVoteOnComment];
+            }
         }
     }];
 }

@@ -45,7 +45,7 @@
     self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0,
                                                                    self.headerView.frame.size.height + self.headerView.frame.origin.y,
                                                                    self.view.bounds.size.width,
-                                                                   self.view.bounds.size.height - self.headerView.frame.size.height)];
+                                                                   self.view.bounds.size.height - self.headerView.frame.size.height - self.headerView.frame.origin.y)];
     
     [self.tableView setDelegate:self];
     [self.tableView setDataSource:self];
@@ -86,9 +86,15 @@
                                                  name:N_CommentsDownloaded
                                                object:nil];
     
+    // Listen for image downloads so that we can refresh the image wall
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(commentVotedFor:)
+                                                 name:N_VotedForComment
+                                               object:nil];
+    
     //Remove yourself from the game's players
     nonUserPlayers = [[NSMutableArray alloc] initWithArray:self.currentGame.players];
-    [nonUserPlayers removeObject:[[DataStore instance].user objectForKey:User_FacebookID]];
+    [nonUserPlayers removeObject:[[DataStore instance].user objectForKey:User_ID]];
 
 }
 
@@ -126,53 +132,58 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSMutableArray* commentsForId;
-    
-    //Current Users section
-    int commentSection = 1;
+    NSMutableArray* commentsForUserId;
+    int commentSection;
+    //User Section
     if(section == 0)
     {
-        commentsForId = [self.comments objectForKey:[[DataStore instance].user objectForKey:User_FacebookID]];
+        commentsForUserId = [self.comments objectForKey:[[DataStore instance].user objectForKey:User_ID]];
         commentSection = 0;
     }else{
-        commentsForId = [self.comments objectForKey:[nonUserPlayers objectAtIndex:section - 1]];
+        commentsForUserId = [self.comments objectForKey:[nonUserPlayers objectAtIndex:section - 1]];
+        //need to add one for the user input comment cell
+        commentSection = 1;
     }
     
-    if(commentsForId == nil)
+    //No comments found
+    if(commentsForUserId == nil)
     {
-        NSLog(@"Found none");
         return commentSection;
     }else{
-        NSLog(@"Found: %lu",(unsigned long)commentsForId.count );
-        return commentsForId.count + commentSection;
+        return commentsForUserId.count + commentSection;
     }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     //check if regular comment cell or user enter table cell
     
-        NSMutableArray* commentsForId;
-        if(indexPath.section == 0)
-        {
-            commentsForId = [self.comments objectForKey:[[DataStore instance].user objectForKey:User_FacebookID]];
-        }else{
-            commentsForId = [self.comments objectForKey:[nonUserPlayers objectAtIndex:indexPath.section - 1]];
-        }
-        //get comment
+    NSMutableArray* commentsForId;
+    //User Section
+    if(indexPath.section == 0)
+    {
+        commentsForId = [self.comments objectForKey:[[DataStore instance].user objectForKey:User_ID]];
+    }else{
+        commentsForId = [self.comments objectForKey:[nonUserPlayers objectAtIndex:indexPath.section - 1]];
+    }
+    
+    //get comment
     if(indexPath.row < commentsForId.count)
     {
         Comment *comment = [commentsForId objectAtIndex:indexPath.row];
         
-        CGFloat width = tableView.frame.size.width - 10 - CommentTableViewCellIconSize - 10 - 10;
+        CGFloat width = tableView.frame.size.width
+                        - 10    //left padding
+                        - CommentTableViewCellIconSize
+                        - 10    //padding between icon and text
+                        - 10;   //padding on right
+        
+        //get the size of the label given the text
         CGSize labelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:comment.comment];
         
-        NSLog(@"heightForRowAtIndexPath: %f", labelSize.height);
+        //1O padding on top and bottom
         return 10 + labelSize.height + 10;
     }
     return UITableViewAutomaticDimension;
-   
-    
-
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
@@ -192,7 +203,7 @@
     if(section == 0)
     {
         //Populate name and picture
-        [cell.nameLabel setText:@"You"];
+        [cell.nameLabel setText:[[DataStore instance].user objectForKey:User_FullName]];
         UIImage *fbProfileImage = [[DataStore instance].user objectForKey:User_FacebookProfilePicture];
         [cell.profilePicture setImage:[fbProfileImage imageScaledToFitSize:CGSizeMake(cell.frame.size.height, cell.frame.size.height)]];
 
@@ -263,14 +274,19 @@
     NSMutableArray* commentsForId;
     if(indexPath.section == 0)
     {
-        commentsForId = [self.comments objectForKey:[[DataStore instance].user objectForKey:User_FacebookID]];
+        commentsForId = [self.comments objectForKey:[[DataStore instance].user objectForKey:User_ID]];
     }else{
         commentsForId = [self.comments objectForKey:[nonUserPlayers objectAtIndex:indexPath.section - 1]];
     }
+    
     //get comment
     Comment *comment = [commentsForId objectAtIndex:indexPath.row];
     
-    [cell setCommentLabelText:comment.comment];
+    if([cell setCommentLabelText:comment])
+    {
+        [self.votedForComments setObject:indexPath forKey:[NSNumber numberWithInteger:indexPath.section]];
+    }
+    
     [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
     return cell;
 }
@@ -289,9 +305,18 @@
    if([[tableView cellForRowAtIndexPath:indexPath] isKindOfClass:[CommentTableViewCell class]])
    {
        NSIndexPath *previouslySelectedIndex = [self.votedForComments objectForKey:[NSNumber numberWithInteger:indexPath.section]];
+       //The user is deselecting their comment
+       if(previouslySelectedIndex.row == indexPath.row && previouslySelectedIndex.section == indexPath.section)
+       {
+           [((CommentTableViewCell *)[tableView cellForRowAtIndexPath:previouslySelectedIndex]) selectedTableCell:NO];
+           [self.votedForComments removeObjectForKey:[NSNumber numberWithInteger:indexPath.section]];
+           return;
+       }
+       //the user already selected a comment and now likes a new one
        if(previouslySelectedIndex != nil)
        {
            [((CommentTableViewCell *)[tableView cellForRowAtIndexPath:previouslySelectedIndex]) selectedTableCell:NO];
+           [self.votedForComments removeObjectForKey:[NSNumber numberWithInteger:previouslySelectedIndex.section]];
        }
        //if([self.votedForComments objectForKey:indexPath.section]
        [((CommentTableViewCell *)[tableView cellForRowAtIndexPath:indexPath]) selectedTableCell:YES];
@@ -304,6 +329,11 @@
 - (void) commentUploaded:(NSNotification *)notification
 {
     [self refreshGame:nil];
+}
+
+- (void) commentVotedFor:(NSNotification *)notification
+{
+   // [self refreshGame:nil];
 }
 
 - (void) commentsDownloaded:(NSNotification *)notification

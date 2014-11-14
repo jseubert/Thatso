@@ -11,8 +11,10 @@ extern NSString * const N_GamesDownloaded;
 extern NSString * const N_ProfilePictureLoaded;
 extern NSString * const N_CommentUploaded;
 extern NSString * const N_CommentsDownloaded;
+extern NSString * const N_VotedForComment;
 
 #pragma mark user fields
+extern NSString * const User_ID;
 extern NSString * const User_ObjectID;
 extern NSString * const User_FacebookID;
 extern NSString * const User_FirstName;
