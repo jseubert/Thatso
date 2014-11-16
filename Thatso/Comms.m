@@ -212,50 +212,65 @@
 
 
 + (void) addComment:(PFObject*)comment forDelegate:(id<DidAddCommentDelegate>)delegate{
-    if(comment.objectId == nil)
-    {
-        
-    }
-    //Check to see if the comment exists already
-    PFQuery *query = [PFQuery queryWithClassName:@"ActiveComments"];
-
-    [query whereKey:@"gameId" equalTo:comment[@"gameId"]];
-    [query whereKey:@"roundId" equalTo:comment[@"roundId"]];
-    [query whereKey:@"from" equalTo:comment[@"from"]];
-    
-    [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-        //Comment does not exist. Add it.
-        if(!object)
+    //Check if this round is still active
+    PFQuery *roundQuery = [PFQuery queryWithClassName:@"CurrentRounds"];
+    [roundQuery whereKey:@"objectId" equalTo:comment[@"roundId"]];
+    [roundQuery getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        if(error)
         {
-            [comment saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                if (succeeded) {
-                    // Notify that the Comment has been uploaded, using NSNotificationCenter
-                    [delegate didAddComment:YES info:nil];
-                                   }
-                else{
-                    [delegate didAddComment:NO info:error.localizedDescription];
-                }
-            }];
+             [delegate didAddComment:NO needsRefresh:YES info:@"This round is over, getting new round!"];
+        }else{
+            //round not active, need to refresh view
+            if(!object)
+            {
+                [delegate didAddComment:NO needsRefresh:YES info:@"This round is over, getting new round!"];
+            }
+            //active round
+            else{
+                //Check to see if the comment exists already
+                PFQuery *query = [PFQuery queryWithClassName:@"ActiveComments"];
+                
+                [query whereKey:@"gameId" equalTo:comment[@"gameId"]];
+                [query whereKey:@"roundId" equalTo:comment[@"roundId"]];
+                [query whereKey:@"from" equalTo:comment[@"from"]];
+                //Check if
+                
+                [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                    //Comment does not exist. Add it.
+                    if(!object)
+                    {
+                        [comment saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                            if (succeeded) {
+                                // Notify that the Comment has been uploaded, using NSNotificationCenter
+                                [delegate didAddComment:YES needsRefresh:NO info:nil];
+                            }
+                            else{
+                                [delegate didAddComment:NO needsRefresh:NO info:error.localizedDescription];
+                            }
+                        }];
+                        
+                    } else {
+                        object[@"comment"] = comment[@"comment"];
+                        [object saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                            if (succeeded) {
+                                // Notify that the Comment has been uploaded, using NSNotificationCenter
+                                [delegate didAddComment:YES needsRefresh:NO info:@"Success"];
+                            }
+                            else{
+                                [delegate didAddComment:NO needsRefresh:NO info:error.localizedDescription];
+                            }
+                        }];
+                    }
+                }];
+            }
             
-        } else {
-            object[@"comment"] = comment[@"comment"];
-            [object saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                if (succeeded) {
-                    // Notify that the Comment has been uploaded, using NSNotificationCenter
-                    [delegate didAddComment:YES info:@"Success"];
-                }
-                else{
-                    [delegate didAddComment:NO info:error.localizedDescription];
-                }
-            }];
         }
     }];
-    
 }
+
 
 + (void) getActiveCommentsForGame:(PFObject*)game inRound:(PFObject*)round forDelegate:(id<DidGetCommentsDelegate>)delegate
 {
-    NSMutableDictionary* comments = [[NSMutableDictionary alloc] init];
     PFQuery *query = [PFQuery queryWithClassName:@"ActiveComments"];
     [query whereKey:@"gameId" equalTo:game.objectId];
     [query whereKey:@"roundId" equalTo:round.objectId];

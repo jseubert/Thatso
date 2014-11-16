@@ -30,7 +30,7 @@
 @end
 
 @protocol DidAddCommentDelegate <NSObject>
-- (void) didAddComment:(BOOL)success info: (NSString *) info;
+- (void) didAddComment:(BOOL)success needsRefresh:(BOOL)refresh info: (NSString *) info;
 @end
 
 @protocol DidGetCommentsDelegate <NSObject>

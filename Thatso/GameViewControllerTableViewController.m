@@ -437,25 +437,10 @@
 }
 
 //callback
-- (void) didAddComment:(BOOL)success info: (NSString *) info{
+- (void) didAddComment:(BOOL)success needsRefresh:(BOOL)refresh info: (NSString *) info
+{
     if(!success)
     {
-        PFObject *comment;
-        for(int i = 0; i < self.comments.count; i ++)
-        {
-            comment = [self.comments objectAtIndex:i];
-            if([comment[@"from"] isEqualToString:[[DataStore instance].user objectForKey:User_ID]])
-            {
-                if(self.previousComment.length > 0 && self.previousComment != nil)
-                {
-                    comment[@"comment"] = self.previousComment;
-                    self.previousComment = nil;
-                } else{
-                    [self.comments removeObjectAtIndex:i];
-                }
-                break;
-            }
-        }
         [self.tableView reloadData];
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error!"
                                                         message:info
@@ -463,6 +448,28 @@
                                               cancelButtonTitle:@"OK"
                                               otherButtonTitles:nil];
         [alert show];
+        if(refresh)
+        {
+            [self refreshGame:nil];
+        } else{
+            PFObject *comment;
+            for(int i = 0; i < self.comments.count; i ++)
+            {
+                comment = [self.comments objectAtIndex:i];
+                if([comment[@"from"] isEqualToString:[[DataStore instance].user objectForKey:User_ID]])
+                {
+                    if(self.previousComment.length > 0 && self.previousComment != nil)
+                    {
+                        comment[@"comment"] = self.previousComment;
+                        self.previousComment = nil;
+                    } else{
+                        [self.comments removeObjectAtIndex:i];
+                    }
+                    break;
+                }
+            }
+            [self.tableView reloadData];
+        }
     }
 }
 
