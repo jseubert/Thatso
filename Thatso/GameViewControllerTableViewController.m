@@ -153,57 +153,9 @@
     }
     
     return commentInputSection + self.comments.count;
-    /*
-    NSMutableArray* commentsForUserId;
-    int commentSection;
-    //Title Section
-    if(section == 0)
-    {
-        return 0;
-    }else{
-        commentsForUserId = [self.comments objectForKey:[nonUserPlayers objectAtIndex:section - 1]];
-        //need to add one for the user input comment cell
-        commentSection = 1;
-    }
-    
-    //No comments found
-    if(commentsForUserId == nil)
-    {
-        return commentSection;
-    }else{
-        return commentsForUserId.count + commentSection;
-    }*/
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    //check if regular comment cell or user enter table cell
-    /*
-    NSMutableArray* commentsForId;
-    //User Section
-    if(indexPath.section == 0)
-    {
-        commentsForId = [self.comments objectForKey:[[DataStore instance].user objectForKey:User_ID]];
-    }else{
-        commentsForId = [self.comments objectForKey:[nonUserPlayers objectAtIndex:indexPath.section - 1]];
-    }
-    
-    //get comment
-    if(indexPath.row < commentsForId.count)
-    {
-        Comment *comment = [commentsForId objectAtIndex:indexPath.row];
-        
-        CGFloat width = tableView.frame.size.width
-                        - 10    //left padding
-                        - CommentTableViewCellIconSize
-                        - 10    //padding between icon and text
-                        - 10;   //padding on right
-        
-        //get the size of the label given the text
-        CGSize labelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:comment.comment];
-        
-        //1O padding on top and bottom
-        return 10 + labelSize.height + 10;
-    }*/
     if([self isJudge])
     {
         PFObject* comment = [self.comments objectAtIndex:indexPath.row];
@@ -328,72 +280,43 @@
     }
     
     
-    //get comment
-   // Comment *comment = [commentsForId objectAtIndex:indexPath.row];
-    
-  //  if([cell setCommentLabelText:comment])
-   // {
-   //     [self.votedForComments setObject:indexPath forKey:[NSNumber numberWithInteger:indexPath.section]];
-  //  }
-    
     [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
     return cell;
 }
-/*
-- (NSIndexPath*)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath*)indexPath {
-    for (NSIndexPath* selectedIndexPath in tableView.indexPathsForSelectedRows ) {
-        if (selectedIndexPath.section == indexPath.section )
-        {
-            [tableView deselectRowAtIndexPath:selectedIndexPath animated:YES] ;
-        }
-    }
-    return indexPath ;
-}*/
+
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    /*
-   if([[tableView cellForRowAtIndexPath:indexPath] isKindOfClass:[CommentTableViewCell class]])
-   {
-       NSIndexPath *previouslySelectedIndex = [self.votedForComments objectForKey:[NSNumber numberWithInteger:indexPath.section]];
-       //The user is deselecting their comment
-       if(previouslySelectedIndex.row == indexPath.row && previouslySelectedIndex.section == indexPath.section)
-       {
-           [((CommentTableViewCell *)[tableView cellForRowAtIndexPath:previouslySelectedIndex]) selectedTableCell:NO];
-           [self.votedForComments removeObjectForKey:[NSNumber numberWithInteger:indexPath.section]];
-           return;
-       }
-       //the user already selected a comment and now likes a new one
-       if(previouslySelectedIndex != nil)
-       {
-           [((CommentTableViewCell *)[tableView cellForRowAtIndexPath:previouslySelectedIndex]) selectedTableCell:NO];
-           [self.votedForComments removeObjectForKey:[NSNumber numberWithInteger:previouslySelectedIndex.section]];
-       }
-       //if([self.votedForComments objectForKey:indexPath.section]
-       [((CommentTableViewCell *)[tableView cellForRowAtIndexPath:indexPath]) selectedTableCell:YES];
-       [self.votedForComments setObject:indexPath forKey:[NSNumber numberWithInteger:indexPath.section]];
-       
-   }*/
+    if([self isJudge])
+    {
+        
+        PFObject* winningComment = [self.comments objectAtIndex:indexPath.row];
+        NSString *title = [NSString stringWithFormat:@"%@'s comment wins!", [[DataStore getFriendWithId:winningComment[@"from"]] objectForKey:User_FirstName]];
+        NSString *summary = [NSString stringWithFormat:@"Click OK to start the next round!"];
+        
+        
+        UIAlertView *messageAlert = [[UIAlertView alloc]
+                                     initWithTitle:title message:summary delegate:self  cancelButtonTitle:nil otherButtonTitles:nil];
+        [messageAlert addButtonWithTitle:@"OK"];
+        [messageAlert setTag:1];
+        
+        // Display Alert Message
+        [messageAlert show];
+        
+        //Start next round
+        [Comms finishRound:self.currentRound inGame:self.currentGame withWinningComment:winningComment andOtherComments:self.comments forDelegate:self];
+        
+    }
 }
 
-/*
-- (void) commentUploaded:(NSNotification *)notification
-{
-    [self refreshGame:nil];
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    if(alertView.tag == 1)
+    {
+      //Do something
+        [self refreshGame:nil];
+    }
 }
 
-- (void) commentVotedFor:(NSNotification *)notification
-{
-   // [self refreshGame:nil];
-}
 
-- (void) commentsDownloaded:(NSNotification *)notification
-{
-
-
-    self.comments = [CurrentRounds instance].currentComments;
-    NSLog(@"commentsDownloaded: %@", self.comments);
-    [self.tableView reloadData];
-}*/
 
 #pragma Submitting getting comments
 //Call back delegate for comments Downloade
@@ -406,7 +329,14 @@
         [refreshControl setEnabled:NO];
     }
     NSLog(@"refreshGame: GameID: %@", self.currentGame.objectId);
-    [Comms getActiveCommentsForGame:self.currentGame inRound:self.currentRound forDelegate:self];
+    [self.currentGame refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        self.currentRound = self.currentGame[@"currentRound"];
+        [self.currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+            
+            [Comms getActiveCommentsForGame:self.currentGame inRound:self.currentRound forDelegate:self];
+
+        }];
+    }];
 }
 
 - (void) didGetComments:(BOOL)success info: (NSString *) info{
@@ -449,8 +379,8 @@
 
 -(IBAction)clickedSubmitComment:(id)sender
 {
-    [self uploadComment:((UITextField *)sender).text];
-    [((UITextField *)sender) setText:@""];
+   // [self uploadComment:((UITextField *)sender).text];
+   // [((UITextField *)sender) setText:@""];
 }
 
 - (BOOL) textFieldShouldReturn:(UITextField *)textField {
@@ -527,6 +457,27 @@
             }
         }
         [self.tableView reloadData];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error!"
+                                                        message:info
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+    }
+}
+
+#pragma staring new round
+- (void) didStartNewRound:(BOOL)success info: (NSString *) info;
+{
+    if(success)
+    {
+        self.comments = [[NSMutableArray alloc] init];
+        [[CurrentRounds instance].currentComments  removeObjectForKey:self.currentGame.objectId];
+        
+    
+
+        [self refreshGame:nil];
+    }else{
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error!"
                                                         message:info
                                                        delegate:nil

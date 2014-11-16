@@ -37,6 +37,10 @@
 - (void) didGetComments:(BOOL)success info: (NSString *) info;
 @end
 
+@protocol DidStartNewRound <NSObject>
+- (void) didStartNewRound:(BOOL)success info: (NSString *) info;
+@end
+
 
 
 @interface Comms : NSObject
@@ -45,5 +49,7 @@
 + (void) getUsersGamesforDelegate:(id<GetGamesDelegate>)delegate;
 + (void) addComment:(PFObject*)comment forDelegate:(id<DidAddCommentDelegate>)delegate;
 + (void) getActiveCommentsForGame:(PFObject*)game inRound:(PFObject*)round forDelegate:(id<DidGetCommentsDelegate>)delegate;
++ (void) finishRound: (PFObject *)round inGame: (PFObject *)game withWinningComment: (PFObject *)comment andOtherComments: (NSArray *)otherComments forDelegate:(id<DidStartNewRound>)delegate;
+
 @end
 

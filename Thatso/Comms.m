@@ -158,7 +158,10 @@
         PFObject *roundObject = [PFObject objectWithClassName:@"CurrentRounds"];
         roundObject[@"judge"] = [[PFUser currentUser] objectForKey:User_FacebookID];
         roundObject[@"subject"] = [fbFriendsInGame objectAtIndex:0];
-        roundObject[@"category"] = @"What would be the first thing they would fo after a one night stand?";
+        roundObject[@"round"] = @0;
+      //  roundObject[@"category"] = @"What would be the first thing they would fo after a one night stand?";
+        roundObject[@"category"] = [NSString stringWithFormat:@"Categoery: Round: %@ Judge: %@ Subject: %@", gameObject[@"rounds"], roundObject[@"judge"], roundObject[@"subject"]];
+        
         gameObject[@"currentRound"] = roundObject;
         
         
@@ -250,7 +253,7 @@
     
 }
 
-+ (void) getActiveCommentsForGame:(PFObject*)game inRound:(PFObject*)round forDelegate:(id<DidGetCommentsDelegate>)delegate;
++ (void) getActiveCommentsForGame:(PFObject*)game inRound:(PFObject*)round forDelegate:(id<DidGetCommentsDelegate>)delegate
 {
     NSMutableDictionary* comments = [[NSMutableDictionary alloc] init];
     PFQuery *query = [PFQuery queryWithClassName:@"ActiveComments"];
@@ -270,5 +273,96 @@
         }
     }];
     
+}
+
++ (void) finishRound: (PFObject *)round inGame: (PFObject *)game withWinningComment: (PFObject *)comment andOtherComments: (NSArray *)otherComments forDelegate:(id<DidStartNewRound>)delegate
+{
+    NSString *previousJudge = round[@"judge"];
+    NSArray *players = game[@"players"];
+    
+    //increment round number for game
+    [game incrementKey:@"rounds"];
+
+    //Build a new round and update the game with it's current round
+    PFObject *roundObject = [PFObject objectWithClassName:@"CurrentRounds"];
+    
+    //Get new judge, next in array
+    for(int i = 0; i < players.count; i ++)
+    {
+        if([players[i] isEqualToString:previousJudge])
+        {
+            //last one so now cycle to first one
+            if(i == players.count -1)
+            {
+                roundObject[@"judge"] = players[0];
+            }else{
+                roundObject[@"judge"] = players[i + 1];
+            }
+            break;
+        }
+    }
+        
+    //get new subject, make sure its not the judge
+    NSMutableArray *nonJudgePlayers = [[NSMutableArray alloc] initWithArray:players];
+    [nonJudgePlayers removeObject:roundObject[@"judge"]];
+    roundObject[@"subject"] = [nonJudgePlayers objectAtIndex:(arc4random() % nonJudgePlayers.count)];
+        
+    //Get new category
+    roundObject[@"category"] = [NSString stringWithFormat:@"Category: Round: %@ Judge: %@ Subject: %@", game[@"rounds"], roundObject[@"judge"], roundObject[@"subject"]];
+        
+    //new round round
+    roundObject[@"round"] = game[@"rounds"];
+    
+    game[@"currentRound"] = roundObject;
+        
+    [game saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if(succeeded)
+        {
+            //Build archivedRound object and save it
+            PFObject *archivedRound = [PFObject objectWithClassName:@"ArchivedRounds"];
+            archivedRound[@"judge"] = round[@"judge"];
+            archivedRound[@"subject"] = round[@"subject"];
+            archivedRound[@"category"] = round[@"category"];
+            archivedRound[@"round"] = round[@"round"];
+            archivedRound[@"gameId"] = game.objectId;
+            
+            //Build archivedComment object and save it
+            PFObject *archivedComment= [PFObject objectWithClassName:@"WinningComments"];
+            archivedComment[@"judge"] = round[@"judge"];
+            archivedComment[@"subject"] = round[@"subject"];
+            archivedComment[@"category"] = round[@"category"];
+            archivedComment[@"round"] = round[@"round"];
+            archivedComment[@"gameId"] = game.objectId;
+            archivedRound[@"winningComment"] = archivedComment;
+            
+            [archivedRound saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                if(succeeded)
+                {
+                    //Remove all comments for the current round
+                    //Remove the current round
+                    [PFObject deleteAllInBackground:otherComments block:^(BOOL succeeded, NSError *error) {
+                        if(succeeded)
+                        {
+                            [round deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                                if(succeeded)
+                                {
+                                    [delegate didStartNewRound:YES info: error.localizedDescription];
+                                }else{
+                                    [delegate didStartNewRound:NO info: error.localizedDescription];
+                                }
+                            }];
+
+                        }else{
+                            [delegate didStartNewRound:NO info: error.localizedDescription];
+                        }
+                    }];
+                }else{
+                    [delegate didStartNewRound:NO info: error.localizedDescription];
+                }
+            }];
+        }else{
+            [delegate didStartNewRound:NO info: error.localizedDescription];
+        }
+    }];
 }
 @end

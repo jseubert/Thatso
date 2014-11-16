@@ -10,10 +10,11 @@
 
 
 
-@interface GameViewControllerTableViewController : UIViewController <CommsDelegate,DidAddCommentDelegate, DidGetCommentsDelegate, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate>
+@interface GameViewControllerTableViewController : UIViewController <CommsDelegate,DidAddCommentDelegate, DidGetCommentsDelegate, DidStartNewRound, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate>
 {
     NSDateFormatter *_dateFormatter;
     NSMutableArray* nonUserPlayers;
+    NSInteger* winningIndex;
 }
 
 

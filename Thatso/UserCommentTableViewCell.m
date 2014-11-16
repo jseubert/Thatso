@@ -19,7 +19,7 @@
         // configure control(s)
         [self setBackgroundColor:[UIColor blueAppColor]];
     
-        self.userCommentTextField = [[UserCommentTextField alloc] initWithFrame:CGRectMake(10, 10, self.frame.size.width - 110, self.frame.size.height - 20)];
+        self.userCommentTextField = [[UserCommentTextField alloc] initWithFrame:CGRectMake(10, 10, self.bounds.size.width - 110, self.bounds.size.height - 20)];
         [self.userCommentTextField setBackgroundColor:[UIColor whiteColor]];
         [self.userCommentTextField setFont:[UIFont defaultAppFontWithSize:16.0f]];
         [[self.userCommentTextField  layer] setCornerRadius:self.userCommentTextField.frame.size.height/4];
