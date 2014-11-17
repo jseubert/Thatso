@@ -177,7 +177,6 @@
         }
         [cell.namesLabel setText:title];
         
-        cell.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
         [cell.categoryLabel setText:game[@"category"]];
     }
     

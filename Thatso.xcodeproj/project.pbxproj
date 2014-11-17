@@ -47,6 +47,7 @@
 		9A428A4A19DFA84B00C80EE7 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A428A4919DFA84B00C80EE7 /* UIImage+Scaling.m */; };
 		9A428A4D19E7AAF500C80EE7 /* StringUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A428A4C19E7AAF500C80EE7 /* StringUtils.m */; };
 		9A428A5119E7C4A000C80EE7 /* CommentTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A428A5019E7C4A000C80EE7 /* CommentTableViewCell.m */; };
+		9A49CA131A18588B00F7CFCA /* PreviousRoundsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A49CA121A18588B00F7CFCA /* PreviousRoundsTableViewController.m */; };
 		9ADD437B19F751AF00AFD160 /* UserCommentTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ADD437A19F751AF00AFD160 /* UserCommentTableViewCell.m */; };
 		9ADD437F19F7565700AFD160 /* UIButton+CustomButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ADD437E19F7565700AFD160 /* UIButton+CustomButtons.m */; };
 		9ADD438219F75A6B00AFD160 /* UserCommentTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ADD438119F75A6B00AFD160 /* UserCommentTextField.m */; };
@@ -123,6 +124,8 @@
 		9A428A4E19E7AE2800C80EE7 /* StringUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StringUtils.h; sourceTree = "<group>"; };
 		9A428A4F19E7C4A000C80EE7 /* CommentTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentTableViewCell.h; sourceTree = "<group>"; };
 		9A428A5019E7C4A000C80EE7 /* CommentTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentTableViewCell.m; sourceTree = "<group>"; };
+		9A49CA111A18588B00F7CFCA /* PreviousRoundsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviousRoundsTableViewController.h; sourceTree = "<group>"; };
+		9A49CA121A18588B00F7CFCA /* PreviousRoundsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreviousRoundsTableViewController.m; sourceTree = "<group>"; };
 		9A893F081A0EC317002F6EEF /* NSString+FontSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+FontSize.m"; sourceTree = "<group>"; };
 		9A893F091A0EC366002F6EEF /* NSString+FontSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+FontSize.h"; sourceTree = "<group>"; };
 		9ADD437919F751AF00AFD160 /* UserCommentTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserCommentTableViewCell.h; sourceTree = "<group>"; };
@@ -289,6 +292,8 @@
 				9A2C6FD519A85EF300DCF2B7 /* NewGameTableViewController.m */,
 				9AFBF0CD19CD4826004F6550 /* GameViewControllerTableViewController.h */,
 				9AFBF0CE19CD4826004F6550 /* GameViewControllerTableViewController.m */,
+				9A49CA111A18588B00F7CFCA /* PreviousRoundsTableViewController.h */,
+				9A49CA121A18588B00F7CFCA /* PreviousRoundsTableViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -442,6 +447,7 @@
 				9A2C6FD619A85EF300DCF2B7 /* NewGameTableViewController.m in Sources */,
 				9A428A4D19E7AAF500C80EE7 /* StringUtils.m in Sources */,
 				953D497119DF59C700596E7B /* SelectGameTableViewCell.m in Sources */,
+				9A49CA131A18588B00F7CFCA /* PreviousRoundsTableViewController.m in Sources */,
 				9A2C6FD019A85D5800DCF2B7 /* NSOperationQueue+NSoperationQueue_SharedQueue.m in Sources */,
 				9A428A4619DF894900C80EE7 /* FratBarButtonItem.m in Sources */,
 				9AFBF0D319CD4B19004F6550 /* ProfileViewTableViewCell.m in Sources */,

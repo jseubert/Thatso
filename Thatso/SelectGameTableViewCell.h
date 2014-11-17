@@ -11,6 +11,7 @@
 @interface SelectGameTableViewCell : UITableViewCell
 
 -(void)setColorScheme:(NSInteger) code;
+-(void)adjustLabels;
 
 @property (nonatomic, strong) UILabel *namesLabel;
 @property (nonatomic, strong) UILabel *categoryLabel;

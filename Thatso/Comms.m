@@ -112,7 +112,7 @@
 
 + (void) startNewGameWithUsers: (NSArray *)fbFriendsInGame forDelegate:(id<CreateGameDelegate>)delegate
 {
-
+    NSArray *categories = @[@"When %@ blacks out, they are most likely to...", @"How would %@ die in a horror movie?", @"What kind of sauce would you put on %@?", @"What kind of animal is most like %@?", @"What's the first thing %@ would do after a one night stand?"];
     // Add Current User to the Game
     NSMutableArray *allPlayersInGame = [[NSMutableArray alloc] initWithArray:fbFriendsInGame];
     [allPlayersInGame addObject:[[PFUser currentUser] objectForKey:User_FacebookID]];
@@ -160,7 +160,9 @@
         roundObject[@"subject"] = [fbFriendsInGame objectAtIndex:0];
         roundObject[@"round"] = @0;
       //  roundObject[@"category"] = @"What would be the first thing they would fo after a one night stand?";
-        roundObject[@"category"] = [NSString stringWithFormat:@"Categoery: Round: %@ Judge: %@ Subject: %@", gameObject[@"rounds"], roundObject[@"judge"], roundObject[@"subject"]];
+        NSString *categorySetup = [categories objectAtIndex:(arc4random() % categories.count)];
+        roundObject[@"category"] = [NSString stringWithFormat:categorySetup,[[DataStore getFriendWithId:roundObject[@"subject"]] objectForKey:User_FirstName]];
+        
         
         gameObject[@"currentRound"] = roundObject;
         
@@ -203,11 +205,7 @@
             
         }
     }];
-    /*
-    // Callback
-    if ([delegate respondsToSelector:@selector(commsDidGetUserGames)]) {
-        [delegate didGetGamesDelegate:(BOOL)success info: (NSString *) info;];
-    }*/
+
 }
 
 
@@ -292,6 +290,8 @@
 
 + (void) finishRound: (PFObject *)round inGame: (PFObject *)game withWinningComment: (PFObject *)comment andOtherComments: (NSArray *)otherComments forDelegate:(id<DidStartNewRound>)delegate
 {
+    NSArray *categories = @[@"When %@ blacks out, they are most likely to...", @"How would %@ die in a horror movie?", @"What kind of sauce would you put on %@?", @"What kind of animal is most like %@?", @"What's the first thing %@ would do after a one night stand?"];
+    
     NSString *previousJudge = round[@"judge"];
     NSArray *players = game[@"players"];
     
@@ -323,7 +323,8 @@
     roundObject[@"subject"] = [nonJudgePlayers objectAtIndex:(arc4random() % nonJudgePlayers.count)];
         
     //Get new category
-    roundObject[@"category"] = [NSString stringWithFormat:@"Category: Round: %@ Judge: %@ Subject: %@", game[@"rounds"], roundObject[@"judge"], roundObject[@"subject"]];
+    NSString *categorySetup = [categories objectAtIndex:(arc4random() % categories.count)];
+    roundObject[@"category"] = [NSString stringWithFormat:categorySetup,[[DataStore getFriendWithId:roundObject[@"subject"]] objectForKey:User_FirstName]];
         
     //new round round
     roundObject[@"round"] = game[@"rounds"];
@@ -343,11 +344,10 @@
             
             //Build archivedComment object and save it
             PFObject *archivedComment= [PFObject objectWithClassName:@"WinningComments"];
-            archivedComment[@"judge"] = round[@"judge"];
-            archivedComment[@"subject"] = round[@"subject"];
-            archivedComment[@"category"] = round[@"category"];
+            archivedComment[@"comment"] = comment[@"comment"];
+            archivedComment[@"from"] = comment[@"from"];
+            archivedComment[@"gameId"] = comment[@"gameId"];
             archivedComment[@"round"] = round[@"round"];
-            archivedComment[@"gameId"] = game.objectId;
             archivedRound[@"winningComment"] = archivedComment;
             
             [archivedRound saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
@@ -380,4 +380,24 @@
         }
     }];
 }
+
+
++ (void) getPreviousRoundsInGame: (PFObject * ) game forDelegate:(id<DidGetPreviousRounds>)delegate
+{
+    PFQuery *getRounds = [PFQuery queryWithClassName:@"ArchivedRounds"];
+    
+    [getRounds orderByAscending:@"round"];
+    [getRounds whereKey:@"gameId" equalTo:game.objectId];
+    
+    [getRounds findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (error) {
+            [delegate didGetPreviousRounds:NO info:error.localizedDescription];
+        } else {
+            [[PreviousRounds instance] setPreviousRounds:objects forGameId:game.objectId];
+            [delegate didGetPreviousRounds:YES info: nil];
+        }
+    }];
+}
+
+
 @end

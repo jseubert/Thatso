@@ -13,6 +13,7 @@
 #import "UIImage+Scaling.h"
 #import "CommentTableViewCell.h"
 #import "UserCommentTableViewCell.h"
+#import "PreviousRoundsTableViewController.h"
 
 
 @implementation GameViewControllerTableViewController
@@ -36,7 +37,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.navigationController.title = @"Category";
+    //self.navigationController.title = @"Category";
     
     //setup Subviews
     self.headerView = [[UILabel alloc] initWithFrame:CGRectMake(0,
@@ -64,6 +65,10 @@
     //Back Button
     FratBarButtonItem *newGameButton= [[FratBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:nil action:nil];
     self.navigationItem.backBarButtonItem = newGameButton;
+    
+    //New Game Button
+    FratBarButtonItem *previousGames= [[FratBarButtonItem alloc] initWithTitle:@"Previous Games" style:UIBarButtonItemStyleBordered target:self action:@selector(previousGames:)];
+    self.navigationItem.rightBarButtonItem = previousGames;
     
     // If we are using iOS 6+, put a pull to refresh control in the table
     if (NSClassFromString(@"UIRefreshControl") != Nil) {
@@ -110,7 +115,7 @@
     self.currentRound = self.currentGame[@"currentRound"];
     [self.currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
 
-         [self.headerView setText:[NSString stringWithFormat:@"%@ : %@",[[DataStore getFriendWithId:self.currentRound[@"subject"]] objectForKey:User_FullName], self.currentRound[@"category"]]];
+         [self.headerView setText:[NSString stringWithFormat:@"%@",self.currentRound[@"category"]]];
     }];
     [self.headerView setBackgroundColor:[UIColor pinkAppColor]];
     [self.headerView setNumberOfLines:0];
@@ -132,6 +137,14 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(IBAction)previousGames:(id)sender{
+    NSLog(@"previousGames");
+    // Seque to the Image Wall
+    PreviousRoundsTableViewController *vc = [[PreviousRoundsTableViewController alloc] init];
+    vc.currentGame = self.currentGame;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark - Table view data source
@@ -334,7 +347,7 @@
         [self.currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
             
             [Comms getActiveCommentsForGame:self.currentGame inRound:self.currentRound forDelegate:self];
-
+            [self setupHeader];
         }];
     }];
 }

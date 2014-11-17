@@ -7,6 +7,7 @@
 //
 
 #import "SelectGameTableViewCell.h"
+#import "CommentTableViewCell.h"
 
 @implementation SelectGameTableViewCell
 
@@ -18,16 +19,36 @@
         self.namesLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, self.frame.size.width -10, self.frame.size.height/2)];
         self.namesLabel.font = [UIFont defaultAppFontWithSize:16.0];
         self.namesLabel.text = @"";
+        self.namesLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        self.namesLabel.numberOfLines = 0;
+        
         
         [self addSubview:self.namesLabel];
         
         self.categoryLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, self.frame.size.height/2 + 10, self.frame.size.width-10, self.frame.size.height/2)];
         self.categoryLabel.font = [UIFont defaultAppFontWithSize:14.0];
         self.categoryLabel.text = @"";
+        self.categoryLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        self.categoryLabel.numberOfLines = 0;
         
         [self addSubview:self.categoryLabel];
     }
     return self;
+}
+
+-(void)adjustLabels
+{
+    CGFloat width = self.frame.size.width
+    - 10    //left padding
+    - 10;   //padding on right
+    
+    CGSize topLabelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:self.namesLabel.text];
+    CGSize bottomeLabelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(width, width)) withText: self.categoryLabel.text];
+    
+    self.namesLabel.frame = CGRectMake(10, 10, self.frame.size.width -10, topLabelSize.height);
+    self.categoryLabel.frame = CGRectMake(10, self.namesLabel.frame.origin.x + self.namesLabel.frame.size.height + 5, self.frame.size.width-10, bottomeLabelSize.height + 10);
+    
+    
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
