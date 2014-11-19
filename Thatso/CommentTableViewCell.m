@@ -57,8 +57,6 @@ NSInteger const CommentTableViewCellIconSize = 20;
                                          labelSize.width,
                                          labelSize.height)];
     
-    [self.circle setCenter:(CGPointMake(self.circle.center.x, (self.commentLabel.frame.size.height + 10 +10 )/2))];
-    
 }
 
 

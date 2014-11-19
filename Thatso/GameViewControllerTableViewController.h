@@ -7,10 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PHFComposeBarView.h"
 
 
-
-@interface GameViewControllerTableViewController : UIViewController <CommsDelegate,DidAddCommentDelegate, DidGetCommentsDelegate, DidStartNewRound, UITextFieldDelegate, UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate>
+@interface GameViewControllerTableViewController : UIViewController <CommsDelegate,DidAddCommentDelegate, DidGetCommentsDelegate, DidStartNewRound, PHFComposeBarViewDelegate,UITextViewDelegate, UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate>
 {
     NSDateFormatter *_dateFormatter;
     NSMutableArray* nonUserPlayers;
@@ -21,10 +21,12 @@
 @property (strong, nonatomic) IBOutlet UILabel *headerView;
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet UIRefreshControl *refreshControl;
+@property (strong, nonatomic) IBOutlet PHFComposeBarView *composeBarView;
 
 @property(nonatomic) PFObject *currentGame;
 @property(nonatomic) PFObject *currentRound;
 @property(nonatomic) NSMutableArray* comments;
 @property(nonatomic) NSString* previousComment;
 @property(nonatomic) NSMutableArray* votedForComments;
+@property(nonatomic) UITapGestureRecognizer *singleTap;
 @end

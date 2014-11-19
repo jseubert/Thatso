@@ -9,7 +9,6 @@
 #import "LoginScreenViewController.h"
 #import "SelectGameTableViewController.h"
 #import "UIButton+CustomButtons.h"
-#import "PHFComposeBarView.h"
 
 
 @interface LoginScreenViewController () <PHFComposeBarViewDelegate>
@@ -53,21 +52,7 @@
     self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     self.activityIndicator.frame = CGRectMake(self.view.frame.size.width/2 - 40, self.view.frame.size.height/2 -30, 80, 80);
     [self.view addSubview:self.activityIndicator];
-    
-    
-    
-    CGRect viewBounds = [[self view] bounds];
-    CGRect frame = CGRectMake(0.0f,
-                              viewBounds.size.height - PHFComposeBarViewInitialHeight,
-                              viewBounds.size.width,
-                              PHFComposeBarViewInitialHeight);
-    PHFComposeBarView *composeBarView = [[PHFComposeBarView alloc] initWithFrame:frame];
-    [composeBarView setMaxCharCount:160];
-    [composeBarView setMaxLinesCount:5];
-    [composeBarView setPlaceholder:@"Type something..."];
-    [composeBarView setUtilityButtonImage:[UIImage imageNamed:@"Camera"]];
-    [composeBarView setDelegate:self];
-    [self.view addSubview:composeBarView];
+
     
     [self.view setBackgroundColor:[UIColor blueAppColor]];
     
@@ -115,15 +100,6 @@
                           cancelButtonTitle:@"Ok"
                           otherButtonTitles:nil] show];
 	}
-}
-
-- (void)composeBarViewDidPressButton:(PHFComposeBarView *)composeBarView
-{
-    
-}
-- (void)composeBarViewDidPressUtilityButton:(PHFComposeBarView *)composeBarView
-{
-    
 }
 
 @end

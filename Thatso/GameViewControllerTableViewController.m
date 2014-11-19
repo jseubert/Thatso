@@ -58,6 +58,29 @@
     [self.tableView setSeparatorColor:[UIColor clearColor]];
     [self.view addSubview:self.tableView];
     
+    CGRect viewBounds = [[self view] bounds];
+    CGRect frame = CGRectMake(0.0f,
+                              viewBounds.size.height - PHFComposeBarViewInitialHeight,
+                              viewBounds.size.width,
+                              PHFComposeBarViewInitialHeight);
+    
+    
+    self.composeBarView = [[PHFComposeBarView alloc] initWithFrame:frame];
+    [self.composeBarView  setMaxCharCount:140];
+    [self.composeBarView  setMaxLinesCount:5];
+    [self.composeBarView  setPlaceholder:@"Enter Response"];
+    [self.composeBarView  setDelegate:self];
+    [self.composeBarView setButtonTintColor:[UIColor pinkAppColor]];
+    [self.composeBarView setButtonTitle:@"ThatSo"];
+    [self.composeBarView setBackgroundColor:[UIColor whiteColor]];
+    
+    [self.view addSubview:self.composeBarView];
+    
+    self.singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resignOnTap:)];
+    [self.singleTap setNumberOfTapsRequired:1];
+    [self.singleTap setNumberOfTouchesRequired:1];
+
+    
     // Create a re-usable NSDateFormatter
     _dateFormatter = [[NSDateFormatter alloc] init];
     [_dateFormatter setDateFormat:@"MMM d, h:mm a"];
@@ -83,22 +106,19 @@
         
     }
     
-    // Listen for uploaded comments so we can refresh the wall
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(commentUploaded:)
-                                                 name:N_CommentUploaded
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:@"UIKeyboardWillShowNotification"
                                                object:nil];
     
-    // Listen for image downloads so that we can refresh the image wall
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(commentsDownloaded:)
-                                                 name:N_CommentsDownloaded
+                                             selector:@selector(keyboardDidHide:)
+                                                 name:@"UIKeyboardDidHideNotification"
                                                object:nil];
     
-    // Listen for image downloads so that we can refresh the image wall
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(commentVotedFor:)
-                                                 name:N_VotedForComment
+                                             selector:@selector(keyboardWillHide:)
+                                                 name:@"UIKeyboardWillHideNotification"
                                                object:nil];
     
     //Remove yourself from the game's players
@@ -115,7 +135,9 @@
     self.currentRound = self.currentGame[@"currentRound"];
     [self.currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
 
-         [self.headerView setText:[NSString stringWithFormat:@"%@",self.currentRound[@"category"]]];
+        [self.headerView setText:[NSString stringWithFormat:@"%@",self.currentRound[@"category"]]];
+        [self layoutSubviews];
+        
     }];
     [self.headerView setBackgroundColor:[UIColor pinkAppColor]];
     [self.headerView setNumberOfLines:0];
@@ -127,10 +149,27 @@
     
 }
 
--(void)viewDidAppear:(BOOL)animated
+-(void)layoutSubviews
 {
-    // Get any new Games
- //   [self refreshGame:nil];
+    CGSize headerTextSize = [CommentTableViewCell sizeWithFontAttribute:self.headerView.font constrainedToSize:(CGSizeMake(self.view.bounds.size.width, self.view.bounds.size.height)) withText:self.headerView.text];
+    self.headerView.frame = CGRectMake(0,
+                                       self.navigationController.navigationBar.frame.size.height + 20,
+                                       self.view.bounds.size.width,
+                                       headerTextSize.height + 10);
+    if([self isJudge])
+    {
+        [self.composeBarView setHidden:YES];
+        self.tableView.frame = CGRectMake(0,
+                                          self.headerView.frame.size.height + self.headerView.frame.origin.y,
+                                          self.view.bounds.size.width,
+                                          self.view.bounds.size.height - self.headerView.frame.size.height - self.headerView.frame.origin.y);
+    }else{
+        [self.composeBarView setHidden:NO];
+        self.tableView.frame = CGRectMake(0,
+                                          self.headerView.frame.size.height + self.headerView.frame.origin.y,
+                                          self.view.bounds.size.width,
+                                          self.view.bounds.size.height - self.headerView.frame.size.height - self.headerView.frame.origin.y - (self.view.bounds.size.height - self.composeBarView.frame.origin.y));
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -140,7 +179,6 @@
 }
 
 -(IBAction)previousGames:(id)sender{
-    NSLog(@"previousGames");
     // Seque to the Image Wall
     PreviousRoundsTableViewController *vc = [[PreviousRoundsTableViewController alloc] init];
     vc.currentGame = self.currentGame;
@@ -156,56 +194,22 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    //Check if the user is the judge
-    int commentInputSection = 0;
-    if([self isJudge])
-    {
-        commentInputSection = 0;
-    } else{
-        commentInputSection = 1;
-    }
-    
-    return commentInputSection + self.comments.count;
+    return self.comments.count;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if([self isJudge])
-    {
-        PFObject* comment = [self.comments objectAtIndex:indexPath.row];
-        CGFloat width = tableView.frame.size.width
-        - 10    //left padding
-        - CommentTableViewCellIconSize
-        - 10    //padding between icon and text
-        - 10;   //padding on right
-        
-        //get the size of the label given the text
-        CGSize labelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:comment[@"comment"]];
-        
-        //1O padding on top and bottom
-        return 10 + labelSize.height + 10;
-    } else{
-        //Last one
-        if(self.comments.count == indexPath.row)
-        {
-            return UITableViewAutomaticDimension;
-            
-        }else{
-            PFObject* comment = [self.comments objectAtIndex:indexPath.row];
-            CGFloat width = tableView.frame.size.width
-            - 10    //left padding
-            - CommentTableViewCellIconSize
-            - 10    //padding between icon and text
-            - 10;   //padding on right
-            
-            //get the size of the label given the text
-            CGSize labelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:comment[@"comment"]];
-            
-            //1O padding on top and bottom
-            return 10 + labelSize.height + 10;
-        }
-    }
-   
-
+    PFObject* comment = [self.comments objectAtIndex:indexPath.row];
+    CGFloat width = tableView.frame.size.width
+    - 10    //left padding
+    - CommentTableViewCellIconSize
+    - 10    //padding between icon and text
+    - 10;   //padding on right
+    
+    //get the size of the label given the text
+    CGSize labelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:comment[@"comment"]];
+    
+    //1O padding on top and bottom
+    return 10 + labelSize.height + 10;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
@@ -221,7 +225,6 @@
         cell = [[ProfileViewTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     
-    
     if([self isJudge])
     {
         [cell.nameLabel setText:[NSString stringWithFormat:@"Judge: %@ (You)", [[DataStore instance].user objectForKey:User_FullName]]];
@@ -235,29 +238,15 @@
     }
     
     //set color
-    [cell setColorScheme:section];
+    [cell setColorScheme:4];
     
     return cell;
   
 }
 
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if([self isJudge])
-    {
-        return [self commentTableViewCell:tableView cellForRowAtIndexPath:indexPath];
-    } else{
-        //Last one
-        if([tableView numberOfRowsInSection:indexPath.section] == indexPath.row + 1)
-        {
-            return [self userCommentTableViewCell:tableView cellForRowAtIndexPath:indexPath];
-
-        }else{
-            return [self commentTableViewCell:tableView cellForRowAtIndexPath:indexPath];
-        }
-    }
-
+    return [self commentTableViewCell:tableView cellForRowAtIndexPath:indexPath];
 }
 
 -(UserCommentTableViewCell *) userCommentTableViewCell:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -292,16 +281,15 @@
         [cell setCommentLabelText:comment[@"comment"]];
     }
     
-    
     [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
     return cell;
 }
 
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    NSLog(@"didSelectRowAtIndexPath");
     if([self isJudge])
     {
-        
         PFObject* winningComment = [self.comments objectAtIndex:indexPath.row];
         NSString *title = [NSString stringWithFormat:@"%@'s comment wins!", [[DataStore getFriendWithId:winningComment[@"from"]] objectForKey:User_FirstName]];
         NSString *summary = [NSString stringWithFormat:@"Click OK to start the next round!"];
@@ -317,7 +305,6 @@
         
         //Start next round
         [Comms finishRound:self.currentRound inGame:self.currentGame withWinningComment:winningComment andOtherComments:self.comments forDelegate:self];
-        
     }
 }
 
@@ -389,20 +376,6 @@
 
 
 #pragma Submitting a commment
-
--(IBAction)clickedSubmitComment:(id)sender
-{
-   // [self uploadComment:((UITextField *)sender).text];
-   // [((UITextField *)sender) setText:@""];
-}
-
-- (BOOL) textFieldShouldReturn:(UITextField *)textField {
-    [textField resignFirstResponder];
-    [self uploadComment: textField.text];
-    [textField setText:@""];
-    return YES;
-}
-
 -(void)uploadComment:(NSString *)commentText
 {
     //ToO. Check comment is a ok.
@@ -507,5 +480,64 @@
     }
 }
 
+- (void) keyboardWillShow:(NSNotification *)note {
+    [self.view addGestureRecognizer:self.singleTap];
+    NSDictionary *userInfo = [note userInfo];
+    CGSize kbSize = [[userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:0.3];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    self.composeBarView.frame = CGRectMake(self.composeBarView .frame.origin.x, (self.composeBarView.frame.origin.y - kbSize.height), self.composeBarView.frame.size.width, self.composeBarView.frame.size.height);
+    [self layoutSubviews];
+    [UIView commitAnimations];
+}
+
+- (void) keyboardWillHide:(NSNotification *)note {
+    [self.view removeGestureRecognizer:self.singleTap];
+    NSDictionary *userInfo = [note userInfo];
+    CGSize kbSize = [[userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:0.3];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    self.composeBarView.frame = CGRectMake(self.composeBarView .frame.origin.x, (self.composeBarView.frame.origin.y + kbSize.height), self.composeBarView.frame.size.width, self.composeBarView.frame.size.height);
+    [self layoutSubviews];
+    [UIView commitAnimations];
+}
+
+- (void) keyboardDidHide:(NSNotification *)note {
+    self.composeBarView.frame = CGRectMake(self.composeBarView.frame.origin.x, (self.view.bounds.size.height - self.composeBarView.frame.size.height), self.composeBarView.frame.size.width, self.composeBarView.frame.size.height);
+    [self layoutSubviews];
+}
+
+- (void)resignOnTap:(id)sender {
+    NSLog(@"resignOnTap");
+    [self.composeBarView resignFirstResponder];
+}
+
+- (void)composeBarViewDidPressButton:(PHFComposeBarView *)composeBarView
+{
+    [composeBarView resignFirstResponder];
+    [self uploadComment: composeBarView.text];
+    [composeBarView setText:@""];
+}
+
+- (void)composeBarView:(PHFComposeBarView *)composeBarView
+   willChangeFromFrame:(CGRect)startFrame
+               toFrame:(CGRect)endFrame
+              duration:(NSTimeInterval)duration
+        animationCurve:(UIViewAnimationCurve)animationCurve
+{
+    
+}
+
+- (void)composeBarView:(PHFComposeBarView *)composeBarView
+    didChangeFromFrame:(CGRect)startFrame
+               toFrame:(CGRect)endFrame
+{
+    [self layoutSubviews];
+}
 
 @end

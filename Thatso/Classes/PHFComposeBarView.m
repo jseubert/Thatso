@@ -5,6 +5,7 @@
 #import "PHFComposeBarView_Button.h"
 
 
+
 CGFloat const PHFComposeBarViewInitialHeight = 44.0f;
 
 
@@ -297,14 +298,14 @@ static CGFloat kTextViewToSuperviewHeightDelta;
         [_button setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleTopMargin];
         [_button setTitle:[self buttonTitle] forState:UIControlStateNormal];
 
-        UIColor *disabledColor = [UIColor colorWithHue:240.0f/360.0f saturation:0.03f brightness:0.58f alpha:1.0f];
+        UIColor *disabledColor = [UIColor blueAppColor];
         [_button setTitleColor:disabledColor forState:UIControlStateDisabled];
         UIColor *enabledColor = [UIColor colorWithHue:211.0f/360.0f saturation:1.0f brightness:1.0f alpha:1.0f];
         [_button setTitleColor:enabledColor forState:UIControlStateNormal];
         [_button addTarget:self action:@selector(didPressButton) forControlEvents:UIControlEventTouchUpInside];
 
         UILabel *label = [_button titleLabel];
-        [label setFont:[UIFont boldSystemFontOfSize:kFontSize]];
+        [label setFont:[UIFont defaultBoldAppFontWithSize:kFontSize]];
     }
 
     return _button;
@@ -320,7 +321,7 @@ static CGFloat kTextViewToSuperviewHeightDelta;
         _charCountLabel = [[UILabel alloc] initWithFrame:frame];
         [_charCountLabel setHidden:![self maxCharCount]];
         [_charCountLabel setTextAlignment:NSTextAlignmentRight];
-        [_charCountLabel setFont:[UIFont systemFontOfSize:kCharCountFontSize]];
+        [_charCountLabel setFont:[UIFont defaultAppFontWithSize:kCharCountFontSize]];
         UIColor *color = [UIColor colorWithHue:240.0f/360.0f saturation:0.02f brightness:0.8f alpha:1.0f];
         [_charCountLabel setTextColor:color];
         [_charCountLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleBottomMargin];
@@ -382,7 +383,7 @@ static CGFloat kTextViewToSuperviewHeightDelta;
         [_textView setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
         [_textView setScrollIndicatorInsets:UIEdgeInsetsMake(8.0f, 0.0f, 8.0f, 0.5f)];
         [_textView setBackgroundColor:[UIColor clearColor]];
-        [_textView setFont:[UIFont systemFontOfSize:kFontSize]];
+        [_textView setFont:[UIFont defaultAppFontWithSize:kFontSize]];
         [self setupDelegateChainForTextView];
     }
 
@@ -395,7 +396,7 @@ static CGFloat kTextViewToSuperviewHeightDelta;
         _placeholderLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         [_placeholderLabel setBackgroundColor:[UIColor clearColor]];
         [_placeholderLabel setUserInteractionEnabled:NO];
-        [_placeholderLabel setFont:[UIFont systemFontOfSize:kFontSize]];
+        [_placeholderLabel setFont:[UIFont defaultAppFontWithSize:kFontSize]];
         [_placeholderLabel setTextColor:[UIColor colorWithHue:240.0f/360.0f saturation:0.02f brightness:0.8f alpha:1.0f]];
         [_placeholderLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
         [_placeholderLabel setAdjustsFontSizeToFitWidth:YES];

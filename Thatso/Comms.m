@@ -386,7 +386,7 @@
 {
     PFQuery *getRounds = [PFQuery queryWithClassName:@"ArchivedRounds"];
     
-    [getRounds orderByAscending:@"round"];
+    [getRounds orderByDescending:@"round"];
     [getRounds whereKey:@"gameId" equalTo:game.objectId];
     
     [getRounds findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {

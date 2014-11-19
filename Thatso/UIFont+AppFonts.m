@@ -21,4 +21,9 @@ NSString * const LIGHT_FONT_NAME =	@"Avenir-Roman";
     return [UIFont fontWithName:FONT_NAME size:size];
 }
 
++(UIFont *)defaultBoldAppFontWithSize:(CGFloat) size
+{
+    return [UIFont fontWithName:BOLD_FONT_NAME size:size];
+}
+
 @end
