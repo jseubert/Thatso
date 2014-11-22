@@ -113,9 +113,10 @@
 + (void) startNewGameWithUsers: (NSArray *)fbFriendsInGame forDelegate:(id<CreateGameDelegate>)delegate
 {
     NSArray *categories = @[@"When %@ blacks out, they are most likely to...", @"How would %@ die in a horror movie?", @"What kind of sauce would you put on %@?", @"What kind of animal is most like %@?", @"What's the first thing %@ would do after a one night stand?"];
+    
     // Add Current User to the Game
     NSMutableArray *allPlayersInGame = [[NSMutableArray alloc] initWithArray:fbFriendsInGame];
-    [allPlayersInGame addObject:[[PFUser currentUser] objectForKey:User_FacebookID]];
+    [allPlayersInGame addObject:[[PFUser currentUser] objectForKey:User_ID]];
     //Must Have more than 3 users
     if(allPlayersInGame.count < 3)
     {
@@ -156,7 +157,7 @@
         
         //Create the first round for this Game
         PFObject *roundObject = [PFObject objectWithClassName:@"CurrentRounds"];
-        roundObject[@"judge"] = [[PFUser currentUser] objectForKey:User_FacebookID];
+        roundObject[@"judge"] = [[PFUser currentUser] objectForKey:User_ID];
         roundObject[@"subject"] = [fbFriendsInGame objectAtIndex:0];
         roundObject[@"round"] = @0;
       //  roundObject[@"category"] = @"What would be the first thing they would fo after a one night stand?";
@@ -186,7 +187,7 @@
     PFQuery *getGames = [PFQuery queryWithClassName:@"Game"];
     
     [getGames orderByAscending:@"createdAt"];
-    NSArray *user =[[NSArray alloc] initWithObjects:[[PFUser currentUser] objectForKey:@"fbId"], nil];
+    NSArray *user =[[NSArray alloc] initWithObjects:[[PFUser currentUser] objectForKey:User_ID], nil];
     
     //find all games that have the current user as a player
     [getGames whereKey:@"players" containsAllObjectsInArray:user];

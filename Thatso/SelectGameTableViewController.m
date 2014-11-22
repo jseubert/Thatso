@@ -14,7 +14,7 @@
 #import "StringUtils.h"
 #import <math.h>
 
-@interface SelectGameTableViewController () <CommsDelegate>
+@interface SelectGameTableViewController ()
 
 @end
 
@@ -76,15 +76,6 @@
     }
     
     [self refreshGames:nil];
-    
-    // Listen for image downloads so that we can refresh the image wall
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(gamesDownloaded:)
-                                                 name:N_GamesDownloaded
-                                               object:nil];
-    
-    
-
 }
 
 -(void)viewDidAppear:(BOOL)animated

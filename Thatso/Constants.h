@@ -6,6 +6,14 @@
 //  Copyright (c) 2014 John Seubert. All rights reserved.
 //
 
+#pragma mark Classes
+extern NSString * const Comments_Class;
+extern NSString * const Games_Class;
+extern NSString * const CurrentRounds_Class;
+extern NSString * const Rounds_Class;
+extern NSString * const CurrentRounds_Class;
+
+
 #pragma mark Notifications
 extern NSString * const N_GamesDownloaded;
 extern NSString * const N_ProfilePictureLoaded;

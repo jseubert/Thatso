@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SelectGameTableViewController : UITableViewController
+@interface SelectGameTableViewController : UITableViewController <GetGamesDelegate, CommsDelegate>
 {
     NSDateFormatter *_dateFormatter;
     BOOL initialLoad; 
