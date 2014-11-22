@@ -11,7 +11,7 @@
 #import "ProfileViewTableViewCell.h"
 #import "UIImage+Scaling.h"
 
-@interface NewGameTableViewController () <CommsDelegate>
+@interface NewGameTableViewController () <CommsDelegate, CreateGameDelegate>
 
 @end
 
@@ -43,6 +43,13 @@
     [self.view addSubview:self.activityIndicator];
     
     self.tableView.allowsMultipleSelection = YES;
+}
+
+-(void) disableUI: (BOOL)flag
+{
+    [self.view setUserInteractionEnabled:flag];
+    [self.navigationItem.rightBarButtonItem setEnabled:flag];
+    [self.navigationItem.leftBarButtonItem setEnabled:flag];
 }
 
 - (void)didReceiveMemoryWarning
@@ -166,6 +173,7 @@
 
 -(IBAction)startGame:(id)sender{
 NSLog(@"startGame");
+    [self disableUI:YES];
    if([self.tableView indexPathsForSelectedRows].count < 2) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Not enough Friends Selected"
                                                         message:@"Must choose at least 2 other people."
@@ -173,6 +181,7 @@ NSLog(@"startGame");
                                               cancelButtonTitle:@"OK"
                                               otherButtonTitles:nil];
         [alert show];
+       [self disableUI:NO];
     } else {
         NSMutableArray* selectedFriends = [[NSMutableArray alloc] init];
         for(NSIndexPath * indexPath in [self.tableView indexPathsForSelectedRows])
@@ -191,6 +200,7 @@ NSLog(@"startGame");
 
 - (void) newGameUploadedToServer:(BOOL)success info:(NSString *)info{
     NSLog(@"newGameUploadedToServer: %d", success);
+    [self disableUI:NO];
     [self.activityIndicator stopAnimating];
     if (success) {
         [self.navigationController popViewControllerAnimated:YES];

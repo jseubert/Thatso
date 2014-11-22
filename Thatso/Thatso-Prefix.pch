@@ -5,14 +5,18 @@
 //
 
 #import <Availability.h>
+#import <Parse/Parse.h>
+#import <ParseFacebookUtils/PFFacebookUtils.h>
+#import <FacebookSDK/FacebookSDK.h>
+
+#import "Constants.h"
 #import "Comms.h"
 #import "DataStore.h"
 #import "UserGames.h"
-#import <Parse/Parse.h>
-#import <FacebookSDK/FacebookSDK.h>
+
 #import "UIColor+AppColors.h"
 #import "UIFont+AppFonts.h"
-#import "Constants.h"
+
 
 #ifndef __IPHONE_3_0
 #warning "This project uses features only available in iOS SDK 3.0 and later."

@@ -38,7 +38,7 @@
 {
     [super viewDidLoad];
     //self.navigationController.title = @"Category";
-    
+    [self.view setBackgroundColor:[UIColor blueAppColor]];
     //setup Subviews
     self.headerView = [[UILabel alloc] initWithFrame:CGRectMake(0,
                                                                 self.navigationController.navigationBar.frame.size.height + 20 ,
@@ -146,6 +146,8 @@
     [self.headerView setTextAlignment:NSTextAlignmentCenter];
     [[self.headerView  layer] setBorderWidth:2.0f];
     [[self.headerView  layer] setBorderColor:[UIColor whiteColor].CGColor];
+    [[self.headerView  layer] setCornerRadius:10.0f];
+    [self.headerView setClipsToBounds:YES];
     
 }
 
@@ -153,9 +155,9 @@
 {
     CGSize headerTextSize = [CommentTableViewCell sizeWithFontAttribute:self.headerView.font constrainedToSize:(CGSizeMake(self.view.bounds.size.width, self.view.bounds.size.height)) withText:self.headerView.text];
     self.headerView.frame = CGRectMake(0,
-                                       self.navigationController.navigationBar.frame.size.height + 20,
-                                       self.view.bounds.size.width,
-                                       headerTextSize.height + 10);
+                                       self.navigationController.navigationBar.frame.size.height + 20 ,
+                                       self.view.bounds.size.width ,
+                                       headerTextSize.height + 10 );
     if([self isJudge])
     {
         [self.composeBarView setHidden:YES];
@@ -247,21 +249,6 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return [self commentTableViewCell:tableView cellForRowAtIndexPath:indexPath];
-}
-
--(UserCommentTableViewCell *) userCommentTableViewCell:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    NSString *userCommmentCellIdentifier = @"UserCommentTableViewCell";
-    UserCommentTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:userCommmentCellIdentifier];
-    if (cell == nil) {
-        cell = [[UserCommentTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:userCommmentCellIdentifier];
-    }
-    
-    [cell.userCommentTextField setDelegate:self];
-    [cell.enterButton addTarget:self action:@selector(clickedSubmitComment:) forControlEvents:UIControlEventTouchUpInside];
-    
-    [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
-    return cell;
 }
 
 -(CommentTableViewCell *) commentTableViewCell:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
