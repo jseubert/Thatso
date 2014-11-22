@@ -637,10 +637,6 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/jaseubert/Documents/FacebookSDK,
-					/Users/jaseubert/Documents,
-					/Users/jseubert/Documents/FacebookSDK,
-					"/Users/jseubert/Documents/parse-library-1.4.0",
 					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -658,10 +654,6 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/jaseubert/Documents/FacebookSDK,
-					/Users/jaseubert/Documents,
-					/Users/jseubert/Documents/FacebookSDK,
-					"/Users/jseubert/Documents/parse-library-1.4.0",
 					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
