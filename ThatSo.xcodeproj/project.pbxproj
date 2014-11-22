@@ -98,18 +98,18 @@
 		95881E9119D91117001202AB /* UIFont+AppFonts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+AppFonts.m"; sourceTree = "<group>"; };
 		9A1FFC951A0AAF9400A82788 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		9A1FFC971A0AAFA500A82788 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
-		9A2C6F6319A8324200DCF2B7 /* Thatso.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thatso.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A2C6F6319A8324200DCF2B7 /* ThatSo.temp_caseinsensitive_rename.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThatSo.temp_caseinsensitive_rename.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A2C6F6619A8324200DCF2B7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		9A2C6F6819A8324200DCF2B7 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		9A2C6F6A19A8324200DCF2B7 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		9A2C6F6E19A8324200DCF2B7 /* Thatso-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Thatso-Info.plist"; sourceTree = "<group>"; };
+		9A2C6F6E19A8324200DCF2B7 /* ThatSo.temp_caseinsensitive_rename-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ThatSo.temp_caseinsensitive_rename-Info.plist"; sourceTree = "<group>"; };
 		9A2C6F7019A8324200DCF2B7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		9A2C6F7219A8324200DCF2B7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		9A2C6F7419A8324200DCF2B7 /* Thatso-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Thatso-Prefix.pch"; sourceTree = "<group>"; };
+		9A2C6F7419A8324200DCF2B7 /* ThatSo.temp_caseinsensitive_rename-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ThatSo.temp_caseinsensitive_rename-Prefix.pch"; sourceTree = "<group>"; };
 		9A2C6F7519A8324200DCF2B7 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		9A2C6F7619A8324200DCF2B7 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		9A2C6F7819A8324200DCF2B7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		9A2C6F7E19A8324200DCF2B7 /* ThatsoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ThatsoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A2C6F7E19A8324200DCF2B7 /* ThatSo.temp_caseinsensitive_renameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ThatSo.temp_caseinsensitive_renameTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A2C6F9519A832CC00DCF2B7 /* LoginScreenViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginScreenViewController.h; sourceTree = "<group>"; };
 		9A2C6F9619A832CC00DCF2B7 /* LoginScreenViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginScreenViewController.m; sourceTree = "<group>"; };
 		9A2C6F9819A835CD00DCF2B7 /* SelectGameTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectGameTableViewController.h; sourceTree = "<group>"; };
@@ -271,8 +271,8 @@
 		9A2C6F6419A8324200DCF2B7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9A2C6F6319A8324200DCF2B7 /* Thatso.app */,
-				9A2C6F7E19A8324200DCF2B7 /* ThatsoTests.xctest */,
+				9A2C6F6319A8324200DCF2B7 /* ThatSo.temp_caseinsensitive_rename.app */,
+				9A2C6F7E19A8324200DCF2B7 /* ThatSo.temp_caseinsensitive_renameTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -324,10 +324,10 @@
 		9A2C6F6D19A8324200DCF2B7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				9A2C6F6E19A8324200DCF2B7 /* Thatso-Info.plist */,
+				9A2C6F6E19A8324200DCF2B7 /* ThatSo.temp_caseinsensitive_rename-Info.plist */,
 				9A2C6F6F19A8324200DCF2B7 /* InfoPlist.strings */,
 				9A2C6F7219A8324200DCF2B7 /* main.m */,
-				9A2C6F7419A8324200DCF2B7 /* Thatso-Prefix.pch */,
+				9A2C6F7419A8324200DCF2B7 /* ThatSo.temp_caseinsensitive_rename-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -403,9 +403,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		9A2C6F6219A8324200DCF2B7 /* Thatso */ = {
+		9A2C6F6219A8324200DCF2B7 /* ThatSo.temp_caseinsensitive_rename */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9A2C6F8F19A8324200DCF2B7 /* Build configuration list for PBXNativeTarget "Thatso" */;
+			buildConfigurationList = 9A2C6F8F19A8324200DCF2B7 /* Build configuration list for PBXNativeTarget "ThatSo.temp_caseinsensitive_rename" */;
 			buildPhases = (
 				9A2C6F5F19A8324200DCF2B7 /* Sources */,
 				9A2C6F6019A8324200DCF2B7 /* Frameworks */,
@@ -415,14 +415,14 @@
 			);
 			dependencies = (
 			);
-			name = Thatso;
+			name = ThatSo.temp_caseinsensitive_rename;
 			productName = Thatso;
-			productReference = 9A2C6F6319A8324200DCF2B7 /* Thatso.app */;
+			productReference = 9A2C6F6319A8324200DCF2B7 /* ThatSo.temp_caseinsensitive_rename.app */;
 			productType = "com.apple.product-type.application";
 		};
-		9A2C6F7D19A8324200DCF2B7 /* ThatsoTests */ = {
+		9A2C6F7D19A8324200DCF2B7 /* ThatSo.temp_caseinsensitive_renameTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9A2C6F9219A8324200DCF2B7 /* Build configuration list for PBXNativeTarget "ThatsoTests" */;
+			buildConfigurationList = 9A2C6F9219A8324200DCF2B7 /* Build configuration list for PBXNativeTarget "ThatSo.temp_caseinsensitive_renameTests" */;
 			buildPhases = (
 				9A2C6F7A19A8324200DCF2B7 /* Sources */,
 				9A2C6F7B19A8324200DCF2B7 /* Frameworks */,
@@ -433,9 +433,9 @@
 			dependencies = (
 				9A2C6F8419A8324200DCF2B7 /* PBXTargetDependency */,
 			);
-			name = ThatsoTests;
+			name = ThatSo.temp_caseinsensitive_renameTests;
 			productName = ThatsoTests;
-			productReference = 9A2C6F7E19A8324200DCF2B7 /* ThatsoTests.xctest */;
+			productReference = 9A2C6F7E19A8324200DCF2B7 /* ThatSo.temp_caseinsensitive_renameTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -452,7 +452,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 9A2C6F5E19A8324200DCF2B7 /* Build configuration list for PBXProject "Thatso" */;
+			buildConfigurationList = 9A2C6F5E19A8324200DCF2B7 /* Build configuration list for PBXProject "ThatSo" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -464,8 +464,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				9A2C6F6219A8324200DCF2B7 /* Thatso */,
-				9A2C6F7D19A8324200DCF2B7 /* ThatsoTests */,
+				9A2C6F6219A8324200DCF2B7 /* ThatSo.temp_caseinsensitive_rename */,
+				9A2C6F7D19A8324200DCF2B7 /* ThatSo.temp_caseinsensitive_renameTests */,
 			);
 		};
 /* End PBXProject section */
@@ -541,7 +541,7 @@
 /* Begin PBXTargetDependency section */
 		9A2C6F8419A8324200DCF2B7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 9A2C6F6219A8324200DCF2B7 /* Thatso */;
+			target = 9A2C6F6219A8324200DCF2B7 /* ThatSo.temp_caseinsensitive_rename */;
 			targetProxy = 9A2C6F8319A8324200DCF2B7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -640,9 +640,9 @@
 					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Thatso/Thatso-Prefix.pch";
-				INFOPLIST_FILE = "Thatso/Thatso-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				GCC_PREFIX_HEADER = "Thatso/ThatSo.temp_caseinsensitive_rename-Prefix.pch";
+				INFOPLIST_FILE = "Thatso/ThatSo.temp_caseinsensitive_rename-Info.plist";
+				PRODUCT_NAME = ThatSo.temp_caseinsensitive_rename;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -657,9 +657,9 @@
 					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Thatso/Thatso-Prefix.pch";
-				INFOPLIST_FILE = "Thatso/Thatso-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				GCC_PREFIX_HEADER = "Thatso/ThatSo.temp_caseinsensitive_rename-Prefix.pch";
+				INFOPLIST_FILE = "Thatso/ThatSo.temp_caseinsensitive_rename-Info.plist";
+				PRODUCT_NAME = ThatSo.temp_caseinsensitive_rename;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -681,7 +681,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "ThatsoTests/ThatsoTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ThatSo.temp_caseinsensitive_renameTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -700,7 +700,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Thatso/Thatso-Prefix.pch";
 				INFOPLIST_FILE = "ThatsoTests/ThatsoTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ThatSo.temp_caseinsensitive_renameTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -709,7 +709,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9A2C6F5E19A8324200DCF2B7 /* Build configuration list for PBXProject "Thatso" */ = {
+		9A2C6F5E19A8324200DCF2B7 /* Build configuration list for PBXProject "ThatSo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9A2C6F8D19A8324200DCF2B7 /* Debug */,
@@ -718,7 +718,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9A2C6F8F19A8324200DCF2B7 /* Build configuration list for PBXNativeTarget "Thatso" */ = {
+		9A2C6F8F19A8324200DCF2B7 /* Build configuration list for PBXNativeTarget "ThatSo.temp_caseinsensitive_rename" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9A2C6F9019A8324200DCF2B7 /* Debug */,
@@ -727,7 +727,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9A2C6F9219A8324200DCF2B7 /* Build configuration list for PBXNativeTarget "ThatsoTests" */ = {
+		9A2C6F9219A8324200DCF2B7 /* Build configuration list for PBXNativeTarget "ThatSo.temp_caseinsensitive_renameTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9A2C6F9319A8324200DCF2B7 /* Debug */,

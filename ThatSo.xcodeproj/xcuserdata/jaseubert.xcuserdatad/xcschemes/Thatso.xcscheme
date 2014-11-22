@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "9A2C6F6219A8324200DCF2B7"
-               BuildableName = "Thatso.app"
-               BlueprintName = "Thatso"
-               ReferencedContainer = "container:Thatso.xcodeproj">
+               BuildableName = "ThatSo.temp_caseinsensitive_rename.app"
+               BlueprintName = "ThatSo.temp_caseinsensitive_rename"
+               ReferencedContainer = "container:ThatSo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "9A2C6F7D19A8324200DCF2B7"
-               BuildableName = "ThatsoTests.xctest"
-               BlueprintName = "ThatsoTests"
-               ReferencedContainer = "container:Thatso.xcodeproj">
+               BuildableName = "ThatSo.temp_caseinsensitive_renameTests.xctest"
+               BlueprintName = "ThatSo.temp_caseinsensitive_renameTests"
+               ReferencedContainer = "container:ThatSo.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -43,9 +43,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "9A2C6F6219A8324200DCF2B7"
-            BuildableName = "Thatso.app"
-            BlueprintName = "Thatso"
-            ReferencedContainer = "container:Thatso.xcodeproj">
+            BuildableName = "ThatSo.temp_caseinsensitive_rename.app"
+            BlueprintName = "ThatSo.temp_caseinsensitive_rename"
+            ReferencedContainer = "container:ThatSo.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "9A2C6F6219A8324200DCF2B7"
-            BuildableName = "Thatso.app"
-            BlueprintName = "Thatso"
-            ReferencedContainer = "container:Thatso.xcodeproj">
+            BuildableName = "ThatSo.temp_caseinsensitive_rename.app"
+            BlueprintName = "ThatSo.temp_caseinsensitive_rename"
+            ReferencedContainer = "container:ThatSo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -80,9 +80,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "9A2C6F6219A8324200DCF2B7"
-            BuildableName = "Thatso.app"
-            BlueprintName = "Thatso"
-            ReferencedContainer = "container:Thatso.xcodeproj">
+            BuildableName = "ThatSo.temp_caseinsensitive_rename.app"
+            BlueprintName = "ThatSo.temp_caseinsensitive_rename"
+            ReferencedContainer = "container:ThatSo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
