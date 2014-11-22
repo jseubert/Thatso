@@ -12,10 +12,6 @@
 		9540A5821A1D068300EA9FEA /* Round.m in Sources */ = {isa = PBXBuildFile; fileRef = 9540A5811A1D068300EA9FEA /* Round.m */; };
 		9540A5851A1D069100EA9FEA /* Comment.m in Sources */ = {isa = PBXBuildFile; fileRef = 9540A5841A1D069100EA9FEA /* Comment.m */; };
 		9540A5881A1D06A200EA9FEA /* CompletedRounds.m in Sources */ = {isa = PBXBuildFile; fileRef = 9540A5871A1D06A200EA9FEA /* CompletedRounds.m */; };
-		95799FE21A1A8FE3006A209F /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95799FE11A1A8FE3006A209F /* FacebookSDK.framework */; };
-		95799FE41A1A8FEF006A209F /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95799FE31A1A8FEF006A209F /* Parse.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		95799FE81A1AA86E006A209F /* FBUserSettingsViewResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 95799FE71A1AA86E006A209F /* FBUserSettingsViewResources.bundle */; };
-		95799FEA1A1AA882006A209F /* ParseFacebookUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95799FE91A1AA882006A209F /* ParseFacebookUtils.framework */; };
 		95799FF21A1AE1FF006A209F /* PHFComposeBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 95799FED1A1AE1FF006A209F /* PHFComposeBarView.m */; };
 		95799FF31A1AE1FF006A209F /* PHFComposeBarView_Button.m in Sources */ = {isa = PBXBuildFile; fileRef = 95799FEF1A1AE1FF006A209F /* PHFComposeBarView_Button.m */; };
 		95799FF41A1AE1FF006A209F /* PHFComposeBarView_TextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 95799FF11A1AE1FF006A209F /* PHFComposeBarView_TextView.m */; };
@@ -57,6 +53,9 @@
 		9A428A4D19E7AAF500C80EE7 /* StringUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A428A4C19E7AAF500C80EE7 /* StringUtils.m */; };
 		9A428A5119E7C4A000C80EE7 /* CommentTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A428A5019E7C4A000C80EE7 /* CommentTableViewCell.m */; };
 		9A49CA131A18588B00F7CFCA /* PreviousRoundsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A49CA121A18588B00F7CFCA /* PreviousRoundsTableViewController.m */; };
+		9A49CA1B1A214B2200F7CFCA /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A49CA1A1A214B2200F7CFCA /* FacebookSDK.framework */; };
+		9A49CA1D1A214B4900F7CFCA /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A49CA1C1A214B4900F7CFCA /* Parse.framework */; };
+		9A49CA1F1A214B9600F7CFCA /* FBUserSettingsViewResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9A49CA1E1A214B9600F7CFCA /* FBUserSettingsViewResources.bundle */; };
 		9ADD437B19F751AF00AFD160 /* UserCommentTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ADD437A19F751AF00AFD160 /* UserCommentTableViewCell.m */; };
 		9ADD437F19F7565700AFD160 /* UIButton+CustomButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ADD437E19F7565700AFD160 /* UIButton+CustomButtons.m */; };
 		9ADD438219F75A6B00AFD160 /* UserCommentTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ADD438119F75A6B00AFD160 /* UserCommentTextField.m */; };
@@ -85,10 +84,6 @@
 		9540A5841A1D069100EA9FEA /* Comment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Comment.m; sourceTree = "<group>"; };
 		9540A5861A1D06A200EA9FEA /* CompletedRounds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompletedRounds.h; sourceTree = "<group>"; };
 		9540A5871A1D06A200EA9FEA /* CompletedRounds.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CompletedRounds.m; sourceTree = "<group>"; };
-		95799FE11A1A8FE3006A209F /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../Documents/FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
-		95799FE31A1A8FEF006A209F /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = "../Documents/parse-library-1.4.0/Parse.framework"; sourceTree = "<group>"; };
-		95799FE71A1AA86E006A209F /* FBUserSettingsViewResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = FBUserSettingsViewResources.bundle; path = ../Documents/FacebookSDK/FacebookSDK.framework/Versions/A/Resources/FBUserSettingsViewResources.bundle; sourceTree = "<group>"; };
-		95799FE91A1AA882006A209F /* ParseFacebookUtils.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ParseFacebookUtils.framework; path = "../Documents/parse-library-1.4.0/ParseFacebookUtils.framework"; sourceTree = "<group>"; };
 		95799FEC1A1AE1FF006A209F /* PHFComposeBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PHFComposeBarView.h; path = Classes/PHFComposeBarView.h; sourceTree = "<group>"; };
 		95799FED1A1AE1FF006A209F /* PHFComposeBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PHFComposeBarView.m; path = Classes/PHFComposeBarView.m; sourceTree = "<group>"; };
 		95799FEE1A1AE1FF006A209F /* PHFComposeBarView_Button.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PHFComposeBarView_Button.h; path = Classes/PHFComposeBarView_Button.h; sourceTree = "<group>"; };
@@ -152,6 +147,9 @@
 		9A428A5019E7C4A000C80EE7 /* CommentTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentTableViewCell.m; sourceTree = "<group>"; };
 		9A49CA111A18588B00F7CFCA /* PreviousRoundsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviousRoundsTableViewController.h; sourceTree = "<group>"; };
 		9A49CA121A18588B00F7CFCA /* PreviousRoundsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreviousRoundsTableViewController.m; sourceTree = "<group>"; };
+		9A49CA1A1A214B2200F7CFCA /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
+		9A49CA1C1A214B4900F7CFCA /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
+		9A49CA1E1A214B9600F7CFCA /* FBUserSettingsViewResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FBUserSettingsViewResources.bundle; sourceTree = "<group>"; };
 		9A893F081A0EC317002F6EEF /* NSString+FontSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+FontSize.m"; sourceTree = "<group>"; };
 		9A893F091A0EC366002F6EEF /* NSString+FontSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+FontSize.h"; sourceTree = "<group>"; };
 		9ADD437919F751AF00AFD160 /* UserCommentTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserCommentTableViewCell.h; sourceTree = "<group>"; };
@@ -171,12 +169,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95799FE41A1A8FEF006A209F /* Parse.framework in Frameworks */,
-				95799FE21A1A8FE3006A209F /* FacebookSDK.framework in Frameworks */,
+				9A49CA1B1A214B2200F7CFCA /* FacebookSDK.framework in Frameworks */,
 				9A2C6FC619A8511800DCF2B7 /* CoreLocation.framework in Frameworks */,
 				9A2C6FBC19A84D0900DCF2B7 /* SystemConfiguration.framework in Frameworks */,
 				9A2C6FBA19A84D0100DCF2B7 /* StoreKit.framework in Frameworks */,
-				95799FEA1A1AA882006A209F /* ParseFacebookUtils.framework in Frameworks */,
 				9A2C6FB819A84CFA00DCF2B7 /* QuartzCore.framework in Frameworks */,
 				9A2C6FB619A84CF500DCF2B7 /* MobileCoreServices.framework in Frameworks */,
 				9A2C6FB419A84CE000DCF2B7 /* libz.1.1.3.dylib in Frameworks */,
@@ -185,6 +181,7 @@
 				9A2C6FB019A84CC800DCF2B7 /* AudioToolbox.framework in Frameworks */,
 				9A2C6FAA19A8484E00DCF2B7 /* Social.framework in Frameworks */,
 				9A2C6FA819A8484900DCF2B7 /* Security.framework in Frameworks */,
+				9A49CA1D1A214B4900F7CFCA /* Parse.framework in Frameworks */,
 				9A2C6FA619A8484300DCF2B7 /* libsqlite3.dylib in Frameworks */,
 				9A2C6FA419A8483B00DCF2B7 /* Accounts.framework in Frameworks */,
 				9A2C6FA219A8483200DCF2B7 /* AdSupport.framework in Frameworks */,
@@ -283,10 +280,9 @@
 		9A2C6F6519A8324200DCF2B7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				95799FE91A1AA882006A209F /* ParseFacebookUtils.framework */,
-				95799FE71A1AA86E006A209F /* FBUserSettingsViewResources.bundle */,
-				95799FE31A1A8FEF006A209F /* Parse.framework */,
-				95799FE11A1A8FE3006A209F /* FacebookSDK.framework */,
+				9A49CA1E1A214B9600F7CFCA /* FBUserSettingsViewResources.bundle */,
+				9A49CA1C1A214B4900F7CFCA /* Parse.framework */,
+				9A49CA1A1A214B2200F7CFCA /* FacebookSDK.framework */,
 				9A2C6FC519A8511800DCF2B7 /* CoreLocation.framework */,
 				9A2C6FBB19A84D0900DCF2B7 /* SystemConfiguration.framework */,
 				9A2C6FB919A84D0100DCF2B7 /* StoreKit.framework */,
@@ -479,8 +475,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A49CA1F1A214B9600F7CFCA /* FBUserSettingsViewResources.bundle in Resources */,
 				9A2C6F7119A8324200DCF2B7 /* InfoPlist.strings in Resources */,
-				95799FE81A1AA86E006A209F /* FBUserSettingsViewResources.bundle in Resources */,
 				9A2C6F7919A8324200DCF2B7 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -645,6 +641,7 @@
 					/Users/jaseubert/Documents,
 					/Users/jseubert/Documents/FacebookSDK,
 					"/Users/jseubert/Documents/parse-library-1.4.0",
+					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Thatso/Thatso-Prefix.pch";
@@ -665,6 +662,7 @@
 					/Users/jaseubert/Documents,
 					/Users/jseubert/Documents/FacebookSDK,
 					"/Users/jseubert/Documents/parse-library-1.4.0",
+					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Thatso/Thatso-Prefix.pch";
