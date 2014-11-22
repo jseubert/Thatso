@@ -8,11 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		953D497119DF59C700596E7B /* SelectGameTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 953D497019DF59C700596E7B /* SelectGameTableViewCell.m */; };
-		95881E8419D54891001202AB /* FBUserSettingsViewResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 95881E8319D54891001202AB /* FBUserSettingsViewResources.bundle */; };
 		95799FF21A1AE1FF006A209F /* PHFComposeBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 95799FED1A1AE1FF006A209F /* PHFComposeBarView.m */; };
 		95799FF31A1AE1FF006A209F /* PHFComposeBarView_Button.m in Sources */ = {isa = PBXBuildFile; fileRef = 95799FEF1A1AE1FF006A209F /* PHFComposeBarView_Button.m */; };
 		95799FF41A1AE1FF006A209F /* PHFComposeBarView_TextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 95799FF11A1AE1FF006A209F /* PHFComposeBarView_TextView.m */; };
 		95799FF81A1AE368006A209F /* PHFDelegateChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 95799FF71A1AE368006A209F /* PHFDelegateChain.m */; };
+		95881E8419D54891001202AB /* FBUserSettingsViewResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 95881E8319D54891001202AB /* FBUserSettingsViewResources.bundle */; };
 		95881E8F19D90B32001202AB /* UIColor+AppColors.m in Sources */ = {isa = PBXBuildFile; fileRef = 95881E8E19D90B32001202AB /* UIColor+AppColors.m */; };
 		95881E9219D91117001202AB /* UIFont+AppFonts.m in Sources */ = {isa = PBXBuildFile; fileRef = 95881E9119D91117001202AB /* UIFont+AppFonts.m */; };
 		9A1FFC961A0AAF9400A82788 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A1FFC951A0AAF9400A82788 /* Constants.m */; };
@@ -52,6 +52,8 @@
 		9A428A4D19E7AAF500C80EE7 /* StringUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A428A4C19E7AAF500C80EE7 /* StringUtils.m */; };
 		9A428A5119E7C4A000C80EE7 /* CommentTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A428A5019E7C4A000C80EE7 /* CommentTableViewCell.m */; };
 		9A49CA131A18588B00F7CFCA /* PreviousRoundsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A49CA121A18588B00F7CFCA /* PreviousRoundsTableViewController.m */; };
+		9A49CA171A21447A00F7CFCA /* Sinch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A49CA161A21447A00F7CFCA /* Sinch.framework */; };
+		9A49CA191A2147AE00F7CFCA /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A49CA181A2147AE00F7CFCA /* AVFoundation.framework */; };
 		9ADD437B19F751AF00AFD160 /* UserCommentTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ADD437A19F751AF00AFD160 /* UserCommentTableViewCell.m */; };
 		9ADD437F19F7565700AFD160 /* UIButton+CustomButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ADD437E19F7565700AFD160 /* UIButton+CustomButtons.m */; };
 		9ADD438219F75A6B00AFD160 /* UserCommentTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ADD438119F75A6B00AFD160 /* UserCommentTextField.m */; };
@@ -72,7 +74,6 @@
 /* Begin PBXFileReference section */
 		953D496F19DF59C700596E7B /* SelectGameTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectGameTableViewCell.h; sourceTree = "<group>"; };
 		953D497019DF59C700596E7B /* SelectGameTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectGameTableViewCell.m; sourceTree = "<group>"; };
-		95881E8319D54891001202AB /* FBUserSettingsViewResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = FBUserSettingsViewResources.bundle; path = ../../Documents/FacebookSDK/FacebookSDK.framework/Versions/A/Resources/FBUserSettingsViewResources.bundle; sourceTree = "<group>"; };
 		95799FEC1A1AE1FF006A209F /* PHFComposeBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PHFComposeBarView.h; path = Classes/PHFComposeBarView.h; sourceTree = "<group>"; };
 		95799FED1A1AE1FF006A209F /* PHFComposeBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PHFComposeBarView.m; path = Classes/PHFComposeBarView.m; sourceTree = "<group>"; };
 		95799FEE1A1AE1FF006A209F /* PHFComposeBarView_Button.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PHFComposeBarView_Button.h; path = Classes/PHFComposeBarView_Button.h; sourceTree = "<group>"; };
@@ -81,6 +82,7 @@
 		95799FF11A1AE1FF006A209F /* PHFComposeBarView_TextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PHFComposeBarView_TextView.m; path = Classes/PHFComposeBarView_TextView.m; sourceTree = "<group>"; };
 		95799FF61A1AE368006A209F /* PHFDelegateChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PHFDelegateChain.h; sourceTree = "<group>"; };
 		95799FF71A1AE368006A209F /* PHFDelegateChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PHFDelegateChain.m; sourceTree = "<group>"; };
+		95881E8319D54891001202AB /* FBUserSettingsViewResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = FBUserSettingsViewResources.bundle; path = ../../Documents/FacebookSDK/FacebookSDK.framework/Versions/A/Resources/FBUserSettingsViewResources.bundle; sourceTree = "<group>"; };
 		95881E8D19D90B32001202AB /* UIColor+AppColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+AppColors.h"; sourceTree = "<group>"; };
 		95881E8E19D90B32001202AB /* UIColor+AppColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+AppColors.m"; sourceTree = "<group>"; };
 		95881E9019D91117001202AB /* UIFont+AppFonts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+AppFonts.h"; sourceTree = "<group>"; };
@@ -138,6 +140,8 @@
 		9A428A5019E7C4A000C80EE7 /* CommentTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommentTableViewCell.m; sourceTree = "<group>"; };
 		9A49CA111A18588B00F7CFCA /* PreviousRoundsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviousRoundsTableViewController.h; sourceTree = "<group>"; };
 		9A49CA121A18588B00F7CFCA /* PreviousRoundsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreviousRoundsTableViewController.m; sourceTree = "<group>"; };
+		9A49CA161A21447A00F7CFCA /* Sinch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sinch.framework; sourceTree = "<group>"; };
+		9A49CA181A2147AE00F7CFCA /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		9A893F081A0EC317002F6EEF /* NSString+FontSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+FontSize.m"; sourceTree = "<group>"; };
 		9A893F091A0EC366002F6EEF /* NSString+FontSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+FontSize.h"; sourceTree = "<group>"; };
 		9ADD437919F751AF00AFD160 /* UserCommentTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserCommentTableViewCell.h; sourceTree = "<group>"; };
@@ -157,18 +161,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A2C6FA819A8484900DCF2B7 /* Security.framework in Frameworks */,
+				9A49CA191A2147AE00F7CFCA /* AVFoundation.framework in Frameworks */,
+				9A2C6FB019A84CC800DCF2B7 /* AudioToolbox.framework in Frameworks */,
 				9A2C6FC619A8511800DCF2B7 /* CoreLocation.framework in Frameworks */,
 				9A428A4119DF7CFC00C80EE7 /* FacebookSDK.framework in Frameworks */,
 				9A2C6FBC19A84D0900DCF2B7 /* SystemConfiguration.framework in Frameworks */,
 				9A2C6FBA19A84D0100DCF2B7 /* StoreKit.framework in Frameworks */,
 				9A2C6FB819A84CFA00DCF2B7 /* QuartzCore.framework in Frameworks */,
 				9A2C6FB619A84CF500DCF2B7 /* MobileCoreServices.framework in Frameworks */,
+				9A49CA171A21447A00F7CFCA /* Sinch.framework in Frameworks */,
 				9A2C6FB419A84CE000DCF2B7 /* libz.1.1.3.dylib in Frameworks */,
 				9A2C6F6919A8324200DCF2B7 /* CoreGraphics.framework in Frameworks */,
 				9A2C6FB219A84CCE00DCF2B7 /* CFNetwork.framework in Frameworks */,
-				9A2C6FB019A84CC800DCF2B7 /* AudioToolbox.framework in Frameworks */,
 				9A2C6FAA19A8484E00DCF2B7 /* Social.framework in Frameworks */,
-				9A2C6FA819A8484900DCF2B7 /* Security.framework in Frameworks */,
 				9A428A4319DF7D7900C80EE7 /* Parse.framework in Frameworks */,
 				9A2C6FA619A8484300DCF2B7 /* libsqlite3.dylib in Frameworks */,
 				9A2C6FA419A8483B00DCF2B7 /* Accounts.framework in Frameworks */,
@@ -253,6 +259,8 @@
 		9A2C6F6519A8324200DCF2B7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9A49CA181A2147AE00F7CFCA /* AVFoundation.framework */,
+				9A49CA161A21447A00F7CFCA /* Sinch.framework */,
 				9A428A4219DF7D7900C80EE7 /* Parse.framework */,
 				9A428A4019DF7CFC00C80EE7 /* FacebookSDK.framework */,
 				95881E8319D54891001202AB /* FBUserSettingsViewResources.bundle */,
@@ -609,10 +617,16 @@
 					/Users/jaseubert/Documents,
 					/Users/jseubert/Documents/FacebookSDK,
 					"/Users/jseubert/Documents/parse-library-1.4.0",
+					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Thatso/Thatso-Prefix.pch";
 				INFOPLIST_FILE = "Thatso/Thatso-Info.plist";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-Xlinker",
+					"-lstdc++",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -629,10 +643,16 @@
 					/Users/jaseubert/Documents,
 					/Users/jseubert/Documents/FacebookSDK,
 					"/Users/jseubert/Documents/parse-library-1.4.0",
+					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Thatso/Thatso-Prefix.pch";
 				INFOPLIST_FILE = "Thatso/Thatso-Info.plist";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-Xlinker",
+					"-lstdc++",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
