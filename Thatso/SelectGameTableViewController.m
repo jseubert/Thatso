@@ -12,6 +12,7 @@
 #import "SelectGameTableViewCell.h"
 #import "FratBarButtonItem.h"
 #import "StringUtils.h"
+#import "AppDelegate.h"
 #import <math.h>
 
 @interface SelectGameTableViewController ()
@@ -179,7 +180,9 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     GameViewControllerTableViewController *vc = [[GameViewControllerTableViewController alloc] init];
-    vc.currentGame = [[UserGames instance].games objectAtIndex:indexPath.row];
+    PFObject* currentGame = [[UserGames instance].games objectAtIndex:indexPath.row];
+    [currentGame[@"currentRound"] fetchIfNeeded];
+    vc.currentGame = currentGame;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -187,6 +190,8 @@
 -(IBAction)logout:(id)sender{
     NSLog(@"Logout");
     [PFUser logOut];
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    [appDelegate logoutSinchClient];
     [self.navigationController popViewControllerAnimated:YES];
 }
 

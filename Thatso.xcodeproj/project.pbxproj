@@ -56,6 +56,8 @@
 		9A49CA1B1A214B2200F7CFCA /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A49CA1A1A214B2200F7CFCA /* FacebookSDK.framework */; };
 		9A49CA1D1A214B4900F7CFCA /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A49CA1C1A214B4900F7CFCA /* Parse.framework */; };
 		9A49CA1F1A214B9600F7CFCA /* FBUserSettingsViewResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9A49CA1E1A214B9600F7CFCA /* FBUserSettingsViewResources.bundle */; };
+		9AA6DB941A2157EE0037EE09 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AA6DB931A2157EE0037EE09 /* AVFoundation.framework */; };
+		9AA6DB981A215A940037EE09 /* Sinch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AA6DB971A215A940037EE09 /* Sinch.framework */; };
 		9ADD437B19F751AF00AFD160 /* UserCommentTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ADD437A19F751AF00AFD160 /* UserCommentTableViewCell.m */; };
 		9ADD437F19F7565700AFD160 /* UIButton+CustomButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ADD437E19F7565700AFD160 /* UIButton+CustomButtons.m */; };
 		9ADD438219F75A6B00AFD160 /* UserCommentTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ADD438119F75A6B00AFD160 /* UserCommentTextField.m */; };
@@ -152,6 +154,8 @@
 		9A49CA1E1A214B9600F7CFCA /* FBUserSettingsViewResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FBUserSettingsViewResources.bundle; sourceTree = "<group>"; };
 		9A893F081A0EC317002F6EEF /* NSString+FontSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+FontSize.m"; sourceTree = "<group>"; };
 		9A893F091A0EC366002F6EEF /* NSString+FontSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+FontSize.h"; sourceTree = "<group>"; };
+		9AA6DB931A2157EE0037EE09 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		9AA6DB971A215A940037EE09 /* Sinch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sinch.framework; sourceTree = "<group>"; };
 		9ADD437919F751AF00AFD160 /* UserCommentTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserCommentTableViewCell.h; sourceTree = "<group>"; };
 		9ADD437A19F751AF00AFD160 /* UserCommentTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserCommentTableViewCell.m; sourceTree = "<group>"; };
 		9ADD437D19F7560100AFD160 /* UIButton+CustomButtons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+CustomButtons.h"; sourceTree = "<group>"; };
@@ -169,9 +173,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9AA6DB941A2157EE0037EE09 /* AVFoundation.framework in Frameworks */,
 				9A49CA1B1A214B2200F7CFCA /* FacebookSDK.framework in Frameworks */,
 				9A2C6FC619A8511800DCF2B7 /* CoreLocation.framework in Frameworks */,
 				9A2C6FBC19A84D0900DCF2B7 /* SystemConfiguration.framework in Frameworks */,
+				9AA6DB981A215A940037EE09 /* Sinch.framework in Frameworks */,
 				9A2C6FBA19A84D0100DCF2B7 /* StoreKit.framework in Frameworks */,
 				9A2C6FB819A84CFA00DCF2B7 /* QuartzCore.framework in Frameworks */,
 				9A2C6FB619A84CF500DCF2B7 /* MobileCoreServices.framework in Frameworks */,
@@ -280,24 +286,26 @@
 		9A2C6F6519A8324200DCF2B7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9A49CA1E1A214B9600F7CFCA /* FBUserSettingsViewResources.bundle */,
-				9A49CA1C1A214B4900F7CFCA /* Parse.framework */,
-				9A49CA1A1A214B2200F7CFCA /* FacebookSDK.framework */,
-				9A2C6FC519A8511800DCF2B7 /* CoreLocation.framework */,
-				9A2C6FBB19A84D0900DCF2B7 /* SystemConfiguration.framework */,
-				9A2C6FB919A84D0100DCF2B7 /* StoreKit.framework */,
-				9A2C6FB719A84CFA00DCF2B7 /* QuartzCore.framework */,
-				9A2C6FB519A84CF500DCF2B7 /* MobileCoreServices.framework */,
-				9A2C6FB319A84CE000DCF2B7 /* libz.1.1.3.dylib */,
-				9A2C6FB119A84CCE00DCF2B7 /* CFNetwork.framework */,
-				9A2C6FAF19A84CC800DCF2B7 /* AudioToolbox.framework */,
-				9A2C6FA919A8484E00DCF2B7 /* Social.framework */,
-				9A2C6FA719A8484900DCF2B7 /* Security.framework */,
-				9A2C6FA519A8484300DCF2B7 /* libsqlite3.dylib */,
+				9AA6DB971A215A940037EE09 /* Sinch.framework */,
+				9AA6DB931A2157EE0037EE09 /* AVFoundation.framework */,
 				9A2C6FA319A8483B00DCF2B7 /* Accounts.framework */,
 				9A2C6FA119A8483200DCF2B7 /* AdSupport.framework */,
-				9A2C6F6619A8324200DCF2B7 /* Foundation.framework */,
+				9A2C6FAF19A84CC800DCF2B7 /* AudioToolbox.framework */,
+				9A2C6FB119A84CCE00DCF2B7 /* CFNetwork.framework */,
 				9A2C6F6819A8324200DCF2B7 /* CoreGraphics.framework */,
+				9A2C6FC519A8511800DCF2B7 /* CoreLocation.framework */,
+				9A49CA1A1A214B2200F7CFCA /* FacebookSDK.framework */,
+				9A49CA1E1A214B9600F7CFCA /* FBUserSettingsViewResources.bundle */,
+				9A2C6F6619A8324200DCF2B7 /* Foundation.framework */,
+				9A2C6FA519A8484300DCF2B7 /* libsqlite3.dylib */,
+				9A2C6FB319A84CE000DCF2B7 /* libz.1.1.3.dylib */,
+				9A2C6FB519A84CF500DCF2B7 /* MobileCoreServices.framework */,
+				9A49CA1C1A214B4900F7CFCA /* Parse.framework */,
+				9A2C6FB719A84CFA00DCF2B7 /* QuartzCore.framework */,
+				9A2C6FA719A8484900DCF2B7 /* Security.framework */,
+				9A2C6FA919A8484E00DCF2B7 /* Social.framework */,
+				9A2C6FB919A84D0100DCF2B7 /* StoreKit.framework */,
+				9A2C6FBB19A84D0900DCF2B7 /* SystemConfiguration.framework */,
 				9A2C6F6A19A8324200DCF2B7 /* UIKit.framework */,
 			);
 			name = Frameworks;
@@ -447,12 +455,15 @@
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "John Seubert";
 				TargetAttributes = {
+					9A2C6F6219A8324200DCF2B7 = {
+						DevelopmentTeam = UZJ8754DYA;
+					};
 					9A2C6F7D19A8324200DCF2B7 = {
 						TestTargetID = 9A2C6F6219A8324200DCF2B7;
 					};
 				};
 			};
-			buildConfigurationList = 9A2C6F5E19A8324200DCF2B7 /* Build configuration list for PBXProject "Thatso" */;
+			buildConfigurationList = 9A2C6F5E19A8324200DCF2B7 /* Build configuration list for PBXProject "ThatSo" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -633,16 +644,32 @@
 		9A2C6F9019A8324200DCF2B7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					armv,
+					armv7s,
+					armv7,
+				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					/Users/jaseubert/Documents/Sinch/samples,
+					/Users/jaseubert/Documents,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Thatso/Thatso-Prefix.pch";
 				INFOPLIST_FILE = "Thatso/Thatso-Info.plist";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-Xlinker",
+					"-lstdc++",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -650,16 +677,32 @@
 		9A2C6F9119A8324200DCF2B7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					armv,
+					armv7s,
+					armv7,
+				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					/Users/jaseubert/Documents/Sinch/samples,
+					/Users/jaseubert/Documents,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Thatso/Thatso-Prefix.pch";
 				INFOPLIST_FILE = "Thatso/Thatso-Info.plist";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-Xlinker",
+					"-lstdc++",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -709,7 +752,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9A2C6F5E19A8324200DCF2B7 /* Build configuration list for PBXProject "Thatso" */ = {
+		9A2C6F5E19A8324200DCF2B7 /* Build configuration list for PBXProject "ThatSo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9A2C6F8D19A8324200DCF2B7 /* Debug */,

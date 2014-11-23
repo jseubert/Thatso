@@ -8,8 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate, SINClientDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
+@property (strong, nonatomic) id<SINClient> client;
+
+- (void)initSinchClientWithUserId:(NSString *)userId;
+-(void)logoutSinchClient;
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "NSOperationQueue+NSoperationQueue_SharedQueue.h"
+#import "AppDelegate.h"
 
 @implementation Comms
 //Notifications 
@@ -65,6 +66,10 @@
                     // Add the User to the list of friends in the DataStore
                     [[DataStore instance].fbFriends setObject:me forKey:me.objectID];
                     [DataStore instance].user = me;
+                    
+                    //Start Sinch!
+                    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                    [appDelegate initSinchClientWithUserId:me.objectID];
                 }
                 // Callback - login successful
                 // 1. Build a Facebook Request object to retrieve your friends from Facebook.

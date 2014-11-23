@@ -7,6 +7,7 @@
 #import <Availability.h>
 #import <Parse/Parse.h>
 #import <FacebookSDK/FacebookSDK.h>
+#import <Sinch/Sinch.h>
 
 #import "Constants.h"
 #import "Comms.h"

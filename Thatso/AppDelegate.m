@@ -49,31 +49,55 @@
     
 }
 
-- (void)applicationWillResignActive:(UIApplication *)application
-{
-    // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-    // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+- (void)initSinchClientWithUserId:(NSString *)userId {
+    NSLog(@"initSinchClientWithUserId: %@", userId);
+    if (!_client) {
+        
+        
+        _client = [Sinch clientWithApplicationKey:@"dbc9af86-a638-4c44-a244-02f263c3e4a7"
+                                applicationSecret:@"6mBCmMuQVk+XwssEuElGxQ=="
+                                  environmentHost:@"sandbox.sinch.com"
+                                           userId:userId];
+        
+        _client.delegate = self;
+        
+        [_client setSupportMessaging:YES];
+        
+        [_client start];
+        [_client startListeningOnActiveConnection];
+    }
 }
 
-- (void)applicationDidEnterBackground:(UIApplication *)application
+-(void)logoutSinchClient
 {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
-    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    [_client stopListeningOnActiveConnection];
+    [_client terminate];
+    _client = nil;
 }
 
-- (void)applicationWillEnterForeground:(UIApplication *)application
-{
-    // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+#pragma mark - SINClientDelegate
+
+- (void)clientDidStart:(id<SINClient>)client {
+    NSLog(@"Sinch client started successfully (version: %@)", [Sinch version]);
 }
 
-- (void)applicationDidBecomeActive:(UIApplication *)application
-{
-    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+- (void)clientDidStop:(id<SINClient>)client {
+    NSLog(@"Sinch client stopped");
 }
 
-- (void)applicationWillTerminate:(UIApplication *)application
-{
-    // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+- (void)clientDidFail:(id<SINClient>)client error:(NSError *)error {
+    NSLog(@"Error: %@", error);
+}
+
+- (void)client:(id<SINClient>)client
+    logMessage:(NSString *)message
+          area:(NSString *)area
+      severity:(SINLogSeverity)severity
+     timestamp:(NSDate *)timestamp {
+    
+    if (severity == SINLogSeverityCritical) {
+        NSLog(@"%@", message);
+    }
 }
 
 @end
