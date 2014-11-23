@@ -142,10 +142,8 @@
 {
     self.currentRound = self.currentGame[@"currentRound"];
     [self.currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-
-        [self.headerView setText:[NSString stringWithFormat:@"%@",self.currentRound[@"category"]]];
+        [self.headerView setText:[NSString stringWithFormat:@"Round %@: %@",self.currentRound[@"round"], self.currentRound[@"category"]]];
         [self layoutSubviews];
-        
     }];
     [self.headerView setBackgroundColor:[UIColor pinkAppColor]];
     [self.headerView setNumberOfLines:0];
@@ -422,11 +420,6 @@
 {
     if(success)
     {
-      /* for(int index = 0; index < nonUserPlayers.count; index ++)
-        {
-            SINOutgoingMessage *message = [SINOutgoingMessage messageWithRecipient:[nonUserPlayers objectAtIndex:index] text:@"CommentAdded"];
-            [self.messageClient sendMessage:message];
-        }*/
         SINOutgoingMessage *message = [SINOutgoingMessage messageWithRecipients:nonUserPlayers text:@"CommentAdded"];
         [self.messageClient sendMessage:message];
         
@@ -471,18 +464,8 @@
         [[CurrentRounds instance].currentComments  removeObjectForKey:self.currentGame.objectId];
 
         [self refreshGame:nil];
-        /*
-        for(int index = 0; index < nonUserPlayers.count; index ++)
-        {
-            SINOutgoingMessage *message = [SINOutgoingMessage messageWithRecipient:[nonUserPlayers objectAtIndex:index] text:@"NewRound"];
-            [message addHeaderWithValue:winningRound[@"category"] key:@"category"];
-            [message addHeaderWithValue:[NSString stringWithFormat:@"%@",winningRound[@"round"]] key:@"round"];
-            [message addHeaderWithValue:winningRound[@"comment"] key:@"comment"];
-            [message addHeaderWithValue:winningRound[@"from"] key:@"from"];
-            [self.messageClient sendMessage:message];
-        }*/
         
-        SINOutgoingMessage *message = [SINOutgoingMessage messageWithRecipients:nonUserPlayers text:@"CommentAdded"];
+        SINOutgoingMessage *message = [SINOutgoingMessage messageWithRecipients:nonUserPlayers text:@"NewRound"];
         [message addHeaderWithValue:winningRound[@"category"] key:@"category"];
         [message addHeaderWithValue:[NSString stringWithFormat:@"%@",winningRound[@"round"]] key:@"round"];
         [message addHeaderWithValue:winningRound[@"comment"] key:@"comment"];

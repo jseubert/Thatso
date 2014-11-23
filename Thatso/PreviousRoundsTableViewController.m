@@ -20,6 +20,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self.tableView setBackgroundColor:[UIColor blueAppColor]];
     
     initialLoad = true;
     self.previousRounds = [[NSMutableArray alloc] init];
@@ -77,8 +78,6 @@
         return UITableViewAutomaticDimension;
     } else{
         PFObject* round = [self.previousRounds objectAtIndex:indexPath.row];
-        PFObject* winningComment = round[@"winningComment"];
-        [winningComment fetchIfNeeded];
         
         CGFloat width = tableView.frame.size.width
             - 10    //left padding
@@ -86,7 +85,7 @@
             
         //get the size of the label given the text
         CGSize topLabelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:round[@"category"]];
-        CGSize bottomeLabelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(width, width)) withText:winningComment[@"comment"]];
+        CGSize bottomeLabelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(width, width)) withText:round[@"comment"]];
         
         
         //1O padding on top and bottom
@@ -115,15 +114,13 @@
         cell.namesLabel.text = @"No previous rounds...";
     } else{
         PFObject* round = [self.previousRounds objectAtIndex:indexPath.row];
-        PFObject* winningComment = round[@"winningComment"];
+        NSString *winner = [[DataStore getFriendWithId:round[@"from"]] objectForKey:User_FirstName];
         [cell.namesLabel setText:round[@"category"]];
-        [winningComment fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-            [cell.categoryLabel setText:winningComment[@"comment"]];
-            [cell adjustLabels]; 
-        }];
+        [cell.categoryLabel setText:[NSString stringWithFormat:@"%@: %@", winner, round[@"comment"]]];
     }
     
     [cell setColorScheme:indexPath.row];
+    [cell adjustLabels];
     
     return cell;
     

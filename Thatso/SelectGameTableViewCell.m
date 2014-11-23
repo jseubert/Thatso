@@ -16,7 +16,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // configure control(s)
-        self.namesLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, self.frame.size.width -10, self.frame.size.height/2)];
+        self.namesLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, self.frame.size.width -20, self.frame.size.height/2)];
         self.namesLabel.font = [UIFont defaultAppFontWithSize:16.0];
         self.namesLabel.text = @"";
         self.namesLabel.lineBreakMode = NSLineBreakByWordWrapping;
@@ -25,7 +25,7 @@
         
         [self addSubview:self.namesLabel];
         
-        self.categoryLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, self.frame.size.height/2 + 10, self.frame.size.width-10, self.frame.size.height/2)];
+        self.categoryLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, self.frame.size.height/2 + 10, self.frame.size.width-20, self.frame.size.height/2)];
         self.categoryLabel.font = [UIFont defaultAppFontWithSize:14.0];
         self.categoryLabel.text = @"";
         self.categoryLabel.lineBreakMode = NSLineBreakByWordWrapping;
@@ -45,8 +45,8 @@
     CGSize topLabelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:self.namesLabel.text];
     CGSize bottomeLabelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(width, width)) withText: self.categoryLabel.text];
     
-    self.namesLabel.frame = CGRectMake(10, 10, self.frame.size.width -10, topLabelSize.height);
-    self.categoryLabel.frame = CGRectMake(10, self.namesLabel.frame.origin.x + self.namesLabel.frame.size.height + 5, self.frame.size.width-10, bottomeLabelSize.height + 10);
+    self.namesLabel.frame = CGRectMake(10, 10, self.frame.size.width -20, topLabelSize.height);
+    self.categoryLabel.frame = CGRectMake(10, self.namesLabel.frame.origin.x + self.namesLabel.frame.size.height + 5, self.frame.size.width-20, bottomeLabelSize.height + 10);
     
     
 }

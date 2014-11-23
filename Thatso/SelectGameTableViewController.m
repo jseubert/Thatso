@@ -140,7 +140,7 @@
         PFObject* game = [[UserGames instance].games objectAtIndex:indexPath.row];
         PFObject *currentRound = game[@"currentRound"];
         [currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-            [cell.categoryLabel setText:currentRound[@"category"]];
+            [cell.categoryLabel setText:[NSString stringWithFormat:@"Round %@: %@", currentRound[@"round"], currentRound[@"category"]]];
         }];
         NSMutableArray *players = game[@"players"];
         NSString *title = [[NSString alloc] init];
@@ -168,9 +168,7 @@
              title = [title stringByAppendingString:[NSString stringWithFormat:@"and %@", lastName]];
         }
         [cell.namesLabel setText:title];
-        
-        [cell.categoryLabel setText:game[@"category"]];
-    }
+            }
     
     [cell setColorScheme:indexPath.row];
 
