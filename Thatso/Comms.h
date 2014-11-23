@@ -38,7 +38,7 @@
 @end
 
 @protocol DidStartNewRound <NSObject>
-- (void) didStartNewRound:(BOOL)success info: (NSString *) info;
+- (void) didStartNewRound:(BOOL)success info: (NSString *) info previousWinner:(PFObject *)winningRound;
 @end
 
 @protocol DidGetPreviousRounds <NSObject>

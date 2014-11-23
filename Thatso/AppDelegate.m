@@ -50,9 +50,8 @@
 }
 
 - (void)initSinchClientWithUserId:(NSString *)userId {
-    NSLog(@"initSinchClientWithUserId: %@", userId);
     if (!_client) {
-        
+         NSLog(@"initSinchClientWithUserId: %@", userId);
         
         _client = [Sinch clientWithApplicationKey:@"dbc9af86-a638-4c44-a244-02f263c3e4a7"
                                 applicationSecret:@"6mBCmMuQVk+XwssEuElGxQ=="

@@ -347,14 +347,8 @@
             archivedRound[@"category"] = round[@"category"];
             archivedRound[@"round"] = round[@"round"];
             archivedRound[@"gameId"] = game.objectId;
-            
-            //Build archivedComment object and save it
-            PFObject *archivedComment= [PFObject objectWithClassName:@"WinningComments"];
-            archivedComment[@"comment"] = comment[@"comment"];
-            archivedComment[@"from"] = comment[@"from"];
-            archivedComment[@"gameId"] = comment[@"gameId"];
-            archivedComment[@"round"] = round[@"round"];
-            archivedRound[@"winningComment"] = archivedComment;
+            archivedRound[@"comment"] = comment[@"comment"];
+            archivedRound[@"from"] = comment[@"from"];
             
             [archivedRound saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                 if(succeeded)
@@ -367,22 +361,22 @@
                             [round deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                                 if(succeeded)
                                 {
-                                    [delegate didStartNewRound:YES info: error.localizedDescription];
+                                    [delegate didStartNewRound:YES info: error.localizedDescription previousWinner:archivedRound];
                                 }else{
-                                    [delegate didStartNewRound:NO info: error.localizedDescription];
+                                    [delegate didStartNewRound:NO info: error.localizedDescription previousWinner:nil];
                                 }
                             }];
 
                         }else{
-                            [delegate didStartNewRound:NO info: error.localizedDescription];
+                            [delegate didStartNewRound:NO info: error.localizedDescription previousWinner:nil];
                         }
                     }];
                 }else{
-                    [delegate didStartNewRound:NO info: error.localizedDescription];
+                    [delegate didStartNewRound:NO info: error.localizedDescription previousWinner:nil];
                 }
             }];
         }else{
-            [delegate didStartNewRound:NO info: error.localizedDescription];
+            [delegate didStartNewRound:NO info: error.localizedDescription previousWinner:nil];
         }
     }];
 }

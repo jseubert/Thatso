@@ -14,6 +14,7 @@
 #import "CommentTableViewCell.h"
 #import "UserCommentTableViewCell.h"
 #import "PreviousRoundsTableViewController.h"
+#import "AppDelegate.h"
 
 
 @implementation GameViewControllerTableViewController
@@ -37,6 +38,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    
+    //Recieve messages
+    self.messageClient = [appDelegate.client messageClient];
+    self.messageClient.delegate = self;
+    
     //self.navigationController.title = @"Category";
     [self.view setBackgroundColor:[UIColor blueAppColor]];
     //setup Subviews
@@ -412,8 +420,17 @@
 //callback
 - (void) didAddComment:(BOOL)success needsRefresh:(BOOL)refresh info: (NSString *) info
 {
-    if(!success)
+    if(success)
     {
+      /* for(int index = 0; index < nonUserPlayers.count; index ++)
+        {
+            SINOutgoingMessage *message = [SINOutgoingMessage messageWithRecipient:[nonUserPlayers objectAtIndex:index] text:@"CommentAdded"];
+            [self.messageClient sendMessage:message];
+        }*/
+        SINOutgoingMessage *message = [SINOutgoingMessage messageWithRecipients:nonUserPlayers text:@"CommentAdded"];
+        [self.messageClient sendMessage:message];
+        
+    } else{
         [self.tableView reloadData];
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error!"
                                                         message:info
@@ -441,22 +458,37 @@
                     break;
                 }
             }
-            [self.tableView reloadData];
         }
     }
 }
 
 #pragma staring new round
-- (void) didStartNewRound:(BOOL)success info: (NSString *) info;
+- (void) didStartNewRound:(BOOL)success info: (NSString *) info previousWinner:(PFObject *)winningRound;
 {
     if(success)
     {
         self.comments = [[NSMutableArray alloc] init];
         [[CurrentRounds instance].currentComments  removeObjectForKey:self.currentGame.objectId];
-        
-    
 
         [self refreshGame:nil];
+        /*
+        for(int index = 0; index < nonUserPlayers.count; index ++)
+        {
+            SINOutgoingMessage *message = [SINOutgoingMessage messageWithRecipient:[nonUserPlayers objectAtIndex:index] text:@"NewRound"];
+            [message addHeaderWithValue:winningRound[@"category"] key:@"category"];
+            [message addHeaderWithValue:[NSString stringWithFormat:@"%@",winningRound[@"round"]] key:@"round"];
+            [message addHeaderWithValue:winningRound[@"comment"] key:@"comment"];
+            [message addHeaderWithValue:winningRound[@"from"] key:@"from"];
+            [self.messageClient sendMessage:message];
+        }*/
+        
+        SINOutgoingMessage *message = [SINOutgoingMessage messageWithRecipients:nonUserPlayers text:@"CommentAdded"];
+        [message addHeaderWithValue:winningRound[@"category"] key:@"category"];
+        [message addHeaderWithValue:[NSString stringWithFormat:@"%@",winningRound[@"round"]] key:@"round"];
+        [message addHeaderWithValue:winningRound[@"comment"] key:@"comment"];
+        [message addHeaderWithValue:winningRound[@"from"] key:@"from"];
+        [self.messageClient sendMessage:message];
+        
     }else{
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error!"
                                                         message:info
@@ -525,6 +557,43 @@
                toFrame:(CGRect)endFrame
 {
     [self layoutSubviews];
+}
+
+#pragma mark - SINMessageClientDelegate
+
+- (void)messageClient:(id<SINMessageClient>)messageClient didReceiveIncomingMessage:(id<SINMessage>)message {
+    NSLog(@"didReceiveIncomingMessage: %@", message);
+    if([message.text isEqualToString:@"NewRound"])
+    {
+        NSString *winner = [[DataStore getFriendWithId:[message.headers objectForKey:@"from"]] objectForKey:User_FirstName];
+        NSString* summary = [NSString stringWithFormat:@"%@ won round %@ with: %@", winner, [message.headers objectForKey:@"round"], [message.headers objectForKey:@"comment"]];
+        
+        UIAlertView *messageAlert = [[UIAlertView alloc]
+                                     initWithTitle:@"New Round Started" message:summary delegate:self  cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        
+        // Display Alert Message
+        [messageAlert show];
+    }
+    [self refreshGame:nil];
+}
+
+- (void)messageSent:(id<SINMessage>)message recipientId:(NSString *)recipientId {
+ NSLog(@"messageSent: %@ to: %@", message, recipientId);
+}
+
+- (void)message:(id<SINMessage>)message shouldSendPushNotifications:(NSArray *)pushPairs {
+    NSLog(@"Recipient not online. \
+          Should notify recipient using push (not implemented in this demo app). \
+          Please refer to the documentation for a comprehensive description.");
+}
+
+- (void)messageDelivered:(id<SINMessageDeliveryInfo>)info {
+    NSLog(@"Message to %@ was successfully delivered", info.recipientId);
+}
+
+- (void)messageFailed:(id<SINMessage>)message info:(id<SINMessageFailureInfo>)failureInfo {
+    NSLog(@"Failed delivering message to %@. Reason: %@", failureInfo.recipientId,
+          [failureInfo.error description]);
 }
 
 @end
