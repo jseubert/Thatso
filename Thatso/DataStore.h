@@ -13,6 +13,7 @@
 @property (nonatomic, strong) NSMutableDictionary *fbFriends;
 @property (nonatomic, strong) NSMutableArray *fbFriendsArray;
 @property (nonatomic, strong) NSDictionary *user;
+@property (nonatomic, strong) NSMutableArray *categories;
 
 + (DataStore *) instance;
 - (void) reset;

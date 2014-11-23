@@ -55,5 +55,6 @@
 + (void) getActiveCommentsForGame:(PFObject*)game inRound:(PFObject*)round forDelegate:(id<DidGetCommentsDelegate>)delegate;
 + (void) finishRound: (PFObject *)round inGame: (PFObject *)game withWinningComment: (PFObject *)comment andOtherComments: (NSArray *)otherComments forDelegate:(id<DidStartNewRound>)delegate;
 + (void) getPreviousRoundsInGame: (PFObject * ) game forDelegate:(id<DidGetPreviousRounds>)delegate;
++ (void) getCategories;
 @end
 

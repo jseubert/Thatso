@@ -26,6 +26,7 @@ static DataStore *instance = nil;
         _fbFriends = [[NSMutableDictionary alloc] init];
         _user = [[NSDictionary alloc] init];
         _fbFriendsArray = [[NSMutableArray alloc] init];
+        self.categories = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -35,6 +36,7 @@ static DataStore *instance = nil;
     [_fbFriends removeAllObjects];
     _user = NULL;
     [_fbFriendsArray removeAllObjects];
+    [self.categories removeAllObjects];
 
 }
 

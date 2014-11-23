@@ -105,6 +105,10 @@
                     
                     // 4 The success callback to the delegate is now only called once the friends request has been made.
                     // Callback - login successful
+                    //Get all the categories
+                    [Comms getCategories];
+                    
+                    
                     if ([delegate respondsToSelector:@selector(commsDidLogin:)]) {
                         [delegate commsDidLogin:YES];
                     }
@@ -166,8 +170,12 @@
         roundObject[@"subject"] = [fbFriendsInGame objectAtIndex:0];
         roundObject[@"round"] = @0;
       //  roundObject[@"category"] = @"What would be the first thing they would fo after a one night stand?";
-        NSString *categorySetup = [categories objectAtIndex:(arc4random() % categories.count)];
-        roundObject[@"category"] = [NSString stringWithFormat:categorySetup,[[DataStore getFriendWithId:roundObject[@"subject"]] objectForKey:User_FirstName]];
+        //Get new category
+        [Comms getCategories];
+        PFObject *category = [[DataStore instance].categories objectAtIndex:(arc4random() % [DataStore instance].categories.count)];
+        
+        roundObject[@"category"] = [NSString stringWithFormat:@"%@ %@%@", category[@"category"], [[DataStore getFriendWithId:roundObject[@"subject"]] objectForKey:User_FirstName], category[@"categoryEnd"]];
+        
         
         
         gameObject[@"currentRound"] = roundObject;
@@ -329,8 +337,10 @@
     roundObject[@"subject"] = [nonJudgePlayers objectAtIndex:(arc4random() % nonJudgePlayers.count)];
         
     //Get new category
-    NSString *categorySetup = [categories objectAtIndex:(arc4random() % categories.count)];
-    roundObject[@"category"] = [NSString stringWithFormat:categorySetup,[[DataStore getFriendWithId:roundObject[@"subject"]] objectForKey:User_FirstName]];
+    [Comms getCategories];
+    PFObject *category = [[DataStore instance].categories objectAtIndex:(arc4random() % [DataStore instance].categories.count)];
+    
+    roundObject[@"category"] = [NSString stringWithFormat:@"%@ %@%@", category[@"category"], [[DataStore getFriendWithId:roundObject[@"subject"]] objectForKey:User_FirstName], category[@"categoryEnd"]];
         
     //new round round
     roundObject[@"round"] = game[@"rounds"];
@@ -397,6 +407,16 @@
             [delegate didGetPreviousRounds:YES info: nil];
         }
     }];
+}
+
++ (void) getCategories
+{
+
+    PFQuery *getCategory = [PFQuery queryWithClassName:@"category"];
+    
+     [DataStore instance].categories = [[NSMutableArray alloc] initWithArray:[getCategory findObjects]];
+    
+    NSLog(@"Categories: %@", [DataStore instance].categories);
 }
 
 
