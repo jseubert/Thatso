@@ -13,6 +13,7 @@
 //Notifications 
 + (void) login:(id<CommsDelegate>)delegate
 {
+    NSLog(@"Bundle ID: %@",[[NSBundle mainBundle] bundleIdentifier]);
     // Reset the DataStore so that we are starting from a fresh Login
     // as we could have come to this screen from the Logout navigation
     [[DataStore instance] reset];
