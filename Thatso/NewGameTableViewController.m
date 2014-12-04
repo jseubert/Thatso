@@ -11,6 +11,7 @@
 #import "ProfileViewTableViewCell.h"
 #import "UIImage+Scaling.h"
 #import "AppDelegate.h"
+#import "StringUtils.h"
 
 @interface NewGameTableViewController () < CreateGameDelegate>
 
@@ -160,11 +161,19 @@
     
 }
 
-- (void) newGameUploadedToServer:(BOOL)success info:(NSString *)info{
+- (void) newGameUploadedToServer:(BOOL)success game:(Game *)game info:(NSString *)info{
     NSLog(@"newGameUploadedToServer: %d", success);
     [self enableUI:YES];
     [self.activityIndicator stopAnimating];
+    
     if (success) {
+        //Send out that a new game was added so other users can download it.
+        NSMutableArray *nonUserPlayers = [[NSMutableArray alloc] initWithArray:game.players];
+        [nonUserPlayers removeObject:[[PFUser currentUser] objectForKey:UserFacebookID]];
+        SINOutgoingMessage *message = [SINOutgoingMessage messageWithRecipients:nonUserPlayers text:NewGame];
+        [message addHeaderWithValue:game.objectId key:ObjectID];
+        [self.messageClient sendMessage:message];
+        
         [self.navigationController popViewControllerAnimated:YES];
     
     }else{
@@ -182,26 +191,74 @@
 #pragma mark - SINMessageClientDelegate
 
 - (void)messageClient:(id<SINMessageClient>)messageClient didReceiveIncomingMessage:(id<SINMessage>)message {
-    
-    NSString *winner = [DataStore getFriendFirstNameWithID:[message.headers objectForKey:@"from"]];
-    
-    if([message.text isEqualToString:@"NewRound"])
-    {
-        NSString* summary = [NSString stringWithFormat:@"New round starting: %@ won previous.", winner];
-        UILocalNotification* notification = [[UILocalNotification alloc] init];
-        notification.alertBody = summary;
-        /*
-         if([[UserGames instance] isGameActive:self.currentGame.objectId])
-         {
-         notification.applicationIconBadgeNumber = [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1;
-         [[UserGames instance] markGame:self.currentGame.objectId active:NO];
-         } else{
-         notification.applicationIconBadgeNumber = [[UIApplication sharedApplication] applicationIconBadgeNumber];
-         }
-         */
-        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+    //In background
+    if([UIApplication sharedApplication].applicationState == UIApplicationStateBackground || [UIApplication sharedApplication].applicationState == UIApplicationStateBackground){
+        if([message.text isEqualToString:NewRound])
+        {
+            NSString *winner = [DataStore getFriendFirstNameWithID:[message.headers objectForKey:CompletedRoundWinningResponseFrom]];
+            
+            NSString* summary = [NSString stringWithFormat:@"New round starting: %@ won previous.", winner];
+            UILocalNotification* notification = [[UILocalNotification alloc] init];
+            notification.alertBody = summary;
+            
+            [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+        }
+        else if([message.text isEqualToString:NewGame])
+        {
+            PFQuery *getGames = [PFQuery queryWithClassName:GameClass];
+            NSString* gameId = [message.headers objectForKey:ObjectID];
+            [getGames getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
+                Game* game = (Game*)object;
+                //Add the game
+                [[[UserGames instance] games] addObject:game];
+                
+                //Notify?
+                [[NSNotificationCenter defaultCenter]
+                 postNotificationName:N_GamesDownloaded
+                 object:self];
+                
+                //Build notification and send
+                NSString* summary = [NSString stringWithFormat:@"You were added to a new game with: %@", [StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
+                UILocalNotification* notification = [[UILocalNotification alloc] init];
+                notification.alertBody = summary;
+                [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+            }];
+        }
     }
-    
+    //UserActive on this screen
+    else
+    {
+        if([message.text isEqualToString:NewRound])
+        {
+            NSString *winner = [DataStore getFriendFirstNameWithID:[message.headers objectForKey:CompletedRoundWinningResponseFrom]];
+            
+            NSString* summary = [NSString stringWithFormat:@"%@ won round %@ with: %@", winner, [message.headers objectForKey:CompletedRoundNumber], [message.headers objectForKey:CompletedRoundWinningResponse]];
+            [self showAlertWithTitle:@"New Round Started" andSummary:summary];
+        }
+        else if([message.text isEqualToString:NewGame])
+        {
+            PFQuery *getGame = [PFQuery queryWithClassName:GameClass];
+            NSLog(@"GameID: %@",[message.headers objectForKey:ObjectID]);
+            NSString* gameId = [message.headers objectForKey:ObjectID];
+            [getGame getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
+                Game* game = (Game*)object;
+                //Add the game
+                [[[UserGames instance] games] addObject:game];
+               
+                [game.currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                    //Build alert
+                    NSString *summary = [NSString stringWithFormat:@"First category is \"%@\" with %@", game.currentRound.category,[StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
+                    [self showAlertWithTitle:@"You were added to a new game!" andSummary:summary];
+                }];
+                
+                //Notify?
+                [[NSNotificationCenter defaultCenter]
+                 postNotificationName:N_GamesDownloaded
+                 object:self];
+
+            }];
+        }
+    }
 }
 
 - (void)messageSent:(id<SINMessage>)message recipientId:(NSString *)recipientId {
@@ -221,6 +278,23 @@
 - (void)messageFailed:(id<SINMessage>)message info:(id<SINMessageFailureInfo>)failureInfo {
     NSLog(@"Failed delivering message to %@. Reason: %@", failureInfo.recipientId,
           [failureInfo.error description]);
+}
+
+//Alert Views
+- (void) dismissAlert {
+    if (self.alertView && self.alertView.visible) {
+        [self.alertView dismissWithClickedButtonIndex:0 animated:YES];
+    }
+}
+
+-(void) showAlertWithTitle: (NSString *)title andSummary:(NSString *)summary
+{
+    [self dismissAlert];
+    self.alertView = [[UIAlertView alloc]
+                      initWithTitle:title message:summary delegate:self  cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+    
+    // Display Alert Message
+    [self.alertView show];
 }
 
 

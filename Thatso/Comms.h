@@ -21,7 +21,7 @@ typedef void (^ImageResultBlock)(UIImage* image);
 @end
 
 @protocol CreateGameDelegate <NSObject>
-- (void) newGameUploadedToServer:(BOOL)success info: (NSString *) info;
+- (void) newGameUploadedToServer:(BOOL)success game: (Game*)game info: (NSString *) info;
 @end
 
 @protocol GetGamesDelegate <NSObject>

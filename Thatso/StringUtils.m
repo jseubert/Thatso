@@ -20,5 +20,42 @@
     return attributedString;
 }
 
++ (NSString *) buildTextStringForPlayersInGame: (NSArray *)playersInGame fullName:(BOOL) fullName
+{
+    NSString *nameType = UserFirstName;
+    NSString *title = [[NSString alloc] init];
+    NSString *lastName = @"";
+    if(fullName)
+    {
+        nameType = UserFullName;
+    }
+    for(int i = 0; i < playersInGame.count; i ++)
+    {
+        //Don't add your own name
+        if(![((NSString *)[playersInGame objectAtIndex:i]) isEqualToString:(NSString *)[[PFUser currentUser] objectForKey:UserFacebookID]])
+        {
+            if([lastName length] != 0)
+            {
+                title = [title stringByAppendingString:[NSString stringWithFormat:@"%@, ", lastName]];
+            }
+            if(fullName)
+            {
+                lastName = [DataStore getFriendFullNameWithID:[playersInGame objectAtIndex:i]];
+            } else{
+                lastName = [DataStore getFriendFirstNameWithID:[playersInGame objectAtIndex:i]];
+            }
+        }
+    }
+    if(playersInGame.count == 2)
+    {
+        title = [title stringByAppendingString:[NSString stringWithFormat:@"%@", lastName]];
+    } else
+    {
+        title = [title stringByAppendingString:[NSString stringWithFormat:@"and %@", lastName]];
+    }
+    
+    return title;
+}
+
 
 @end

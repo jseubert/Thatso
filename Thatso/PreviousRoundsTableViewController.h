@@ -17,5 +17,6 @@
 @property(nonatomic) Game *currentGame;
 @property(nonatomic) NSMutableArray* previousRounds;
 @property (strong, nonatomic) id<SINMessageClient> messageClient;
+@property (nonatomic, strong) UIAlertView *alertView;
 
 @end

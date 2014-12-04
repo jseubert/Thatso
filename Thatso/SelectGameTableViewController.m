@@ -161,32 +161,8 @@
         [currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
             [cell.categoryLabel setText:[NSString stringWithFormat:@"Round %@: %@", currentRound[RoundNumber], currentRound[RoundCategory]]];
         }];
-        NSArray *players = game.players;
-        NSString *title = [[NSString alloc] init];
         
-        NSString *lastName = @"";
-        for(int i = 0; i < players.count;i ++)
-        {
-            //Don't add your own name
-            if(![((NSString *)[players objectAtIndex:i]) isEqualToString:(NSString *)[[PFUser currentUser] objectForKey:UserFacebookID]])
-            {
-                if([lastName length] != 0)
-                {
-                    title = [title stringByAppendingString:[NSString stringWithFormat:@"%@, ", lastName]];
-                }
-                lastName = [DataStore getFriendFirstNameWithID:[players objectAtIndex:i]];
-
-            
-            }
-        }
-        if(players.count == 2)
-        {
-            title = [title stringByAppendingString:[NSString stringWithFormat:@"%@", lastName]];
-        } else
-        {
-             title = [title stringByAppendingString:[NSString stringWithFormat:@"and %@", lastName]];
-        }
-        [cell.namesLabel setText:title];
+        [cell.namesLabel setText:[StringUtils buildTextStringForPlayersInGame:game.players fullName:NO]];
         
         if([[UserGames instance] isGameActive:game.objectId])
         {
@@ -283,32 +259,70 @@
 #pragma mark - SINMessageClientDelegate
 
 - (void)messageClient:(id<SINMessageClient>)messageClient didReceiveIncomingMessage:(id<SINMessage>)message {
-    NSString *winner = [DataStore getFriendFirstNameWithID:[message.headers objectForKey:@"from"]];
-    
-
+   
     if([UIApplication sharedApplication].applicationState == UIApplicationStateBackground || [UIApplication sharedApplication].applicationState == UIApplicationStateBackground){
-        if([message.text isEqualToString:@"NewRound"])
+        if([message.text isEqualToString:NewRound])
         {
+            NSString *winner = [DataStore getFriendFirstNameWithID:[message.headers objectForKey:CompletedRoundWinningResponseFrom]];
+            
             NSString* summary = [NSString stringWithFormat:@"New round starting: %@ won previous.", winner];
             UILocalNotification* notification = [[UILocalNotification alloc] init];
             notification.alertBody = summary;
             
-            if([[UserGames instance] isGameActive:[message.headers objectForKey:CommentGameID]])
-            {
-                notification.applicationIconBadgeNumber = [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1;
-                [[UserGames instance] markGame:[message.headers objectForKey:CommentGameID] active:NO];
-            } else{
-                notification.applicationIconBadgeNumber = [[UIApplication sharedApplication] applicationIconBadgeNumber];
-            }
-            
             [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+        }
+        else if([message.text isEqualToString:NewGame])
+        {
+            PFQuery *getGames = [PFQuery queryWithClassName:GameClass];
+            NSString* gameId = [message.headers objectForKey:ObjectID];
+            [getGames getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
+                Game* game = (Game*)object;
+                //Add the game
+                [[[UserGames instance] games] addObject:game];
+                
+                //Notify?
+                [[NSNotificationCenter defaultCenter]
+                 postNotificationName:N_GamesDownloaded
+                 object:self];
+                
+                //Build notification and send
+                NSString* summary = [NSString stringWithFormat:@"You were added to a new game with: %@", [StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
+                UILocalNotification* notification = [[UILocalNotification alloc] init];
+                notification.alertBody = summary;
+                [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+            }];
         }
     } else {
         // Update UI in-app
-        if([message.text isEqualToString:@"NewRound"])
+        if([message.text isEqualToString:NewRound])
         {
-            NSString* summary = [NSString stringWithFormat:@"%@ won round %@ with: %@", winner, [message.headers objectForKey:@"round"], [message.headers objectForKey:@"comment"]];
+            NSString *winner = [DataStore getFriendFirstNameWithID:[message.headers objectForKey:CompletedRoundWinningResponseFrom]];
+            
+            NSString* summary = [NSString stringWithFormat:@"%@ won round %@ with: %@", winner, [message.headers objectForKey:CompletedRoundNumber], [message.headers objectForKey:CompletedRoundWinningResponse]];
             [self showAlertWithTitle:@"New Round Started" andSummary:summary];
+        }
+        else if([message.text isEqualToString:NewGame])
+        {
+            PFQuery *getGame = [PFQuery queryWithClassName:GameClass];
+            NSLog(@"GameID: %@",[message.headers objectForKey:ObjectID]);
+            NSString* gameId = [message.headers objectForKey:ObjectID];
+            [getGame getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
+                Game* game = (Game*)object;
+                //Add the game
+                [[[UserGames instance] games] addObject:game];
+                
+                [game.currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                    //Build alert
+                    NSString *summary = [NSString stringWithFormat:@"First category is \"%@\" with %@", game.currentRound.category,[StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
+                    [self showAlertWithTitle:@"You were added to a new game!" andSummary:summary];
+                }];
+                
+                //Notify?
+                [[NSNotificationCenter defaultCenter]
+                 postNotificationName:N_GamesDownloaded
+                 object:self];
+                
+            }];
         }
     }
     

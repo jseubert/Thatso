@@ -9,4 +9,5 @@
 #import <Foundation/Foundation.h>
 @interface StringUtils : NSObject
 + (NSAttributedString *) makeRefreshText:(NSString *) string;
++ (NSString *) buildTextStringForPlayersInGame: (NSArray *)playersInGame fullName:(BOOL) fullName;
 @end

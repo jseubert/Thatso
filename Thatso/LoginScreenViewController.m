@@ -9,6 +9,7 @@
 #import "LoginScreenViewController.h"
 #import "SelectGameTableViewController.h"
 #import "UIButton+CustomButtons.h"
+#import "AppDelegate.h"
 
 
 @interface LoginScreenViewController () <PHFComposeBarViewDelegate>
@@ -63,6 +64,11 @@
     // Check if user is cached and linked to Facebook, if so, bypass login
     if ([PFUser currentUser] && [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]]) {
         [Comms getAllFacebookFriends:nil];
+        
+        //Start Sinch!
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        [appDelegate initSinchClientWithUserId:[[PFUser currentUser] objectForKey:UserFacebookID]];
+        
         SelectGameTableViewController *vc = [[SelectGameTableViewController alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
     }
@@ -97,9 +103,14 @@
     
 	// Did we login successfully ?
 	if (success) {
+        //Start Sinch!
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        [appDelegate initSinchClientWithUserId:[[PFUser currentUser] objectForKey:UserFacebookID]];
+        
 		// Seque to the Image Wall
 		SelectGameTableViewController *vc = [[SelectGameTableViewController alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
+        
 	} else {
 		// Show error alert
 		[[[UIAlertView alloc] initWithTitle:@"Login Failed"

@@ -15,6 +15,11 @@ NSString * const N_CommentUploaded = @"N_CommentUploaded";
 NSString * const N_CommentsDownloaded = @"N_CommentsDownloaded";
 NSString * const N_VotedForComment = @"N_VotedForComment";
 
+#pragma mark Message Notifications
+NSString * const NewGame = @"NewGame";
+NSString * const NewRound = @"NewRound";
+NSString * const NewComment = @"NewComment";
+
 #pragma mark Classes
 NSString * const UserClass = @"User";
 NSString * const CommentClass = @"Comment";

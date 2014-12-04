@@ -12,6 +12,11 @@ extern NSString * const N_CommentUploaded;
 extern NSString * const N_CommentsDownloaded;
 extern NSString * const N_VotedForComment;
 
+#pragma mark Message Notifications
+extern NSString * const NewGame;
+extern NSString * const NewRound;
+extern NSString * const NewComment;
+
 #pragma mark Classes
 extern NSString * const UserClass;
 extern NSString * const CommentClass;

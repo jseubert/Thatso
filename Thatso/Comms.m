@@ -53,10 +53,6 @@
                     
                 // Add the User to the list of friends in the DataStore
                 //[[DataStore instance].fbFriends setObject:user forKey:[user objectForKey:UserFacebookID]];
-                    
-                //Start Sinch!
-                AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-                [appDelegate initSinchClientWithUserId:[user objectForKey:UserFacebookID]];
                 
                 //Now get all your friends and make sure theyre added
                 [Comms getAllFacebookFriends:delegate];
@@ -136,7 +132,7 @@
         //Error With Query
         if(error)
         {
-            [delegate newGameUploadedToServer:NO info:error.fberrorUserMessage];
+            [delegate newGameUploadedToServer:NO game:nil info:error.fberrorUserMessage];
         }
         //Check if this game already exists
         else if(objects != NULL && [objects count] > 0)
@@ -146,7 +142,7 @@
             {
                 if([allPlayersInGame count] == [[[objects objectAtIndex:i] objectForKey:GamePlayers] count])
                 {
-                    [delegate newGameUploadedToServer:NO info:@"A game with these users already exists!"];
+                    [delegate newGameUploadedToServer:NO game:nil info:@"A game with these users already exists!"];
                     return;
                 }
             }
@@ -182,10 +178,10 @@
                 
                 [[[UserGames instance] games] addObject:gameObject];
              
-                [delegate newGameUploadedToServer:YES info:@"Success"];
+                [delegate newGameUploadedToServer:YES game:gameObject info:@"Success"];
             } else {
                     // 6 If there was an error saving the new game object, report the error
-                    [delegate newGameUploadedToServer:NO info:error.fberrorUserMessage];
+                [delegate newGameUploadedToServer:NO game:nil info:error.fberrorUserMessage];
             }
         }];
         
@@ -213,7 +209,6 @@
             [delegate didGetGamesDelegate:YES info: nil];
         }
     }];
-
 }
 
 
