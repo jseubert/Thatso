@@ -55,7 +55,7 @@
     self.tableView.allowsMultipleSelection = YES;
 }
 
--(void) disableUI: (BOOL)flag
+-(void) enableUI: (BOOL)flag
 {
     [self.view setUserInteractionEnabled:flag];
     [self.navigationItem.rightBarButtonItem setEnabled:flag];
@@ -104,8 +104,9 @@
     }else if (indexPath.row < self.fbFriendsArray.count){
         PFUser *user = [self.fbFriendsArray objectAtIndex:indexPath.row];
         [cell.nameLabel setText:[DataStore getFriendFullNameWithID:[user objectForKey:UserFacebookID]]];
-        UIImage *fbProfileImage = [DataStore getFriendProfilePictureWithID:[user objectForKey:UserFacebookID]];
-        [cell.profilePicture setImage:[fbProfileImage imageScaledToFitSize:CGSizeMake(cell.frame.size.height, cell.frame.size.height)]];
+        [DataStore getFriendProfilePictureWithID:[user objectForKey:UserFacebookID] withBlock:^(UIImage *image) {
+            [cell.profilePicture setImage:[image imageScaledToFitSize:CGSizeMake(cell.frame.size.height, cell.frame.size.height)]];
+        }];
     }
     [cell setColorScheme:indexPath.row];
     return cell;
@@ -134,7 +135,7 @@
 
 -(IBAction)startGame:(id)sender{
     NSLog(@"startGame");
-    [self disableUI:YES];
+    [self enableUI:NO];
    if([self.tableView indexPathsForSelectedRows].count < 1) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Not enough Friends Selected"
                                                         message:@"Must choose at least 2 other people."
@@ -142,7 +143,7 @@
                                               cancelButtonTitle:@"OK"
                                               otherButtonTitles:nil];
         [alert show];
-       [self disableUI:NO];
+       [self enableUI:YES];
     } else {
         NSMutableArray* selectedFriends = [[NSMutableArray alloc] init];
         for(NSIndexPath * indexPath in [self.tableView indexPathsForSelectedRows])
@@ -161,7 +162,7 @@
 
 - (void) newGameUploadedToServer:(BOOL)success info:(NSString *)info{
     NSLog(@"newGameUploadedToServer: %d", success);
-    [self disableUI:NO];
+    [self enableUI:YES];
     [self.activityIndicator stopAnimating];
     if (success) {
         [self.navigationController popViewControllerAnimated:YES];

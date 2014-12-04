@@ -14,6 +14,8 @@
 #import "Comment.h"
 #import "CompletedRound.h"
 
+typedef void (^ImageResultBlock)(UIImage* image);
+
 @protocol DidLoginDelegate <NSObject>
 - (void) didlogin:(BOOL)success info: (NSString *) info;
 @end
@@ -42,10 +44,9 @@
 - (void) didGetPreviousRounds:(BOOL)success info: (NSString *) info;
 @end
 
-
-
 @interface Comms : NSObject
 + (void) login:(id<DidLoginDelegate>)delegate;
++ (void) getAllFacebookFriends:(id<DidLoginDelegate>)delegate;
 + (void) startNewGameWithUsers: (NSMutableArray *)fbFriendsInGame forDelegate:(id<CreateGameDelegate>)delegate;
 + (void) getUsersGamesforDelegate:(id<GetGamesDelegate>)delegate;
 + (void) addComment:(Comment*)comment forDelegate:(id<DidAddCommentDelegate>)delegate;
@@ -54,6 +55,6 @@
 + (void) getPreviousRoundsInGame: (Game*) game forDelegate:(id<DidGetPreviousRounds>)delegate;
 + (void) getCategories;
 + (void) getuser: (NSString *)fbId;
-+ (void) getProfilePictureForUser: (PFUser*) user;
++ (void) getProfilePictureForUser: (NSString*) fbId withBlock:(void (^)(UIImage*))block;
 @end
 

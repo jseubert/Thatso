@@ -248,14 +248,14 @@
     if([self isJudge])
     {
         [cell.nameLabel setText:[NSString stringWithFormat:@"You pick the best answer"]];
-        UIImage *fbProfileImage = [DataStore getFriendProfilePictureWithID:self.currentRound.judge];
-        [cell.profilePicture setImage:[fbProfileImage imageScaledToFitSize:CGSizeMake(cell.frame.size.height, cell.frame.size.height)]];
-
+     
     } else{
         [cell.nameLabel setText:[NSString stringWithFormat:@"%@ picks the best answer",[DataStore getFriendFirstNameWithID:self.currentRound.judge]]];
-        UIImage *fbProfileImage = [DataStore getFriendProfilePictureWithID:self.currentRound.judge];
-        [cell.profilePicture setImage:[fbProfileImage imageScaledToFitSize:CGSizeMake(cell.frame.size.height, cell.frame.size.height)]];
     }
+    
+    [DataStore getFriendProfilePictureWithID:self.currentRound.judge withBlock:^(UIImage *image) {
+        [cell.profilePicture setImage:[image imageScaledToFitSize:CGSizeMake(cell.frame.size.height, cell.frame.size.height)]];
+    }];
     
     //set color
     [cell setColorScheme:4];

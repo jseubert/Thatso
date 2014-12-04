@@ -62,6 +62,7 @@
     
     // Check if user is cached and linked to Facebook, if so, bypass login
     if ([PFUser currentUser] && [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]]) {
+        [Comms getAllFacebookFriends:nil];
         SelectGameTableViewController *vc = [[SelectGameTableViewController alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
     }

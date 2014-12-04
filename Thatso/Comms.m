@@ -11,6 +11,7 @@
 #import "Comms.h"
 
 @implementation Comms
+
 //Notifications 
 + (void) login:(id<DidLoginDelegate>)delegate
 {
@@ -47,7 +48,8 @@
                 [[PFUser currentUser] saveInBackground];
                 
                 // Launch another thread to handle the download of the user's Facebook profile picture
-                [Comms getProfilePictureForUser:user];
+                [Comms getProfilePictureForUser:[user objectForKey:UserFacebookID] withBlock:nil];
+                
                     
                 // Add the User to the list of friends in the DataStore
                 //[[DataStore instance].fbFriends setObject:user forKey:[user objectForKey:UserFacebookID]];
@@ -57,53 +59,59 @@
                 [appDelegate initSinchClientWithUserId:[user objectForKey:UserFacebookID]];
                 
                 //Now get all your friends and make sure theyre added
-                FBRequest *friendsRequest = [FBRequest requestForMyFriends];
-                [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
-                                                              NSDictionary* result,
-                                                              NSError *error)
-                {
-                    if(error)
-                    {
-                        [delegate didlogin:NO info: [NSString stringWithFormat:@"An error occurred: %@", error.localizedDescription]];
-                        return;
-                    }
-                    else
-                    {
-                        NSArray *friends = result[@"data"];
-                        NSMutableArray *friendsIDs = [[NSMutableArray alloc] init];
-                        for (FBGraphObject* friend in friends) {
-                            NSLog(@"Friend: %@", friend);
-                            [friendsIDs addObject:[friend objectForKey:ID]];
-                            NSLog(@"Friend: %@", [friend objectForKey:ID]);
-                        }
-                        
-                        PFQuery *getFBFriends = [PFUser query];
-                        [getFBFriends whereKey:UserFacebookID containedIn:friendsIDs];
-                        //[getFBFriends whereKey:UserFacebookID containsString:@"1467121910205120"];
-                        
-                        
-                        [getFBFriends findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-                            if(error)
-                            {
-                                [delegate didlogin:NO info: [NSString stringWithFormat:@"An error occurred: %@", error.localizedDescription]];
-                                return;
-                            } else{
-                                for (PFObject* friend in objects) {
-                                    [[DataStore instance].fbFriends setObject:friend forKey:friend[UserFacebookID]];
-                                    [Comms getProfilePictureForUser:(PFUser *)friend];
-                                }
-                                
-                                [Comms getCategories];
-                                
-                                [delegate didlogin:YES info: nil];
-                            }
-                        }];
-                    }
-                }];
+                [Comms getAllFacebookFriends:delegate];
             }
         }];
     }
     }];
+}
+
++ (void) getAllFacebookFriends:(id<DidLoginDelegate>)delegate
+{
+    [Comms getProfilePictureForUser:[[PFUser currentUser] objectForKey:UserFacebookID] withBlock:nil];
+    FBRequest *friendsRequest = [FBRequest requestForMyFriends];
+    [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
+                                                  NSDictionary* result,
+                                                  NSError *error)
+     {
+         if(error)
+         {
+             [delegate didlogin:NO info: [NSString stringWithFormat:@"An error occurred: %@", error.localizedDescription]];
+             return;
+         }
+         else
+         {
+             NSArray *friends = result[@"data"];
+             NSMutableArray *friendsIDs = [[NSMutableArray alloc] init];
+             for (FBGraphObject* friend in friends) {
+                 NSLog(@"Friend: %@", friend);
+                 [friendsIDs addObject:[friend objectForKey:ID]];
+                 NSLog(@"Friend: %@", [friend objectForKey:ID]);
+             }
+             
+             PFQuery *getFBFriends = [PFUser query];
+             [getFBFriends whereKey:UserFacebookID containedIn:friendsIDs];
+             //[getFBFriends whereKey:UserFacebookID containsString:@"1467121910205120"];
+             
+             
+             [getFBFriends findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+                 if(error)
+                 {
+                     [delegate didlogin:NO info: [NSString stringWithFormat:@"An error occurred: %@", error.localizedDescription]];
+                     return;
+                 } else{
+                     for (PFObject* friend in objects) {
+                         [[DataStore instance].fbFriends setObject:friend forKey:friend[UserFacebookID]];
+                         [Comms getProfilePictureForUser:[friend objectForKey:UserFacebookID] withBlock:nil];
+                     }
+                     
+                     [Comms getCategories];
+                     
+                     [delegate didlogin:YES info: nil];
+                 }
+             }];
+         }
+     }];
 }
 
 + (void) startNewGameWithUsers: (NSArray *)fbFriendsInGame forDelegate:(id<CreateGameDelegate>)delegate
@@ -171,7 +179,10 @@
         {
             if (succeeded) {
                 // 4 If the save was successful, save the comment in another new Parse object. Again, save the  user’s name and Facebook user ID along with the comment string.
-                    [delegate newGameUploadedToServer:YES info:@"Success"];
+                
+                [[[UserGames instance] games] addObject:gameObject];
+             
+                [delegate newGameUploadedToServer:YES info:@"Success"];
             } else {
                     // 6 If there was an error saving the new game object, report the error
                     [delegate newGameUploadedToServer:NO info:error.fberrorUserMessage];
@@ -407,19 +418,26 @@
     
     [[DataStore instance].fbFriends setObject:user forKey:fbId];
     
-    [Comms getProfilePictureForUser:user];
+    [Comms getProfilePictureForUser:[user objectForKey:UserFacebookID] withBlock:nil];
 }
 
-+ (void) getProfilePictureForUser: (PFUser*) user
++ (void) getProfilePictureForUser: (NSString*) fbId withBlock:(void (^)(UIImage*))block
 {
     [[NSOperationQueue profilePictureOperationQueue] addOperationWithBlock:^ {
         // Build a profile picture URL from the user's Facebook user id
-        NSString *profilePictureURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", user[UserFacebookID]];
+        NSString *profilePictureURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", fbId];
         NSData *profilePictureData = [NSData dataWithContentsOfURL:[NSURL URLWithString:profilePictureURL]];
         UIImage *profilePicture = [UIImage imageWithData:profilePictureData];
         
         // Set the profile picture into the user object
-        if (profilePicture) [[DataStore instance].fbFriendsProfilePictures setObject:profilePicture forKey:[user objectForKey:UserFacebookID]];
+        if (profilePicture)
+        {
+            [[DataStore instance].fbFriendsProfilePictures setObject:profilePicture forKey:fbId];
+        }
+        if(block != nil)
+        {
+            block(profilePicture);
+        }
     }];
 }
 

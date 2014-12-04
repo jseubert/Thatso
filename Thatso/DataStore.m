@@ -7,6 +7,7 @@
 //
 
 #import "DataStore.h"
+#import "NSOperationQueue+NSoperationQueue_SharedQueue.h"
 
 @implementation DataStore
 static DataStore *instance = nil;
@@ -61,8 +62,17 @@ static DataStore *instance = nil;
     return [self getFriendObjectForKey:UserFullName forFriendID: fbId];
 }
 
-+ (UIImage *) getFriendProfilePictureWithID: (NSString *) fbId {
-    return [[DataStore instance].fbFriendsProfilePictures objectForKey:fbId];
++ (void) getFriendProfilePictureWithID: (NSString *) fbId withBlock:(void (^)(UIImage*))block{
+    UIImage * image = [[DataStore instance].fbFriendsProfilePictures objectForKey:fbId];
+    if (image == nil)
+    {
+        [Comms getProfilePictureForUser:fbId withBlock:block];
+    }else{
+        if(block != nil)
+        {
+            block([[DataStore instance].fbFriendsProfilePictures objectForKey:fbId]);
+        }
+    }
 }
 
 @end

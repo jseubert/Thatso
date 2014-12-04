@@ -79,6 +79,11 @@
         
     }
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(newGamesAddedToDatabase:)
+                                                 name:N_GamesDownloaded
+                                               object:nil];
+    
     [self refreshGames:nil];
 }
 
@@ -235,6 +240,10 @@
     
 	// Get any new Wall Images since the last update
 	[Comms getUsersGamesforDelegate:self];
+}
+#pragma mark Game Download
+- (void) newGamesAddedToDatabase:(NSNotification *)note {
+    [self.tableView reloadData];
 }
 
 //Call back delegate for new images finished

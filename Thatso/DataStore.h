@@ -19,6 +19,6 @@
 + (NSString *) getFriendFirstNameWithID: (NSString *) fbId;
 + (NSString *) getFriendLastNameWithID: (NSString *) fbId;
 + (NSString *) getFriendFullNameWithID: (NSString *) fbId;
-+ (UIImage *) getFriendProfilePictureWithID: (NSString *) fbId;
++ (void) getFriendProfilePictureWithID: (NSString *) fbId withBlock:(void (^)(UIImage*))block;
 
 @end
