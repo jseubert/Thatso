@@ -62,7 +62,6 @@ static DataStore *instance = nil;
 }
 
 + (UIImage *) getFriendProfilePictureWithID: (NSString *) fbId {
-    NSDictionary *pictures = [DataStore instance].fbFriendsProfilePictures;
     return [[DataStore instance].fbFriendsProfilePictures objectForKey:fbId];
 }
 
