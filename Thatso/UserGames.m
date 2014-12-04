@@ -24,13 +24,29 @@ static UserGames *instance = nil;
     self = [super init];
     if (self) {
         _games = [[NSMutableArray alloc] init];
+        self.activeGames =[[NSMutableDictionary alloc] init];
     }
     return self;
 }
 
 - (void) reset
 {
+    [self.activeGames removeAllObjects];
     [_games removeAllObjects];
+}
+
+- (void) markGame:(NSString*)gameId active:(BOOL)active
+{
+    [self.activeGames setObject:[NSNumber numberWithBool:active] forKey:gameId];
+}
+
+-(BOOL) isGameActive:(NSString*)gameId
+{
+    if([self.activeGames objectForKey:gameId] == nil)
+    {
+        [self.activeGames setObject:[NSNumber numberWithBool:YES] forKey:gameId];
+    }
+    return [[self.activeGames objectForKey:gameId] boolValue];
 }
 
 @end

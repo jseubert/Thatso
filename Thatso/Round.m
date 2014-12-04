@@ -10,13 +10,16 @@
 #import <Parse/PFObject+Subclass.h>
 
 @implementation Round
-
+@dynamic judge;
+@dynamic subject;
+@dynamic category;
+@dynamic roundNumber;
 + (void)load {
     [self registerSubclass];
 }
 
 + (NSString *)parseClassName {
-    return @"Round";
+    return RoundClass;
 }
 
 @end

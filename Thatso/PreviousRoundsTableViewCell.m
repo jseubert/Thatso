@@ -1,15 +1,16 @@
 //
-//  SelectGameTableViewCell.m
+//  PreviousRoundsTableViewCell.m
 //  Thatso
 //
-//  Created by John  Seubert on 10/3/14.
+//  Created by John  Seubert on 12/3/14.
 //  Copyright (c) 2014 John Seubert. All rights reserved.
 //
 
-#import "SelectGameTableViewCell.h"
+#import "PreviousRoundsTableViewCell.h"
+
 #import "CommentTableViewCell.h"
 
-@implementation SelectGameTableViewCell
+@implementation PreviousRoundsTableViewCell
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -60,7 +61,6 @@
     
     CGFloat width = self.frame.size.width
     - 10    //left padding
-    - 30    //New Button
     - 10;   //padding on right
     
     CGSize topLabelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:self.namesLabel.text];
@@ -74,7 +74,7 @@
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
-
+    
     // Configure the view for the selected state
 }
 
@@ -120,5 +120,4 @@
     }
     
 }
-
 @end

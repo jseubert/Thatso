@@ -9,5 +9,10 @@
 #import <Parse/Parse.h>
 
 @interface Comment : PFObject<PFSubclassing>
+@property (retain) NSString *gameID;
+@property (retain) NSString *roundID;
+@property (retain) NSString *from;
+@property (retain) NSString *response;
+
 + (NSString *)parseClassName;
 @end

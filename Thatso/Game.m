@@ -10,17 +10,16 @@
 #import <Parse/PFObject+Subclass.h>
 
 @implementation Game
-@dynamic displayName;
-//@dynamic displayName;
-//@dynamic displayName;
-//@dynamic displayName;
+@dynamic players;
+@dynamic rounds;
+@dynamic currentRound;
 
 + (void)load {
     [self registerSubclass];
 }
 
 + (NSString *)parseClassName {
-    return @"Game";
+    return GameClass;
 }
 
 @end

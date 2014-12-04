@@ -6,16 +6,23 @@
 //  Copyright (c) 2014 John Seubert. All rights reserved.
 //
 
-#import "CompletedRounds.h"
+#import "CompletedRound.h"
 #import <Parse/PFObject+Subclass.h>
 
-@implementation CompletedRounds
+@implementation CompletedRound
+@dynamic judge;
+@dynamic subject;
+@dynamic category;
+@dynamic roundNumber;
+@dynamic gameID;
+@dynamic winningResponse;
+@dynamic winningResponseFrom;
 + (void)load {
     [self registerSubclass];
 }
 
 + (NSString *)parseClassName {
-    return @"CompletedRound";
+    return CompletedRoundClass;
 }
 
 @end

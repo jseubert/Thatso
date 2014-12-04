@@ -11,12 +11,14 @@
 @interface DataStore : NSObject
 
 @property (nonatomic, strong) NSMutableDictionary *fbFriends;
-@property (nonatomic, strong) NSMutableArray *fbFriendsArray;
-@property (nonatomic, strong) NSDictionary *user;
+@property (nonatomic, strong) NSMutableDictionary *fbFriendsProfilePictures;
 @property (nonatomic, strong) NSMutableArray *categories;
 
 + (DataStore *) instance;
 - (void) reset;
-+ (NSDictionary *) getFriendWithId: (NSString *) fbId;
++ (NSString *) getFriendFirstNameWithID: (NSString *) fbId;
++ (NSString *) getFriendLastNameWithID: (NSString *) fbId;
++ (NSString *) getFriendFullNameWithID: (NSString *) fbId;
++ (UIImage *) getFriendProfilePictureWithID: (NSString *) fbId;
 
 @end

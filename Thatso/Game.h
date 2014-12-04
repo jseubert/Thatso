@@ -7,12 +7,11 @@
 //
 
 #import <Parse/Parse.h>
+#import "Round.h"
 
 @interface Game : PFObject<PFSubclassing>
 + (NSString *)parseClassName;
-@property (retain) NSString *displayName;
-//@property (retain) NSString *displayName;
-//@property (retain) NSString *displayName;
-//@property (retain) NSString *displayName;
-//@property (retain) NSString *displayName;
+@property (retain) NSArray *players;
+@property (retain) NSNumber *rounds;
+@property (retain) Round *currentRound;
 @end

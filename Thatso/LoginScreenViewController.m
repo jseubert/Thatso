@@ -79,7 +79,7 @@
 
 }
 
-- (void) commsDidLogin:(BOOL)loggedIn {
+- (void) didlogin:(BOOL)success info: (NSString *) info {
     NSLog(@"commsDidLogin");
 	// Re-enable the Login button
 	[self.loginButton setEnabled:YES];
@@ -88,14 +88,14 @@
 	[self.activityIndicator stopAnimating];
     
 	// Did we login successfully ?
-	if (loggedIn) {
+	if (success) {
 		// Seque to the Image Wall
 		SelectGameTableViewController *vc = [[SelectGameTableViewController alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
 	} else {
 		// Show error alert
 		[[[UIAlertView alloc] initWithTitle:@"Login Failed"
-                                    message:@"Facebook Login failed. Please try again"
+                                    message:info
                                    delegate:nil
                           cancelButtonTitle:@"Ok"
                           otherButtonTitles:nil] show];

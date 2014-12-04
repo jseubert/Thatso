@@ -24,8 +24,7 @@ static DataStore *instance = nil;
     self = [super init];
     if (self) {
         _fbFriends = [[NSMutableDictionary alloc] init];
-        _user = [[NSDictionary alloc] init];
-        _fbFriendsArray = [[NSMutableArray alloc] init];
+        self.fbFriendsProfilePictures = [[NSMutableDictionary alloc] init];
         self.categories = [[NSMutableArray alloc] init];
     }
     return self;
@@ -34,15 +33,37 @@ static DataStore *instance = nil;
 - (void) reset
 {
     [_fbFriends removeAllObjects];
-    _user = NULL;
-    [_fbFriendsArray removeAllObjects];
     [self.categories removeAllObjects];
+    [self.fbFriendsProfilePictures removeAllObjects];
 
 }
 
-+ (NSDictionary *) getFriendWithId: (NSString *) fbId
++(NSString *) getFriendObjectForKey: (NSString *)key forFriendID: (NSString *) fbId
 {
-    return [[DataStore instance].fbFriends objectForKey:fbId];
+    //Download user if it doesnt exist
+    NSDictionary *friend = [[DataStore instance].fbFriends objectForKey:fbId];
+    if(friend == nil)
+    {
+        [Comms getuser:fbId];
+    }
+    return [[[DataStore instance].fbFriends objectForKey:fbId] objectForKey:key];
+}
+
++ (NSString *) getFriendFirstNameWithID: (NSString *) fbId {
+    return [self getFriendObjectForKey:UserFirstName forFriendID: fbId];
+}
+
++ (NSString *) getFriendLastNameWithID: (NSString *) fbId {
+    return [self getFriendObjectForKey:UserLastName forFriendID: fbId];
+}
+
++ (NSString *) getFriendFullNameWithID: (NSString *) fbId {
+    return [self getFriendObjectForKey:UserFullName forFriendID: fbId];
+}
+
++ (UIImage *) getFriendProfilePictureWithID: (NSString *) fbId {
+    NSDictionary *pictures = [DataStore instance].fbFriendsProfilePictures;
+    return [[DataStore instance].fbFriendsProfilePictures objectForKey:fbId];
 }
 
 @end

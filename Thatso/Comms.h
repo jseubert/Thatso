@@ -8,18 +8,15 @@
 
 #import <Foundation/Foundation.h>
 #import <Parse/Parse.h>
-@protocol CommsDelegate <NSObject>
-@optional
-- (void) commsDidLogin:(BOOL)loggedIn;
-- (void) newGameUploadedToServer:(BOOL)success info: (NSString *) info;
-- (void) commsDidGetUserGames;
-- (void) commsDidGetComments: (NSMutableDictionary *) comments;
+#import "Game.h"
+#import "GenericCategory.h"
+#import "Round.h"
+#import "Comment.h"
+#import "CompletedRound.h"
+
+@protocol DidLoginDelegate <NSObject>
+- (void) didlogin:(BOOL)success info: (NSString *) info;
 @end
-
-
-
-
-
 
 @protocol CreateGameDelegate <NSObject>
 - (void) newGameUploadedToServer:(BOOL)success info: (NSString *) info;
@@ -38,7 +35,7 @@
 @end
 
 @protocol DidStartNewRound <NSObject>
-- (void) didStartNewRound:(BOOL)success info: (NSString *) info previousWinner:(PFObject *)winningRound;
+- (void) didStartNewRound:(BOOL)success info: (NSString *) info previousWinner:(CompletedRound *)winningRound;
 @end
 
 @protocol DidGetPreviousRounds <NSObject>
@@ -48,13 +45,15 @@
 
 
 @interface Comms : NSObject
-+ (void) login:(id<CommsDelegate>)delegate;
++ (void) login:(id<DidLoginDelegate>)delegate;
 + (void) startNewGameWithUsers: (NSMutableArray *)fbFriendsInGame forDelegate:(id<CreateGameDelegate>)delegate;
 + (void) getUsersGamesforDelegate:(id<GetGamesDelegate>)delegate;
-+ (void) addComment:(PFObject*)comment forDelegate:(id<DidAddCommentDelegate>)delegate;
-+ (void) getActiveCommentsForGame:(PFObject*)game inRound:(PFObject*)round forDelegate:(id<DidGetCommentsDelegate>)delegate;
-+ (void) finishRound: (PFObject *)round inGame: (PFObject *)game withWinningComment: (PFObject *)comment andOtherComments: (NSArray *)otherComments forDelegate:(id<DidStartNewRound>)delegate;
-+ (void) getPreviousRoundsInGame: (PFObject * ) game forDelegate:(id<DidGetPreviousRounds>)delegate;
++ (void) addComment:(Comment*)comment forDelegate:(id<DidAddCommentDelegate>)delegate;
++ (void) getActiveCommentsForGame:(Game*)game inRound:(Round*)round forDelegate:(id<DidGetCommentsDelegate>)delegate;
++ (void) finishRound: (Round*)round inGame: (Game*)game withWinningComment: (Comment*)comment andOtherComments: (NSArray *)otherComments forDelegate:(id<DidStartNewRound>)delegate;
++ (void) getPreviousRoundsInGame: (Game*) game forDelegate:(id<DidGetPreviousRounds>)delegate;
 + (void) getCategories;
++ (void) getuser: (NSString *)fbId;
++ (void) getProfilePictureForUser: (PFUser*) user;
 @end
 

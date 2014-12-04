@@ -11,8 +11,12 @@
 
 @interface UserGames : NSObject
 @property (nonatomic, strong) NSMutableArray *games;
+@property (nonatomic, strong) NSMutableDictionary *activeGames;
 +(UserGames *) instance;
 - (void) reset;
+- (void) markGame:(NSString*)gameId active:(BOOL)active;
+-(BOOL) isGameActive:(NSString*)gameId;
+
 @end
 
 @interface CurrentRounds : NSObject
@@ -28,3 +32,6 @@
 -(void) setPreviousRounds: (NSArray*)rounds forGameId: (NSString *) gameId;
 -(void) reset;
 @end
+
+
+

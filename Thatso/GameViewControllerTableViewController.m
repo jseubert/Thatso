@@ -12,7 +12,6 @@
 #import "StringUtils.h"
 #import "UIImage+Scaling.h"
 #import "CommentTableViewCell.h"
-#import "UserCommentTableViewCell.h"
 #import "PreviousRoundsTableViewController.h"
 #import "AppDelegate.h"
 
@@ -32,7 +31,12 @@
 
 -(BOOL) isJudge
 {
-    return [[[DataStore instance].user objectForKey:User_ID] isEqualToString:self.currentRound[@"judge"]];
+    return [[[PFUser currentUser] objectForKey:UserFacebookID] isEqualToString:self.currentRound[RoundJudge]];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [[UserGames instance] markGame:self.currentGame.objectId active:YES];
 }
 
 - (void)viewDidLoad
@@ -131,8 +135,8 @@
     
     //Remove yourself from the game's players
     
-    nonUserPlayers = [[NSMutableArray alloc] initWithArray:self.currentGame[@"players"]];
-    [nonUserPlayers removeObject:[[DataStore instance].user objectForKey:User_ID]];
+    nonUserPlayers = [[NSMutableArray alloc] initWithArray:self.currentGame.players];
+    [nonUserPlayers removeObject:[[PFUser currentUser] objectForKey:UserFacebookID]];
     
     [self refreshGame:nil];
 
@@ -140,9 +144,9 @@
 
 -(void) setupHeader
 {
-    self.currentRound = self.currentGame[@"currentRound"];
+    self.currentRound = self.currentGame.currentRound;
     [self.currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-        [self.headerView setText:[NSString stringWithFormat:@"Round %@: %@",self.currentRound[@"round"], self.currentRound[@"category"]]];
+        [self.headerView setText:[NSString stringWithFormat:@"Round %@: %@",self.currentRound.roundNumber, self.currentRound.category]];
         [self layoutSubviews];
     }];
     [self.headerView setBackgroundColor:[UIColor pinkAppColor]];
@@ -160,6 +164,7 @@
 -(void)layoutSubviews
 {
     CGSize headerTextSize = [CommentTableViewCell sizeWithFontAttribute:self.headerView.font constrainedToSize:(CGSizeMake(self.view.bounds.size.width, self.view.bounds.size.height)) withText:self.headerView.text];
+    
     self.headerView.frame = CGRectMake(0,
                                        self.navigationController.navigationBar.frame.size.height + 20 ,
                                        self.view.bounds.size.width ,
@@ -206,7 +211,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    PFObject* comment = [self.comments objectAtIndex:indexPath.row];
+    Comment* comment = [self.comments objectAtIndex:indexPath.row];
     CGFloat width = tableView.frame.size.width
     - 10    //left padding
     - CommentTableViewCellIconSize
@@ -214,8 +219,15 @@
     - 10;   //padding on right
     
     //get the size of the label given the text
-    CGSize labelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:comment[@"comment"]];
-    
+    CGSize labelSize;
+    if([comment.from isEqualToString:[[PFUser currentUser] objectForKey:UserFacebookID]])
+    {
+        labelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:[NSString stringWithFormat:@"(Your Response) %@",comment.response]];
+        
+    } else
+    {
+        labelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:comment.response];        
+    }
     //1O padding on top and bottom
     return 10 + labelSize.height + 10;
 }
@@ -235,13 +247,13 @@
     
     if([self isJudge])
     {
-        [cell.nameLabel setText:[NSString stringWithFormat:@"Judge: %@ (You)", [[DataStore instance].user objectForKey:User_FullName]]];
-        UIImage *fbProfileImage = [[DataStore instance].user objectForKey:User_FacebookProfilePicture];
+        [cell.nameLabel setText:[NSString stringWithFormat:@"You pick the best answer"]];
+        UIImage *fbProfileImage = [DataStore getFriendProfilePictureWithID:self.currentRound.judge];
         [cell.profilePicture setImage:[fbProfileImage imageScaledToFitSize:CGSizeMake(cell.frame.size.height, cell.frame.size.height)]];
 
     } else{
-        [cell.nameLabel setText:[NSString stringWithFormat:@"Judge: %@",[[DataStore getFriendWithId:self.currentRound[@"judge"]] objectForKey:User_FullName]]];
-        UIImage *fbProfileImage = [[DataStore getFriendWithId:self.currentRound[@"judge"]] objectForKey:User_FacebookProfilePicture];
+        [cell.nameLabel setText:[NSString stringWithFormat:@"%@ picks the best answer",[DataStore getFriendFirstNameWithID:self.currentRound.judge]]];
+        UIImage *fbProfileImage = [DataStore getFriendProfilePictureWithID:self.currentRound.judge];
         [cell.profilePicture setImage:[fbProfileImage imageScaledToFitSize:CGSizeMake(cell.frame.size.height, cell.frame.size.height)]];
     }
     
@@ -265,16 +277,21 @@
     if (cell == nil) {
         cell = [[CommentTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:commentCellIdentifier];
     }
-    PFObject* comment = [self.comments objectAtIndex:indexPath.row];
-    if([comment[@"from"] isEqualToString:[[DataStore instance].user objectForKey:User_ID]])
+    Comment* comment = [self.comments objectAtIndex:indexPath.row];
+    if([comment.from isEqualToString:[[PFUser currentUser] objectForKey:UserFacebookID]])
     {
-        [cell setCommentLabelText:[NSString stringWithFormat:@"(Your Response) %@",comment[@"comment"]]];
+        [cell setCommentLabelText:[NSString stringWithFormat:@"(Your Response) %@",comment.response]];
     } else
     {
-        [cell setCommentLabelText:comment[@"comment"]];
+        [cell setCommentLabelText:comment.response];
     }
-    
-    [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+    if([self isJudge])
+    {
+        [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
+    }else
+    {
+        [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+    }
     return cell;
 }
 
@@ -283,18 +300,12 @@
     NSLog(@"didSelectRowAtIndexPath");
     if([self isJudge])
     {
-        PFObject* winningComment = [self.comments objectAtIndex:indexPath.row];
-        NSString *title = [NSString stringWithFormat:@"%@'s comment wins!", [[DataStore getFriendWithId:winningComment[@"from"]] objectForKey:User_FirstName]];
+        Comment* winningComment = [self.comments objectAtIndex:indexPath.row];
+        NSString *title = [NSString stringWithFormat:@"%@'s comment wins!", [DataStore getFriendFirstNameWithID:winningComment[@"from"]]];
         NSString *summary = [NSString stringWithFormat:@"Click OK to start the next round!"];
         
         
-        UIAlertView *messageAlert = [[UIAlertView alloc]
-                                     initWithTitle:title message:summary delegate:self  cancelButtonTitle:nil otherButtonTitles:nil];
-        [messageAlert addButtonWithTitle:@"OK"];
-        [messageAlert setTag:1];
-        
-        // Display Alert Message
-        [messageAlert show];
+        [self showAlertWithTitle:title andSummary:summary];
         
         //Start next round
         [Comms finishRound:self.currentRound inGame:self.currentGame withWinningComment:winningComment andOtherComments:self.comments forDelegate:self];
@@ -323,7 +334,7 @@
     }
     NSLog(@"refreshGame: GameID: %@", self.currentGame.objectId);
     [self.currentGame refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-        self.currentRound = self.currentGame[@"currentRound"];
+        self.currentRound = self.currentGame.currentRound;
         [self.currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
             
             [Comms getActiveCommentsForGame:self.currentGame inRound:self.currentRound forDelegate:self];
@@ -350,10 +361,6 @@
     
     }else{
         if (self.refreshControl) {
-            NSString *lastUpdated = [NSString stringWithFormat:@"Last updated on %@", [_dateFormatter stringFromDate:[NSDate date]]];
-            [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:lastUpdated]];
-            [self.refreshControl setTintColor:[UIColor whiteColor]];
-            
             [self.refreshControl endRefreshing];
         }
         
@@ -371,7 +378,7 @@
 #pragma Submitting a commment
 -(void)uploadComment:(NSString *)commentText
 {
-    //ToO. Check comment is a ok.
+    //Make sure the user entered a comment
     if(commentText == nil || commentText.length == 0)
     {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Can't Enter Empty Comment"
@@ -383,15 +390,17 @@
         return;
     }
     
-    PFObject *comment;
+    Comment *comment;
     BOOL newObject = YES;
+    //find out if the user already submitted a comment
     for(int i = 0; i < self.comments.count; i ++)
     {
         comment = [self.comments objectAtIndex:i];
-        if([comment[@"from"] isEqualToString:[[DataStore instance].user objectForKey:User_ID]])
+        if([comment.from isEqualToString:[[PFUser currentUser] objectForKey:UserFacebookID]])
         {
-            self.previousComment = [NSString stringWithString:comment[@"comment"]];
-            comment[@"comment"] = commentText;
+            //check if they just submitted the same thing
+            self.previousComment = [NSString stringWithString:comment.response];
+            comment.response = commentText;
             newObject = NO;
             break;
         }
@@ -400,11 +409,11 @@
     {
         
         NSLog(@"Self.CurrentGame: %@", self.currentGame);
-        comment = [PFObject objectWithClassName:@"ActiveComments"];
-        comment[@"comment"] = commentText;
-        comment[@"gameId"] = self.currentGame.objectId;
-        comment[@"roundId"] = self.currentRound.objectId;
-        comment[@"from"] = [[DataStore instance].user objectForKey:User_ID];
+        comment = [Comment object];
+        comment.response = commentText;
+        comment.gameID = self.currentGame.objectId;
+        comment.roundID = self.currentRound.objectId;
+        comment.from = [[PFUser currentUser] objectForKey:UserFacebookID];
         
         [self.comments addObject:comment];
     }
@@ -435,15 +444,15 @@
         {
             [self refreshGame:nil];
         } else{
-            PFObject *comment;
+            Comment *comment;
             for(int i = 0; i < self.comments.count; i ++)
             {
                 comment = [self.comments objectAtIndex:i];
-                if([comment[@"from"] isEqualToString:[[DataStore instance].user objectForKey:User_ID]])
+                if([comment.from isEqualToString:[[PFUser currentUser] objectForKey:UserFacebookID]])
                 {
                     if(self.previousComment.length > 0 && self.previousComment != nil)
                     {
-                        comment[@"comment"] = self.previousComment;
+                        comment.response = self.previousComment;
                         self.previousComment = nil;
                     } else{
                         [self.comments removeObjectAtIndex:i];
@@ -456,7 +465,7 @@
 }
 
 #pragma staring new round
-- (void) didStartNewRound:(BOOL)success info: (NSString *) info previousWinner:(PFObject *)winningRound;
+- (void) didStartNewRound:(BOOL)success info: (NSString *) info previousWinner:(CompletedRound *)winningRound;
 {
     if(success)
     {
@@ -466,10 +475,11 @@
         [self refreshGame:nil];
         
         SINOutgoingMessage *message = [SINOutgoingMessage messageWithRecipients:nonUserPlayers text:@"NewRound"];
-        [message addHeaderWithValue:winningRound[@"category"] key:@"category"];
-        [message addHeaderWithValue:[NSString stringWithFormat:@"%@",winningRound[@"round"]] key:@"round"];
-        [message addHeaderWithValue:winningRound[@"comment"] key:@"comment"];
-        [message addHeaderWithValue:winningRound[@"from"] key:@"from"];
+        [message addHeaderWithValue:winningRound.category key:CompletedRoundCategory];
+        [message addHeaderWithValue:[NSString stringWithFormat:@"%@",winningRound.roundNumber] key:CompletedRoundNumber];
+        [message addHeaderWithValue:winningRound.winningResponse key:CompletedRoundWinningResponse];
+        [message addHeaderWithValue:winningRound.winningResponseFrom key:CompletedRoundWinningResponseFrom];
+        [message addHeaderWithValue:winningRound.gameID key:CompletedRoundGameID];
         [self.messageClient sendMessage:message];
         
     }else{
@@ -515,7 +525,6 @@
 }
 
 - (void)resignOnTap:(id)sender {
-    NSLog(@"resignOnTap");
     [self.composeBarView resignFirstResponder];
 }
 
@@ -542,22 +551,57 @@
     [self layoutSubviews];
 }
 
+- (void) dismissAlert {
+    if (self.alertView && self.alertView.visible) {
+        [self.alertView dismissWithClickedButtonIndex:0 animated:YES];
+    }
+}
+
+-(void) showAlertWithTitle: (NSString *)title andSummary:(NSString *)summary
+{
+    [self dismissAlert];
+    self.alertView = [[UIAlertView alloc]
+                      initWithTitle:title message:summary delegate:self  cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+    
+    // Display Alert Message
+    [self.alertView show];
+}
+
 #pragma mark - SINMessageClientDelegate
 
 - (void)messageClient:(id<SINMessageClient>)messageClient didReceiveIncomingMessage:(id<SINMessage>)message {
-    NSLog(@"didReceiveIncomingMessage: %@", message);
-    if([message.text isEqualToString:@"NewRound"])
-    {
-        NSString *winner = [[DataStore getFriendWithId:[message.headers objectForKey:@"from"]] objectForKey:User_FirstName];
-        NSString* summary = [NSString stringWithFormat:@"%@ won round %@ with: %@", winner, [message.headers objectForKey:@"round"], [message.headers objectForKey:@"comment"]];
-        
-        UIAlertView *messageAlert = [[UIAlertView alloc]
-                                     initWithTitle:@"New Round Started" message:summary delegate:self  cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-        
-        // Display Alert Message
-        [messageAlert show];
+    NSLog(@"didReceiveIncomingMessage: %@", message );
+    //If user is inactive, send a notification
+    if([UIApplication sharedApplication].applicationState == UIApplicationStateBackground || [UIApplication sharedApplication].applicationState == UIApplicationStateBackground){
+        if([message.text isEqualToString:@"NewRound"])
+        {
+            NSString *winner = [DataStore getFriendFirstNameWithID:[message.headers objectForKey:CompletedRoundWinningResponseFrom]];
+            
+            NSString* summary = [NSString stringWithFormat:@"New round starting: %@ won previous.", winner];
+            UILocalNotification* notification = [[UILocalNotification alloc] init];
+            notification.alertBody = summary;
+            
+            if([[UserGames instance] isGameActive:self.currentGame.objectId])
+            {
+                notification.applicationIconBadgeNumber = [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1;
+                [[UserGames instance] markGame:self.currentGame.objectId active:NO];
+            } else{
+                notification.applicationIconBadgeNumber = [[UIApplication sharedApplication] applicationIconBadgeNumber];
+            }
+
+            [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+        }
+    } else {
+        // Update UI in-app
+        if([message.text isEqualToString:@"NewRound"])
+        {
+            NSString *winner = [DataStore getFriendFirstNameWithID:[message.headers objectForKey:CompletedRoundWinningResponseFrom]];
+            
+            NSString* summary = [NSString stringWithFormat:@"%@ won round %@ with: %@", winner, [message.headers objectForKey:CompletedRoundNumber], [message.headers objectForKey:CompletedRoundWinningResponse]];
+            [self showAlertWithTitle:@"New Round Started" andSummary:summary];
+        }
+        [self refreshGame:nil];
     }
-    [self refreshGame:nil];
 }
 
 - (void)messageSent:(id<SINMessage>)message recipientId:(NSString *)recipientId {

@@ -10,13 +10,23 @@
 #import "FratBarButtonItem.h"
 #import "StringUtils.h"
 #import "CommentTableViewCell.h"
-#import "SelectGameTableViewCell.h"
+#import "PreviousRoundsTableViewCell.h"
+#import "AppDelegate.h"
 
 @interface PreviousRoundsTableViewController ()
 
 @end
 
 @implementation PreviousRoundsTableViewController
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    
+    //Recieve messages
+    self.messageClient = [appDelegate.client messageClient];
+    self.messageClient.delegate = self;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -70,22 +80,28 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.previousRounds.count;
+    if(initialLoad)
+    {
+        return 1;
+    }else{
+        return self.previousRounds.count;
+    }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if(initialLoad){
         return UITableViewAutomaticDimension;
     } else{
-        PFObject* round = [self.previousRounds objectAtIndex:indexPath.row];
+        CompletedRound* round = [self.previousRounds objectAtIndex:indexPath.row];
         
         CGFloat width = tableView.frame.size.width
             - 10    //left padding
             - 10;   //padding on right
             
         //get the size of the label given the text
-        CGSize topLabelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:round[@"category"]];
-        CGSize bottomeLabelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(width, width)) withText:round[@"comment"]];
+        CGSize topLabelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:round.category];
+        NSString *winner = [DataStore getFriendFirstNameWithID:round.winningResponseFrom];
+        CGSize bottomeLabelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(width, width)) withText:[NSString stringWithFormat:@"%@: %@", winner, round.winningResponse]];
         
         
         //1O padding on top and bottom
@@ -102,9 +118,9 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *cellIdentifier = @"PreviousCell";
-    SelectGameTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    PreviousRoundsTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (cell == nil) {
-        cell = [[SelectGameTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        cell = [[PreviousRoundsTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     
     if(initialLoad)
@@ -113,10 +129,10 @@
     } else if(self.previousRounds.count == 0){
         cell.namesLabel.text = @"No previous rounds...";
     } else{
-        PFObject* round = [self.previousRounds objectAtIndex:indexPath.row];
-        NSString *winner = [[DataStore getFriendWithId:round[@"from"]] objectForKey:User_FirstName];
-        [cell.namesLabel setText:round[@"category"]];
-        [cell.categoryLabel setText:[NSString stringWithFormat:@"%@: %@", winner, round[@"comment"]]];
+        CompletedRound* round = [self.previousRounds objectAtIndex:indexPath.row];
+        NSString *winner = [DataStore getFriendFirstNameWithID:round.winningResponseFrom];
+        [cell.namesLabel setText:round.category];
+        [cell.categoryLabel setText:[NSString stringWithFormat:@"%@: %@", winner, round.winningResponse]];
     }
     
     [cell setColorScheme:indexPath.row];
@@ -153,6 +169,50 @@
         [alert show];
         
     }
+}
+
+#pragma mark - SINMessageClientDelegate
+
+- (void)messageClient:(id<SINMessageClient>)messageClient didReceiveIncomingMessage:(id<SINMessage>)message {
+    
+    NSString *winner = [DataStore getFriendFirstNameWithID:[message.headers objectForKey:@"from"]];
+    
+    if([message.text isEqualToString:@"NewRound"])
+    {
+        NSString* summary = [NSString stringWithFormat:@"New round starting: %@ won previous.", winner];
+        UILocalNotification* notification = [[UILocalNotification alloc] init];
+        notification.alertBody = summary;
+        /*
+         if([[UserGames instance] isGameActive:self.currentGame.objectId])
+         {
+         notification.applicationIconBadgeNumber = [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1;
+         [[UserGames instance] markGame:self.currentGame.objectId active:NO];
+         } else{
+         notification.applicationIconBadgeNumber = [[UIApplication sharedApplication] applicationIconBadgeNumber];
+         }
+         */
+        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+    }
+    
+}
+
+- (void)messageSent:(id<SINMessage>)message recipientId:(NSString *)recipientId {
+    NSLog(@"messageSent: %@ to: %@", message, recipientId);
+}
+
+- (void)message:(id<SINMessage>)message shouldSendPushNotifications:(NSArray *)pushPairs {
+    NSLog(@"Recipient not online. \
+          Should notify recipient using push (not implemented in this demo app). \
+          Please refer to the documentation for a comprehensive description.");
+}
+
+- (void)messageDelivered:(id<SINMessageDeliveryInfo>)info {
+    NSLog(@"Message to %@ was successfully delivered", info.recipientId);
+}
+
+- (void)messageFailed:(id<SINMessage>)message info:(id<SINMessageFailureInfo>)failureInfo {
+    NSLog(@"Failed delivering message to %@. Reason: %@", failureInfo.recipientId,
+          [failureInfo.error description]);
 }
 
 

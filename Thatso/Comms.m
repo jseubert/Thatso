@@ -8,16 +8,18 @@
 
 #import "NSOperationQueue+NSoperationQueue_SharedQueue.h"
 #import "AppDelegate.h"
+#import "Comms.h"
 
 @implementation Comms
 //Notifications 
-+ (void) login:(id<CommsDelegate>)delegate
++ (void) login:(id<DidLoginDelegate>)delegate
 {
-    NSLog(@"Bundle ID: %@",[[NSBundle mainBundle] bundleIdentifier]);
     // Reset the DataStore so that we are starting from a fresh Login
     // as we could have come to this screen from the Logout navigation
     [[DataStore instance] reset];
     [[UserGames instance] reset];
+    [[CurrentRounds instance] reset];
+    [[PreviousRounds instance] reset];
     
 	// Basic User information and your friends are part of the standard permissions
 	// so there is no reason to ask for additional permissions
@@ -25,120 +27,102 @@
 		// Was login successful ?
 		if (!user) {
 			if (!error) {
-                NSLog(@"The user cancelled the Facebook login.");
+                [delegate didlogin:NO info:@"The user cancelled the Facebook login."];
             } else {
-                NSLog(@"An error occurred: %@", error.localizedDescription);
+                [delegate didlogin:NO info: [NSString stringWithFormat:@"An error occurred: %@", error.localizedDescription]];
             }
-            
-			// Callback - login failed
-			if ([delegate respondsToSelector:@selector(commsDidLogin:)]) {
-				[delegate commsDidLogin:NO];
-			}
-		} else {
-			if (user.isNew) {
-				NSLog(@"User signed up and logged in through Facebook!");
-			} else {
-				NSLog(@"User logged in through Facebook!");
-			}
-            
-			// Callback - login successful
-			[FBRequestConnection startForMeWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                if (!error) {
-                    NSDictionary<FBGraphUser> *me = (NSDictionary<FBGraphUser> *)result;
-                    // Store the Facebook Id
-                    [[PFUser currentUser] setObject:me.objectID forKey:User_ID];
-                    NSLog(@"Added you: %@", me.name);
-                    [[PFUser currentUser] saveInBackground];
+            return;
+		}
+        else
+        {
+			//Login Successful - Update user and find friends
+            [FBRequestConnection startForMeWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+            if (!error) {
+                //Update the user
+                NSDictionary<FBGraphUser> *me = (NSDictionary<FBGraphUser> *)result;
+                [[PFUser currentUser] setObject:[me objectForKey:ID] forKey:UserFacebookID];
+                [[PFUser currentUser] setObject:[me objectForKey:UserFirstName] forKey:UserFirstName];
+                [[PFUser currentUser] setObject:[me objectForKey:UserLastName] forKey:UserLastName];
+                [[PFUser currentUser] setObject:[me objectForKey:UserFullName] forKey:UserFullName];
+                [[PFUser currentUser] saveInBackground];
+                
+                // Launch another thread to handle the download of the user's Facebook profile picture
+                [Comms getProfilePictureForUser:user];
                     
-                    // Launch another thread to handle the download of the user's Facebook profile picture
-                    [[NSOperationQueue profilePictureOperationQueue] addOperationWithBlock:^ {
-                        // Build a profile picture URL from the user's Facebook user id
-                        NSString *profilePictureURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", me.objectID];
-                        NSData *profilePictureData = [NSData dataWithContentsOfURL:[NSURL URLWithString:profilePictureURL]];
-                        UIImage *profilePicture = [UIImage imageWithData:profilePictureData];
-                        
-                        // Set the profile picture into the user object
-                        if (profilePicture) [me setObject:profilePicture forKey:User_FacebookProfilePicture];
-                        
-                        // Notify that the profile picture has been downloaded, using NSNotificationCenter
-                        [[NSNotificationCenter defaultCenter] postNotificationName:N_ProfilePictureLoaded object:nil];
-                    }];
+                // Add the User to the list of friends in the DataStore
+                //[[DataStore instance].fbFriends setObject:user forKey:[user objectForKey:UserFacebookID]];
                     
-                    // Add the User to the list of friends in the DataStore
-                    [[DataStore instance].fbFriends setObject:me forKey:me.objectID];
-                    [DataStore instance].user = me;
-                    
-                    //Start Sinch!
-                    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-                    [appDelegate initSinchClientWithUserId:me.objectID];
-                }
-                // Callback - login successful
-                // 1. Build a Facebook Request object to retrieve your friends from Facebook.
+                //Start Sinch!
+                AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                [appDelegate initSinchClientWithUserId:[user objectForKey:UserFacebookID]];
+                
+                //Now get all your friends and make sure theyre added
                 FBRequest *friendsRequest = [FBRequest requestForMyFriends];
                 [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
                                                               NSDictionary* result,
-                                                              NSError *error) {
-                    NSLog(@"Friend Callback");
-                    // 2 Loop through the array of FBGraphUser objects data returned from the Facebook request.
-                    NSArray *friends = result[@"data"];
-                    NSLog(@"Friend Callback: %@", friends);
-                    for (NSDictionary<FBGraphUser>* friend in friends) {
-                        NSLog(@"Found a friend: %@", friend.name);
-                        // Launch another thread to handle the download of the friend's Facebook profile picture
-                        [[NSOperationQueue profilePictureOperationQueue] addOperationWithBlock:^ {
-                            // Build a profile picture URL from the friend's Facebook user id
-                            NSString *profilePictureURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", friend.objectID];
-                            NSData *profilePictureData = [NSData dataWithContentsOfURL:[NSURL URLWithString:profilePictureURL]];
-                            UIImage *profilePicture = [UIImage imageWithData:profilePictureData];
-                            
-                            // Set the profile picture into the user object
-                            if (profilePicture) [friend setObject:profilePicture forKey:User_FacebookProfilePicture];
-                            
-                            // Notify that the profile picture has been downloaded, using NSNotificationCenter
-                            //[[NSNotificationCenter defaultCenter] postNotificationName:N_ProfilePictureLoaded object:nil];
-                        }];
-                        // 3 Add each friend’s FBGraphUser object to the friends list in the DataStore.
-                        // Add the friend to the list of friends in the DataStore
-                        
-                        [[DataStore instance].fbFriends setObject:friend forKey:friend.objectID];
-                        [[DataStore instance].fbFriendsArray addObject:friend];
+                                                              NSError *error)
+                {
+                    if(error)
+                    {
+                        [delegate didlogin:NO info: [NSString stringWithFormat:@"An error occurred: %@", error.localizedDescription]];
+                        return;
                     }
-                    
-                    // 4 The success callback to the delegate is now only called once the friends request has been made.
-                    // Callback - login successful
-                    //Get all the categories
-                    [Comms getCategories];
-                    
-                    
-                    if ([delegate respondsToSelector:@selector(commsDidLogin:)]) {
-                        [delegate commsDidLogin:YES];
+                    else
+                    {
+                        NSArray *friends = result[@"data"];
+                        NSMutableArray *friendsIDs = [[NSMutableArray alloc] init];
+                        for (FBGraphObject* friend in friends) {
+                            NSLog(@"Friend: %@", friend);
+                            [friendsIDs addObject:[friend objectForKey:ID]];
+                            NSLog(@"Friend: %@", [friend objectForKey:ID]);
+                        }
+                        
+                        PFQuery *getFBFriends = [PFUser query];
+                        [getFBFriends whereKey:UserFacebookID containedIn:friendsIDs];
+                        //[getFBFriends whereKey:UserFacebookID containsString:@"1467121910205120"];
+                        
+                        
+                        [getFBFriends findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+                            if(error)
+                            {
+                                [delegate didlogin:NO info: [NSString stringWithFormat:@"An error occurred: %@", error.localizedDescription]];
+                                return;
+                            } else{
+                                for (PFObject* friend in objects) {
+                                    [[DataStore instance].fbFriends setObject:friend forKey:friend[UserFacebookID]];
+                                    [Comms getProfilePictureForUser:(PFUser *)friend];
+                                }
+                                
+                                [Comms getCategories];
+                                
+                                [delegate didlogin:YES info: nil];
+                            }
+                        }];
                     }
                 }];
-            }];
-		}
-	}];
-  
+            }
+        }];
+    }
+    }];
 }
 
 + (void) startNewGameWithUsers: (NSArray *)fbFriendsInGame forDelegate:(id<CreateGameDelegate>)delegate
 {
-    NSArray *categories = @[@"When %@ blacks out, they are most likely to...", @"How would %@ die in a horror movie?", @"What kind of sauce would you put on %@?", @"What kind of animal is most like %@?", @"What's the first thing %@ would do after a one night stand?"];
-    
     // Add Current User to the Game
     NSMutableArray *allPlayersInGame = [[NSMutableArray alloc] initWithArray:fbFriendsInGame];
-    [allPlayersInGame addObject:[[PFUser currentUser] objectForKey:User_ID]];
+    [allPlayersInGame addObject:[[PFUser currentUser] objectForKey:UserFacebookID]];
     //Must Have more than 3 users
     if(allPlayersInGame.count < 3)
     {
         //Return Error
-        [delegate newGameUploadedToServer:NO info:@"Not Enough Players in Game!"];
-        return;
+       // [delegate newGameUploadedToServer:NO info:@"Not Enough Players in Game!"];
+        //return;
     }
     
     //Check if this game already exists
     //Query returns all games that contain the players above
-    PFQuery *checkIfGameExistsQuery = [PFQuery queryWithClassName:@"Game"];
-    [checkIfGameExistsQuery whereKey:@"players" containsAllObjectsInArray:allPlayersInGame];
+    PFQuery *checkIfGameExistsQuery = [PFQuery queryWithClassName:GameClass];
+    [checkIfGameExistsQuery whereKey:GamePlayers containsAllObjectsInArray:allPlayersInGame];
     [checkIfGameExistsQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
     {
         //Error With Query
@@ -152,7 +136,7 @@
             //Check each game returned. If a game has a same amount of players as the original ID's passed, then it is a duplicate game
             for(int i = 0; i < [objects count]; i ++)
             {
-                if([allPlayersInGame count] == [[[objects objectAtIndex:i] objectForKey:@"players"] count])
+                if([allPlayersInGame count] == [[[objects objectAtIndex:i] objectForKey:GamePlayers] count])
                 {
                     [delegate newGameUploadedToServer:NO info:@"A game with these users already exists!"];
                     return;
@@ -161,25 +145,26 @@
         }
         
         //Create the game
-        PFObject *gameObject = [PFObject objectWithClassName:@"Game"];
-        gameObject[@"rounds"] = @0;
-        gameObject[@"players"] = allPlayersInGame;
+        
+        Game *gameObject = [Game object];
+        gameObject.rounds = @1;
+        gameObject.players = allPlayersInGame;
         
         //Create the first round for this Game
-        PFObject *roundObject = [PFObject objectWithClassName:@"CurrentRounds"];
-        roundObject[@"judge"] = [[PFUser currentUser] objectForKey:User_ID];
-        roundObject[@"subject"] = [fbFriendsInGame objectAtIndex:0];
-        roundObject[@"round"] = @0;
-      //  roundObject[@"category"] = @"What would be the first thing they would fo after a one night stand?";
+        Round *roundObject = [Round object];
+        roundObject.judge = [[PFUser currentUser] objectForKey:UserFacebookID];
+        roundObject.subject = [fbFriendsInGame objectAtIndex:0];
+        roundObject.roundNumber = @1;
+      
         //Get new category
         [Comms getCategories];
-        PFObject *category = [[DataStore instance].categories objectAtIndex:(arc4random() % [DataStore instance].categories.count)];
+        GenericCategory *category = [[DataStore instance].categories objectAtIndex:(arc4random() % [DataStore instance].categories.count)];
         
-        roundObject[@"category"] = [NSString stringWithFormat:@"%@ %@%@", category[@"category"], [[DataStore getFriendWithId:roundObject[@"subject"]] objectForKey:User_FirstName], category[@"categoryEnd"]];
+        roundObject[RoundCategory] = [NSString stringWithFormat:@"%@ %@%@", category.startText, [DataStore getFriendFirstNameWithID:roundObject.subject], category.endText];
         
         
         
-        gameObject[@"currentRound"] = roundObject;
+        gameObject.currentRound = roundObject;
         
         
         [gameObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error)
@@ -198,36 +183,33 @@
 
 +(void) getUsersGamesforDelegate:(id<GetGamesDelegate>)delegate
 {
-    PFQuery *getGames = [PFQuery queryWithClassName:@"Game"];
+    PFQuery *getGames = [PFQuery queryWithClassName:GameClass];
     
-    [getGames orderByAscending:@"createdAt"];
-    NSArray *user =[[NSArray alloc] initWithObjects:[[PFUser currentUser] objectForKey:User_ID], nil];
+    [getGames orderByAscending:UpdatedAt];
+    NSArray *user =[[NSArray alloc] initWithObjects:[[PFUser currentUser] objectForKey:UserFacebookID], nil];
     
     //find all games that have the current user as a player
-    [getGames whereKey:@"players" containsAllObjectsInArray:user];
+    [getGames whereKey:GamePlayers containsAllObjectsInArray:user];
     
     [getGames findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (error) {
             [delegate didGetGamesDelegate:NO info: error.localizedDescription];
 		} else {
-            [[UserGames instance] reset];
+            [[[UserGames instance] games] removeAllObjects];
             [[[UserGames instance] games] addObjectsFromArray:objects];
             
             // Notify that all the current games have been downloaded
             [delegate didGetGamesDelegate:YES info: nil];
-
-          //  [[NSNotificationCenter defaultCenter] postNotificationName:N_GamesDownloaded object:nil];
-            
         }
     }];
 
 }
 
 
-+ (void) addComment:(PFObject*)comment forDelegate:(id<DidAddCommentDelegate>)delegate{
++ (void) addComment:(Comment*)comment forDelegate:(id<DidAddCommentDelegate>)delegate{
     //Check if this round is still active
-    PFQuery *roundQuery = [PFQuery queryWithClassName:@"CurrentRounds"];
-    [roundQuery whereKey:@"objectId" equalTo:comment[@"roundId"]];
+    PFQuery *roundQuery = [PFQuery queryWithClassName:RoundClass];
+    [roundQuery whereKey:ObjectID equalTo:comment.roundID];
     [roundQuery getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
         if(error)
         {
@@ -241,11 +223,11 @@
             //active round
             else{
                 //Check to see if the comment exists already
-                PFQuery *query = [PFQuery queryWithClassName:@"ActiveComments"];
+                PFQuery *query = [PFQuery queryWithClassName:CommentClass];
                 
-                [query whereKey:@"gameId" equalTo:comment[@"gameId"]];
-                [query whereKey:@"roundId" equalTo:comment[@"roundId"]];
-                [query whereKey:@"from" equalTo:comment[@"from"]];
+                [query whereKey:CommentGameID equalTo:comment.gameID];
+                [query whereKey:CommentRoundID equalTo:comment.roundID];
+                [query whereKey:CommentFrom equalTo:comment.from];
                 //Check if
                 
                 [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
@@ -263,7 +245,7 @@
                         }];
                         
                     } else {
-                        object[@"comment"] = comment[@"comment"];
+                        object[CommentResponse] = comment.response;
                         [object saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                             if (succeeded) {
                                 // Notify that the Comment has been uploaded, using NSNotificationCenter
@@ -282,39 +264,35 @@
 }
 
 
-+ (void) getActiveCommentsForGame:(PFObject*)game inRound:(PFObject*)round forDelegate:(id<DidGetCommentsDelegate>)delegate
++ (void) getActiveCommentsForGame:(Game*)game inRound:(Round*)round forDelegate:(id<DidGetCommentsDelegate>)delegate
 {
-    PFQuery *query = [PFQuery queryWithClassName:@"ActiveComments"];
-    [query whereKey:@"gameId" equalTo:game.objectId];
-    [query whereKey:@"roundId" equalTo:round.objectId];
+    PFQuery *query = [PFQuery queryWithClassName:CommentClass];
+    [query whereKey:CommentGameID equalTo:game.objectId];
+    [query whereKey:CommentRoundID equalTo:round.objectId];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (error) {
             NSLog(@"Objects error: %@", error.localizedDescription);
             [delegate didGetComments:NO info:error.localizedDescription];
             
         } else {
-            // [UserGames insta]
+            //[UserGames insta]
             //Should merge later but for now just copy over
             [[CurrentRounds instance] setComments:objects forGameId:game.objectId];
             [delegate didGetComments:YES info:nil];
-            
         }
     }];
-    
 }
 
-+ (void) finishRound: (PFObject *)round inGame: (PFObject *)game withWinningComment: (PFObject *)comment andOtherComments: (NSArray *)otherComments forDelegate:(id<DidStartNewRound>)delegate
++ (void) finishRound: (Round *)round inGame: (Game *)game withWinningComment: (Comment *)comment andOtherComments: (NSArray *)otherComments forDelegate:(id<DidStartNewRound>)delegate
 {
-    NSArray *categories = @[@"When %@ blacks out, they are most likely to...", @"How would %@ die in a horror movie?", @"What kind of sauce would you put on %@?", @"What kind of animal is most like %@?", @"What's the first thing %@ would do after a one night stand?"];
-    
-    NSString *previousJudge = round[@"judge"];
-    NSArray *players = game[@"players"];
+    NSString *previousJudge = round.judge;
+    NSArray *players = game.players;
     
     //increment round number for game
-    [game incrementKey:@"rounds"];
+    [game incrementKey:GameRounds];
 
     //Build a new round and update the game with it's current round
-    PFObject *roundObject = [PFObject objectWithClassName:@"CurrentRounds"];
+    Round *roundObject = [Round object];
     
     //Get new judge, next in array
     for(int i = 0; i < players.count; i ++)
@@ -324,9 +302,9 @@
             //last one so now cycle to first one
             if(i == players.count -1)
             {
-                roundObject[@"judge"] = players[0];
+                roundObject.judge = players[0];
             }else{
-                roundObject[@"judge"] = players[i + 1];
+                roundObject.judge = players[i + 1];
             }
             break;
         }
@@ -334,34 +312,34 @@
         
     //get new subject, make sure its not the judge
     NSMutableArray *nonJudgePlayers = [[NSMutableArray alloc] initWithArray:players];
-    [nonJudgePlayers removeObject:roundObject[@"judge"]];
-    roundObject[@"subject"] = [nonJudgePlayers objectAtIndex:(arc4random() % nonJudgePlayers.count)];
+    [nonJudgePlayers removeObject:roundObject.judge];
+    roundObject.subject = [nonJudgePlayers objectAtIndex:(arc4random() % nonJudgePlayers.count)];
         
     //Get new category
     [Comms getCategories];
-    PFObject *category = [[DataStore instance].categories objectAtIndex:(arc4random() % [DataStore instance].categories.count)];
+    GenericCategory *category = [[DataStore instance].categories objectAtIndex:(arc4random() % [DataStore instance].categories.count)];
     
-    roundObject[@"category"] = [NSString stringWithFormat:@"%@ %@%@", category[@"category"], [[DataStore getFriendWithId:roundObject[@"subject"]] objectForKey:User_FirstName], category[@"categoryEnd"]];
+    roundObject.category = [NSString stringWithFormat:@"%@ %@%@", category.startText, [DataStore getFriendFirstNameWithID:roundObject.subject], category.endText];
         
     //new round round
-    roundObject[@"round"] = game[@"rounds"];
+    roundObject.roundNumber = game.rounds;
     
-    game[@"currentRound"] = roundObject;
+    game.currentRound = roundObject;
         
     [game saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if(succeeded)
         {
             //Build archivedRound object and save it
-            PFObject *archivedRound = [PFObject objectWithClassName:@"ArchivedRounds"];
-            archivedRound[@"judge"] = round[@"judge"];
-            archivedRound[@"subject"] = round[@"subject"];
-            archivedRound[@"category"] = round[@"category"];
-            archivedRound[@"round"] = round[@"round"];
-            archivedRound[@"gameId"] = game.objectId;
-            archivedRound[@"comment"] = comment[@"comment"];
-            archivedRound[@"from"] = comment[@"from"];
+            CompletedRound *completedRound = [CompletedRound object];
+            completedRound.judge = round.judge;
+            completedRound.subject = round.subject;
+            completedRound.category = round.category;
+            completedRound.roundNumber = round.roundNumber;
+            completedRound.gameID = game.objectId;
+            completedRound.winningResponse = comment.response;
+            completedRound.winningResponseFrom = comment.from;
             
-            [archivedRound saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            [completedRound saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                 if(succeeded)
                 {
                     //Remove all comments for the current round
@@ -372,7 +350,7 @@
                             [round deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                                 if(succeeded)
                                 {
-                                    [delegate didStartNewRound:YES info: error.localizedDescription previousWinner:archivedRound];
+                                    [delegate didStartNewRound:YES info: error.localizedDescription previousWinner:completedRound];
                                 }else{
                                     [delegate didStartNewRound:NO info: error.localizedDescription previousWinner:nil];
                                 }
@@ -393,12 +371,12 @@
 }
 
 
-+ (void) getPreviousRoundsInGame: (PFObject * ) game forDelegate:(id<DidGetPreviousRounds>)delegate
++ (void) getPreviousRoundsInGame: (Game * ) game forDelegate:(id<DidGetPreviousRounds>)delegate
 {
-    PFQuery *getRounds = [PFQuery queryWithClassName:@"ArchivedRounds"];
+    PFQuery *getRounds = [PFQuery queryWithClassName:CompletedRoundClass];
     
-    [getRounds orderByDescending:@"round"];
-    [getRounds whereKey:@"gameId" equalTo:game.objectId];
+    [getRounds orderByDescending:CompletedRoundNumber];
+    [getRounds whereKey:CompletedRoundGameID equalTo:game.objectId];
     
     [getRounds findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (error) {
@@ -413,12 +391,39 @@
 + (void) getCategories
 {
 
-    PFQuery *getCategory = [PFQuery queryWithClassName:@"category"];
+    PFQuery *getCategory = [PFQuery queryWithClassName:CategoryClass];
     
-     [DataStore instance].categories = [[NSMutableArray alloc] initWithArray:[getCategory findObjects]];
+    [DataStore instance].categories = [[NSMutableArray alloc] initWithArray:[getCategory findObjects]];
     
     NSLog(@"Categories: %@", [DataStore instance].categories);
 }
+
++ (void) getuser: (NSString *)fbId
+{
+    PFQuery *getUser = [PFUser query];
+    [getUser whereKey:UserFacebookID containsString:fbId];
+    
+    PFUser* user = (PFUser *)[getUser getFirstObject];
+    
+    [[DataStore instance].fbFriends setObject:user forKey:fbId];
+    
+    [Comms getProfilePictureForUser:user];
+}
+
++ (void) getProfilePictureForUser: (PFUser*) user
+{
+    [[NSOperationQueue profilePictureOperationQueue] addOperationWithBlock:^ {
+        // Build a profile picture URL from the user's Facebook user id
+        NSString *profilePictureURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", user[UserFacebookID]];
+        NSData *profilePictureData = [NSData dataWithContentsOfURL:[NSURL URLWithString:profilePictureURL]];
+        UIImage *profilePicture = [UIImage imageWithData:profilePictureData];
+        
+        // Set the profile picture into the user object
+        if (profilePicture) [[DataStore instance].fbFriendsProfilePictures setObject:profilePicture forKey:[user objectForKey:UserFacebookID]];
+    }];
+}
+
+
 
 
 @end

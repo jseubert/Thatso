@@ -8,13 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PreviousRoundsTableViewController : UITableViewController <DidGetPreviousRounds>
+@interface PreviousRoundsTableViewController : UITableViewController <DidGetPreviousRounds, SINMessageClientDelegate>
 {
     NSDateFormatter *_dateFormatter;
     BOOL initialLoad; 
 }
 
-@property(nonatomic) PFObject *currentGame;
+@property(nonatomic) Game *currentGame;
 @property(nonatomic) NSMutableArray* previousRounds;
+@property (strong, nonatomic) id<SINMessageClient> messageClient;
 
 @end

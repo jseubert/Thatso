@@ -13,7 +13,9 @@
 #import "FratBarButtonItem.h"
 #import "StringUtils.h"
 #import "AppDelegate.h"
+#import "UserGames.h"
 #import <math.h>
+#import "Game.h"
 
 @interface SelectGameTableViewController ()
 
@@ -35,11 +37,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    initialLoad = true;
     self.tableView.backgroundColor = [UIColor blueAppColor];
     [self.tableView setSeparatorColor:[UIColor clearColor]];
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     self.navigationItem.title = @"Games";
+   
     [self.navigationController.navigationBar setTitleTextAttributes:
      [NSDictionary dictionaryWithObjectsAndKeys:
       [UIFont fontWithName:@"mplus-1c-regular" size:50],
@@ -81,7 +84,11 @@
 
 -(void)viewDidAppear:(BOOL)animated
 {
-   //[self refreshGames:nil];
+    //Recieve messages
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    self.messageClient = [appDelegate.client messageClient];
+    self.messageClient.delegate = self;
+    [self.tableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning
@@ -100,19 +107,24 @@
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    //Make Variable size height
     return 60;
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    
-    if([[UserGames instance].games count] > 0)
+    if(initialLoad)
     {
-        return (int)[[UserGames instance].games count];
-    }else
-    {
-        return roundf(tableView.frame.size.height/60);
+        return 1;
+    } else{
+        if([[UserGames instance].games count] > 0)
+        {
+            return (int)[[UserGames instance].games count];
+        }else
+        {
+            return roundf(tableView.frame.size.height/60);
+        }
     }
 
 }
@@ -133,29 +145,31 @@
         } else
         {
              cell.namesLabel.text = @"No Games Found.";
+            
         }
+        [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
     }else if([[UserGames instance].games count] > 0)
     {
      
-        PFObject* game = [[UserGames instance].games objectAtIndex:indexPath.row];
-        PFObject *currentRound = game[@"currentRound"];
+        Game* game = [[UserGames instance].games objectAtIndex:indexPath.row];
+        Round *currentRound = game.currentRound;
         [currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-            [cell.categoryLabel setText:[NSString stringWithFormat:@"Round %@: %@", currentRound[@"round"], currentRound[@"category"]]];
+            [cell.categoryLabel setText:[NSString stringWithFormat:@"Round %@: %@", currentRound[RoundNumber], currentRound[RoundCategory]]];
         }];
-        NSMutableArray *players = game[@"players"];
+        NSArray *players = game.players;
         NSString *title = [[NSString alloc] init];
         
         NSString *lastName = @"";
         for(int i = 0; i < players.count;i ++)
         {
             //Don't add your own name
-            if(![((NSString *)[players objectAtIndex:i]) isEqualToString:(NSString *)[[PFUser currentUser] objectForKey:@"fbId"]])
+            if(![((NSString *)[players objectAtIndex:i]) isEqualToString:(NSString *)[[PFUser currentUser] objectForKey:UserFacebookID]])
             {
                 if([lastName length] != 0)
                 {
                     title = [title stringByAppendingString:[NSString stringWithFormat:@"%@, ", lastName]];
                 }
-                lastName = [[[DataStore instance].fbFriends objectForKey:[players objectAtIndex:i]] objectForKey:@"first_name"];
+                lastName = [DataStore getFriendFirstNameWithID:[players objectAtIndex:i]];
 
             
             }
@@ -168,20 +182,30 @@
              title = [title stringByAppendingString:[NSString stringWithFormat:@"and %@", lastName]];
         }
         [cell.namesLabel setText:title];
-            }
+        
+        if([[UserGames instance] isGameActive:game.objectId])
+        {
+            [cell.nextRoundLabel setHidden:YES];
+        } else{
+            [cell.nextRoundLabel setHidden:NO];
+        }
+        [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
+    }
     
     [cell setColorScheme:indexPath.row];
-
     return cell;
 }
 
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    GameViewControllerTableViewController *vc = [[GameViewControllerTableViewController alloc] init];
-    PFObject* currentGame = [[UserGames instance].games objectAtIndex:indexPath.row];
-    [currentGame[@"currentRound"] fetchIfNeeded];
-    vc.currentGame = currentGame;
-    [self.navigationController pushViewController:vc animated:YES];
+    if([UserGames instance].games != nil && [UserGames instance].games.count > 0)
+    {
+        GameViewControllerTableViewController *vc = [[GameViewControllerTableViewController alloc] init];
+        Game* currentGame = [[UserGames instance].games objectAtIndex:indexPath.row];
+        [currentGame.currentRound fetchIfNeeded];
+        vc.currentGame = currentGame;
+        [self.navigationController pushViewController:vc animated:YES];
+    }
 }
 
 
@@ -216,7 +240,6 @@
 //Call back delegate for new images finished
 - (void) didGetGamesDelegate:(BOOL)success info: (NSString *) info
 {
-
     initialLoad = false;
     
 	// Refresh the table data to show the new games
@@ -231,11 +254,75 @@
 		[self.refreshControl endRefreshing];
 	}
 }
-/*
-//Notificaiton call backs
-- (void) gamesDownloaded:(NSNotification *)notification {
-    initialLoad = false;
-	[self.tableView reloadData];
-}*/
+
+- (void) dismissAlert {
+    if (self.alertView && self.alertView.visible) {
+        [self.alertView dismissWithClickedButtonIndex:0 animated:YES];
+    }
+}
+
+-(void) showAlertWithTitle: (NSString *)title andSummary:(NSString *)summary
+{
+    [self dismissAlert];
+    self.alertView = [[UIAlertView alloc]
+                      initWithTitle:title message:summary delegate:self  cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+    
+    // Display Alert Message
+    [self.alertView show];
+}
+
+#pragma mark - SINMessageClientDelegate
+
+- (void)messageClient:(id<SINMessageClient>)messageClient didReceiveIncomingMessage:(id<SINMessage>)message {
+    NSString *winner = [DataStore getFriendFirstNameWithID:[message.headers objectForKey:@"from"]];
+    
+
+    if([UIApplication sharedApplication].applicationState == UIApplicationStateBackground || [UIApplication sharedApplication].applicationState == UIApplicationStateBackground){
+        if([message.text isEqualToString:@"NewRound"])
+        {
+            NSString* summary = [NSString stringWithFormat:@"New round starting: %@ won previous.", winner];
+            UILocalNotification* notification = [[UILocalNotification alloc] init];
+            notification.alertBody = summary;
+            
+            if([[UserGames instance] isGameActive:[message.headers objectForKey:CommentGameID]])
+            {
+                notification.applicationIconBadgeNumber = [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1;
+                [[UserGames instance] markGame:[message.headers objectForKey:CommentGameID] active:NO];
+            } else{
+                notification.applicationIconBadgeNumber = [[UIApplication sharedApplication] applicationIconBadgeNumber];
+            }
+            
+            [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+        }
+    } else {
+        // Update UI in-app
+        if([message.text isEqualToString:@"NewRound"])
+        {
+            NSString* summary = [NSString stringWithFormat:@"%@ won round %@ with: %@", winner, [message.headers objectForKey:@"round"], [message.headers objectForKey:@"comment"]];
+            [self showAlertWithTitle:@"New Round Started" andSummary:summary];
+        }
+    }
+    
+}
+
+- (void)messageSent:(id<SINMessage>)message recipientId:(NSString *)recipientId {
+    NSLog(@"messageSent: %@ to: %@", message, recipientId);
+}
+
+- (void)message:(id<SINMessage>)message shouldSendPushNotifications:(NSArray *)pushPairs {
+    NSLog(@"Recipient not online. \
+          Should notify recipient using push (not implemented in this demo app). \
+          Please refer to the documentation for a comprehensive description.");
+}
+
+- (void)messageDelivered:(id<SINMessageDeliveryInfo>)info {
+    NSLog(@"Message to %@ was successfully delivered", info.recipientId);
+}
+
+- (void)messageFailed:(id<SINMessage>)message info:(id<SINMessageFailureInfo>)failureInfo {
+    NSLog(@"Failed delivering message to %@. Reason: %@", failureInfo.recipientId,
+          [failureInfo.error description]);
+}
+
 
 @end

@@ -25,7 +25,7 @@ NSInteger const CommentTableViewCellIconSize = 20;
                                                                10,
                                                                CommentTableViewCellIconSize,
                                                                CommentTableViewCellIconSize)];
-        [self.circle setCenter:(CGPointMake(self.circle.center.x, self.bounds.size.height/2))];
+       // [self.circle setCenter:(CGPointMake(self.circle.center.x, self.bounds.size.height/2))];
         self.circle.backgroundColor = [UIColor whiteColor];
         self.circle.layer.borderColor = [UIColor lightBlueAppColor].CGColor;
         self.circle.layer.borderWidth = 2;
@@ -50,7 +50,14 @@ NSInteger const CommentTableViewCellIconSize = 20;
 
 -(void) setCommentLabelText: (NSString *) comment
 {
-    CGSize labelSize = [CommentTableViewCell sizeWithFontAttribute:self.commentLabel.font constrainedToSize:(CGSizeMake(self.bounds.size.width - (10 + self.circle.frame.size.width + self.circle.frame.origin.x) -10, self.bounds.size.width - (10 + self.circle.frame.size.width + self.circle.frame.origin.x) -10)) withText:comment];
+    CGFloat width = self.frame.size.width
+    - 10    //left padding
+    - 20    //New Button
+    - 10    //right padding button
+    - 10;   //padding on right
+    
+    CGSize labelSize = [CommentTableViewCell sizeWithFontAttribute:self.commentLabel.font constrainedToSize:CGSizeMake(width, width) withText:comment];
+    
     [self.commentLabel setText:comment];
     [self.commentLabel setFrame:CGRectMake(self.commentLabel.frame.origin.x,
                                          10,
@@ -68,30 +75,6 @@ NSInteger const CommentTableViewCellIconSize = 20;
     return CGSizeMake(ceilf(res.size.width), ceilf(res.size.height));
 }
 
-
--(void) selectedTableCell: (BOOL) selected
-{
-    if(selected)
-    {
-        [self setBackgroundColor:[UIColor whiteColor]];
-        
-        self.circle.backgroundColor = [UIColor whiteColor];
-        self.circle.layer.borderColor = [UIColor lightBlueAppColor].CGColor;
-        
-        self.commentLabel.textColor = [UIColor blueAppColor];
-        
-    }else{
-        [self setBackgroundColor:[UIColor blueAppColor]];
-        
-        self.circle.backgroundColor = [UIColor lightBlueAppColor];
-        self.circle.layer.borderColor = [UIColor whiteColor].CGColor;
-        
-        self.commentLabel.textColor = [UIColor whiteColor];
-    }
-    [self setSelected:selected];
-    NSLog(@"About to voted with userId: %@", [DataStore instance].user);
-  //  [Comms user: [[DataStore instance].user objectForKey:User_ID] DidUpvote:selected forComment:self.comment.objectId];
-}
 
 
 

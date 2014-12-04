@@ -10,12 +10,16 @@
 #import <Parse/PFObject+Subclass.h>
 
 @implementation Comment
+@dynamic gameID;
+@dynamic roundID;
+@dynamic from;
+@dynamic response;
 + (void)load {
     [self registerSubclass];
 }
 
 + (NSString *)parseClassName {
-    return @"Comment";
+    return CommentClass;
 }
 
 @end

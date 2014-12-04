@@ -35,7 +35,21 @@
     [self.window makeKeyAndVisible];
     [self.window addSubview:navController.view];
     self.window.rootViewController = navController;
+    
+    if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)]){
+        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
+    }
+    
+    // Handle launching from a notification
+
+    application.applicationIconBadgeNumber = 0;
+    
+    
     return YES;
+}
+
+- (void)applicationWillEnterForeground:(UIApplication *)application{
+    application.applicationIconBadgeNumber = 0;
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
@@ -47,6 +61,12 @@
     return [PFFacebookUtils handleOpenURL:url];
     //return [FBAppCall handleOpenURL:url sourceApplication:nil];
     
+}
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    // get previously initiated Sinch client
+    id<SINClient> client = _client;
+    [client registerPushNotificationData:deviceToken];
 }
 
 - (void)initSinchClientWithUserId:(NSString *)userId {
@@ -61,6 +81,8 @@
         _client.delegate = self;
         
         [_client setSupportMessaging:YES];
+        [_client setSupportActiveConnectionInBackground:YES];
+        [_client setSupportPushNotifications:YES];
         
         [_client start];
         [_client startListeningOnActiveConnection];

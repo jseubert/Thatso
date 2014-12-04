@@ -9,8 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "PHFComposeBarView.h"
 
-
-@interface GameViewControllerTableViewController : UIViewController <CommsDelegate, SINMessageClientDelegate, DidAddCommentDelegate, DidGetCommentsDelegate, DidStartNewRound, PHFComposeBarViewDelegate,UITextViewDelegate, UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate>
+@interface GameViewControllerTableViewController : UIViewController <SINMessageClientDelegate, DidAddCommentDelegate, DidGetCommentsDelegate, DidStartNewRound, PHFComposeBarViewDelegate,UITextViewDelegate, UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate>
 {
     NSDateFormatter *_dateFormatter;
     NSMutableArray* nonUserPlayers;
@@ -21,13 +20,14 @@
 
 
 @property (strong, nonatomic) IBOutlet UILabel *headerView;
+@property (nonatomic, strong) UIAlertView *alertView;
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet UIRefreshControl *refreshControl;
 @property (strong, nonatomic) IBOutlet PHFComposeBarView *composeBarView;
 
 
-@property(nonatomic) PFObject *currentGame;
-@property(nonatomic) PFObject *currentRound;
+@property(nonatomic) Game *currentGame;
+@property(nonatomic) Round *currentRound;
 @property(nonatomic) NSMutableArray* comments;
 @property(nonatomic) NSString* previousComment;
 @property(nonatomic) NSMutableArray* votedForComments;

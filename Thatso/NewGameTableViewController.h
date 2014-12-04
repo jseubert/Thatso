@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface NewGameTableViewController : UITableViewController
+@interface NewGameTableViewController : UITableViewController <SINMessageClientDelegate>
 
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+@property (strong, nonatomic) id<SINMessageClient> messageClient;
+@property(nonatomic) NSArray* fbFriendsArray;
 
 @end

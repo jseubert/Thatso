@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "PHFComposeBarView.h"
 
-@interface LoginScreenViewController : UIViewController <CommsDelegate>
+@interface LoginScreenViewController : UIViewController <DidLoginDelegate>
 
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 @property (strong, nonatomic) IBOutlet UIButton *loginButton;

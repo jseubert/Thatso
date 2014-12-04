@@ -10,8 +10,9 @@
 #import "FratBarButtonItem.h"
 #import "ProfileViewTableViewCell.h"
 #import "UIImage+Scaling.h"
+#import "AppDelegate.h"
 
-@interface NewGameTableViewController () <CommsDelegate, CreateGameDelegate>
+@interface NewGameTableViewController () < CreateGameDelegate>
 
 @end
 
@@ -21,9 +22,18 @@
 {
     self = [super initWithStyle:style];
     if (self) {
-        
+        self.fbFriendsArray = [[DataStore instance].fbFriends allValues];
     }
     return self;
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    
+    //Recieve messages
+    self.messageClient = [appDelegate.client messageClient];
+    self.messageClient.delegate = self;
 }
 
 - (void)viewDidLoad
@@ -32,7 +42,7 @@
     
     self.tableView.backgroundColor = [UIColor blueAppColor];
     [self.tableView setSeparatorColor:[UIColor clearColor]];
-    self.navigationController.title = @"Category";
+
     
     //New Game Button
     FratBarButtonItem *startButton  = [[FratBarButtonItem alloc] initWithTitle:@"Start Game" style:UIBarButtonItemStyleBordered target:self action:@selector(startGame:)];
@@ -70,7 +80,7 @@
 {
     // Return the number of rows in the section.
     //return [DataStore instance].fbFriendsArray.count;
-    return [DataStore instance].fbFriendsArray.count;
+    return MAX(1,self.fbFriendsArray.count);
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -86,19 +96,16 @@
         cell = [[ProfileViewTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
    
-    NSLog(@"Row count: %ld, %lu",(long)indexPath.row, (unsigned long)[DataStore instance].fbFriendsArray.count);
+    NSLog(@"Row count: %ld, %lu",(long)indexPath.row, (unsigned long)[DataStore instance].fbFriends.count);
     
-    if([DataStore instance].fbFriendsArray.count <= 0)
+    if([DataStore instance].fbFriends.count <= 0)
     {
         [cell.nameLabel setText:@"No Friends :("];
-    }else if (indexPath.row < [DataStore instance].fbFriendsArray.count){
-        NSLog(@"Inside");
-        
-        [cell.nameLabel setText:[[[DataStore instance].fbFriendsArray objectAtIndex:indexPath.row] objectForKey:@"name"]];
-        UIImage *fbProfileImage = [[[DataStore instance].fbFriendsArray objectAtIndex:indexPath.row] objectForKey:@"fbProfilePicture"];
+    }else if (indexPath.row < self.fbFriendsArray.count){
+        PFUser *user = [self.fbFriendsArray objectAtIndex:indexPath.row];
+        [cell.nameLabel setText:[DataStore getFriendFullNameWithID:[user objectForKey:UserFacebookID]]];
+        UIImage *fbProfileImage = [DataStore getFriendProfilePictureWithID:[user objectForKey:UserFacebookID]];
         [cell.profilePicture setImage:[fbProfileImage imageScaledToFitSize:CGSizeMake(cell.frame.size.height, cell.frame.size.height)]];
-        NSLog(@"Done");
-        
     }
     [cell setColorScheme:indexPath.row];
     return cell;
@@ -106,7 +113,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if(indexPath.row < [DataStore instance].fbFriendsArray.count)
+    if(indexPath.row < self.fbFriendsArray.count)
     {
         [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryCheckmark;
     }
@@ -114,67 +121,21 @@
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if(indexPath.row < [DataStore instance].fbFriendsArray.count)
+    if(indexPath.row < self.fbFriendsArray.count)
     {
         [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryNone;
     }
 }
 
-
-
-
-// Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Return NO if you do not want the specified item to be editable.
     return NO;
 }
 
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 -(IBAction)startGame:(id)sender{
-NSLog(@"startGame");
+    NSLog(@"startGame");
     [self disableUI:YES];
-   if([self.tableView indexPathsForSelectedRows].count < 2) {
+   if([self.tableView indexPathsForSelectedRows].count < 1) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Not enough Friends Selected"
                                                         message:@"Must choose at least 2 other people."
                                                        delegate:nil
@@ -187,7 +148,7 @@ NSLog(@"startGame");
         for(NSIndexPath * indexPath in [self.tableView indexPathsForSelectedRows])
         {
             NSLog(@"addingFreind: %ld", (long)indexPath.row);
-            [selectedFriends addObject:[[[DataStore instance].fbFriendsArray objectAtIndex:indexPath.row] objectForKey:@"id"]];
+            [selectedFriends addObject:[[self.fbFriendsArray objectAtIndex:indexPath.row] objectForKey:UserFacebookID]];
         }
         [self.activityIndicator startAnimating];
         [Comms startNewGameWithUsers:selectedFriends forDelegate:self];
@@ -216,5 +177,50 @@ NSLog(@"startGame");
     
 
 }
+
+#pragma mark - SINMessageClientDelegate
+
+- (void)messageClient:(id<SINMessageClient>)messageClient didReceiveIncomingMessage:(id<SINMessage>)message {
+    
+    NSString *winner = [DataStore getFriendFirstNameWithID:[message.headers objectForKey:@"from"]];
+    
+    if([message.text isEqualToString:@"NewRound"])
+    {
+        NSString* summary = [NSString stringWithFormat:@"New round starting: %@ won previous.", winner];
+        UILocalNotification* notification = [[UILocalNotification alloc] init];
+        notification.alertBody = summary;
+        /*
+         if([[UserGames instance] isGameActive:self.currentGame.objectId])
+         {
+         notification.applicationIconBadgeNumber = [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1;
+         [[UserGames instance] markGame:self.currentGame.objectId active:NO];
+         } else{
+         notification.applicationIconBadgeNumber = [[UIApplication sharedApplication] applicationIconBadgeNumber];
+         }
+         */
+        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+    }
+    
+}
+
+- (void)messageSent:(id<SINMessage>)message recipientId:(NSString *)recipientId {
+    NSLog(@"messageSent: %@ to: %@", message, recipientId);
+}
+
+- (void)message:(id<SINMessage>)message shouldSendPushNotifications:(NSArray *)pushPairs {
+    NSLog(@"Recipient not online. \
+          Should notify recipient using push (not implemented in this demo app). \
+          Please refer to the documentation for a comprehensive description.");
+}
+
+- (void)messageDelivered:(id<SINMessageDeliveryInfo>)info {
+    NSLog(@"Message to %@ was successfully delivered", info.recipientId);
+}
+
+- (void)messageFailed:(id<SINMessage>)message info:(id<SINMessageFailureInfo>)failureInfo {
+    NSLog(@"Failed delivering message to %@. Reason: %@", failureInfo.recipientId,
+          [failureInfo.error description]);
+}
+
 
 @end
