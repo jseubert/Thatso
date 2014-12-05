@@ -192,7 +192,7 @@
 {
     PFQuery *getGames = [PFQuery queryWithClassName:GameClass];
     
-    [getGames orderByAscending:UpdatedAt];
+    [getGames orderByDescending:UpdatedAt];
     NSArray *user =[[NSArray alloc] initWithObjects:[[PFUser currentUser] objectForKey:UserFacebookID], nil];
     
     //find all games that have the current user as a player
@@ -410,10 +410,12 @@
     [getUser whereKey:UserFacebookID containsString:fbId];
     
     PFUser* user = (PFUser *)[getUser getFirstObject];
+    if(user != nil)
+    {
+        [[DataStore instance].fbFriends setObject:user forKey:fbId];
     
-    [[DataStore instance].fbFriends setObject:user forKey:fbId];
-    
-    [Comms getProfilePictureForUser:[user objectForKey:UserFacebookID] withBlock:nil];
+        [Comms getProfilePictureForUser:[user objectForKey:UserFacebookID] withBlock:nil];
+    }
 }
 
 + (void) getProfilePictureForUser: (NSString*) fbId withBlock:(void (^)(UIImage*))block
