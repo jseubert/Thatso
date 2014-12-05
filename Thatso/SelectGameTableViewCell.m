@@ -19,7 +19,7 @@
         self.namesLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, self.frame.size.width -20, self.frame.size.height/2)];
         self.namesLabel.font = [UIFont defaultAppFontWithSize:16.0];
         self.namesLabel.text = @"";
-        self.namesLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        self.namesLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         self.namesLabel.numberOfLines = 0;
         
         
@@ -28,7 +28,7 @@
         self.categoryLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, self.frame.size.height/2 + 10, self.frame.size.width-20, self.frame.size.height/2)];
         self.categoryLabel.font = [UIFont defaultAppFontWithSize:14.0];
         self.categoryLabel.text = @"";
-        self.categoryLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        self.categoryLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         self.categoryLabel.numberOfLines = 0;
         
         [self addSubview:self.categoryLabel];

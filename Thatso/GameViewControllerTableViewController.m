@@ -53,7 +53,7 @@
     //self.navigationController.title = @"Category";
     [self.view setBackgroundColor:[UIColor blueAppColor]];
     //setup Subviews
-    self.headerView = [[UILabel alloc] initWithFrame:CGRectMake(0,
+    self.headerView = [[GameHeaderView alloc] initWithFrame:CGRectMake(0,
                                                                 self.navigationController.navigationBar.frame.size.height + 20 ,
                                                                 self.view.bounds.size.width,
                                                                 ProfileViewTableViewCellHeight)];
@@ -147,29 +147,24 @@
 {
     self.currentRound = self.currentGame.currentRound;
     [self.currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-        [self.headerView setText:[NSString stringWithFormat:@"Round %@: %@",self.currentRound.roundNumber, self.currentRound.category]];
+        [self.headerView.roundLabel setText:[NSString stringWithFormat:@"Round %@",self.currentRound.roundNumber]];
+        [self.headerView.caregoryLabel setText:[NSString stringWithFormat:@"%@",self.currentRound.category]];
+        [DataStore getFriendProfilePictureWithID:self.currentRound.subject withBlock:^(UIImage * image) {
+            [self.headerView.profilePicture setImage:image];
+
+        }];
         [self layoutSubviews];
     }];
-    [self.headerView setBackgroundColor:[UIColor pinkAppColor]];
-    [self.headerView setNumberOfLines:0];
-    [self.headerView setLineBreakMode:NSLineBreakByWordWrapping];
-    [self.headerView setTextColor:[UIColor whiteColor]];
-    [self.headerView setTextAlignment:NSTextAlignmentCenter];
-    [[self.headerView  layer] setBorderWidth:2.0f];
-    [[self.headerView  layer] setBorderColor:[UIColor whiteColor].CGColor];
-    [[self.headerView  layer] setCornerRadius:10.0f];
-    [self.headerView setClipsToBounds:YES];
-    
 }
 
 -(void)layoutSubviews
 {
-    CGSize headerTextSize = [CommentTableViewCell sizeWithFontAttribute:self.headerView.font constrainedToSize:(CGSizeMake(self.view.bounds.size.width, self.view.bounds.size.height)) withText:self.headerView.text];
     
     self.headerView.frame = CGRectMake(0,
                                        self.navigationController.navigationBar.frame.size.height + 20 ,
                                        self.view.bounds.size.width ,
-                                       headerTextSize.height + 10 );
+                                       [self.headerView heightGivenWidth:self.view.bounds.size.width + 10] );
+    [self.headerView layoutSubviews];
     if([self isJudge])
     {
         [self.composeBarView setHidden:YES];

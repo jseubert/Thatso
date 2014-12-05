@@ -20,6 +20,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		953287DE1A3246F000AC17EA /* GameHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 953287DD1A3246F000AC17EA /* GameHeaderView.m */; };
 		953D497119DF59C700596E7B /* SelectGameTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 953D497019DF59C700596E7B /* SelectGameTableViewCell.m */; };
 		9540A57F1A1D05C200EA9FEA /* Game.m in Sources */ = {isa = PBXBuildFile; fileRef = 9540A57E1A1D05C200EA9FEA /* Game.m */; };
 		9540A5821A1D068300EA9FEA /* Round.m in Sources */ = {isa = PBXBuildFile; fileRef = 9540A5811A1D068300EA9FEA /* Round.m */; };
@@ -32,7 +33,6 @@
 		95799FF81A1AE368006A209F /* PHFDelegateChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 95799FF71A1AE368006A209F /* PHFDelegateChain.m */; };
 		95881E8F19D90B32001202AB /* UIColor+AppColors.m in Sources */ = {isa = PBXBuildFile; fileRef = 95881E8E19D90B32001202AB /* UIColor+AppColors.m */; };
 		95881E9219D91117001202AB /* UIFont+AppFonts.m in Sources */ = {isa = PBXBuildFile; fileRef = 95881E9119D91117001202AB /* UIFont+AppFonts.m */; };
-		959440D51A25895500944935 /* LoadingDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 959440D41A25895500944935 /* LoadingDialog.m */; };
 		95F05C5B1A30107E00752A16 /* PreviousRoundsTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 95F05C5A1A30107E00752A16 /* PreviousRoundsTableViewCell.m */; };
 		9A1FFC961A0AAF9400A82788 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A1FFC951A0AAF9400A82788 /* Constants.m */; };
 		9A2C6F6719A8324200DCF2B7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A2C6F6619A8324200DCF2B7 /* Foundation.framework */; };
@@ -75,7 +75,6 @@
 		9AA6DB941A2157EE0037EE09 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AA6DB931A2157EE0037EE09 /* AVFoundation.framework */; };
 		9AA6DB981A215A940037EE09 /* Sinch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AA6DB971A215A940037EE09 /* Sinch.framework */; };
 		9ADD437F19F7565700AFD160 /* UIButton+CustomButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ADD437E19F7565700AFD160 /* UIButton+CustomButtons.m */; };
-		9ADD438219F75A6B00AFD160 /* UserCommentTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ADD438119F75A6B00AFD160 /* UserCommentTextField.m */; };
 		9AFBF0CF19CD4826004F6550 /* GameViewControllerTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFBF0CE19CD4826004F6550 /* GameViewControllerTableViewController.m */; };
 		9AFBF0D319CD4B19004F6550 /* ProfileViewTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AFBF0D219CD4B19004F6550 /* ProfileViewTableViewCell.m */; };
 /* End PBXBuildFile section */
@@ -91,6 +90,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		953287DC1A3246F000AC17EA /* GameHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameHeaderView.h; sourceTree = "<group>"; };
+		953287DD1A3246F000AC17EA /* GameHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameHeaderView.m; sourceTree = "<group>"; };
 		953D496F19DF59C700596E7B /* SelectGameTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectGameTableViewCell.h; sourceTree = "<group>"; };
 		953D497019DF59C700596E7B /* SelectGameTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectGameTableViewCell.m; sourceTree = "<group>"; };
 		9540A57D1A1D05C200EA9FEA /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Game.h; sourceTree = "<group>"; };
@@ -115,8 +116,6 @@
 		95881E8E19D90B32001202AB /* UIColor+AppColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+AppColors.m"; sourceTree = "<group>"; };
 		95881E9019D91117001202AB /* UIFont+AppFonts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+AppFonts.h"; sourceTree = "<group>"; };
 		95881E9119D91117001202AB /* UIFont+AppFonts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+AppFonts.m"; sourceTree = "<group>"; };
-		959440D31A25895500944935 /* LoadingDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadingDialog.h; sourceTree = "<group>"; };
-		959440D41A25895500944935 /* LoadingDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadingDialog.m; sourceTree = "<group>"; };
 		95F05C591A30107E00752A16 /* PreviousRoundsTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviousRoundsTableViewCell.h; sourceTree = "<group>"; };
 		95F05C5A1A30107E00752A16 /* PreviousRoundsTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreviousRoundsTableViewCell.m; sourceTree = "<group>"; };
 		9A1FFC951A0AAF9400A82788 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
@@ -179,8 +178,6 @@
 		9AA6DB971A215A940037EE09 /* Sinch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sinch.framework; sourceTree = "<group>"; };
 		9ADD437D19F7560100AFD160 /* UIButton+CustomButtons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+CustomButtons.h"; sourceTree = "<group>"; };
 		9ADD437E19F7565700AFD160 /* UIButton+CustomButtons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+CustomButtons.m"; sourceTree = "<group>"; };
-		9ADD438019F75A6B00AFD160 /* UserCommentTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserCommentTextField.h; sourceTree = "<group>"; };
-		9ADD438119F75A6B00AFD160 /* UserCommentTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserCommentTextField.m; sourceTree = "<group>"; };
 		9AFBF0CD19CD4826004F6550 /* GameViewControllerTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameViewControllerTableViewController.h; sourceTree = "<group>"; };
 		9AFBF0CE19CD4826004F6550 /* GameViewControllerTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameViewControllerTableViewController.m; sourceTree = "<group>"; };
 		9AFBF0D119CD4B19004F6550 /* ProfileViewTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileViewTableViewCell.h; sourceTree = "<group>"; };
@@ -233,10 +230,8 @@
 				95799FF51A1AE21B006A209F /* PHFComposeBarView */,
 				9A428A4419DF894900C80EE7 /* FratBarButtonItem.h */,
 				9A428A4519DF894900C80EE7 /* FratBarButtonItem.m */,
-				9ADD438019F75A6B00AFD160 /* UserCommentTextField.h */,
-				9ADD438119F75A6B00AFD160 /* UserCommentTextField.m */,
-				959440D31A25895500944935 /* LoadingDialog.h */,
-				959440D41A25895500944935 /* LoadingDialog.m */,
+				953287DC1A3246F000AC17EA /* GameHeaderView.h */,
+				953287DD1A3246F000AC17EA /* GameHeaderView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -556,19 +551,18 @@
 				9A428A4619DF894900C80EE7 /* FratBarButtonItem.m in Sources */,
 				9AFBF0D319CD4B19004F6550 /* ProfileViewTableViewCell.m in Sources */,
 				9A1FFC961A0AAF9400A82788 /* Constants.m in Sources */,
-				9ADD438219F75A6B00AFD160 /* UserCommentTextField.m in Sources */,
 				9A428A4A19DFA84B00C80EE7 /* UIImage+Scaling.m in Sources */,
 				9A2C6F9719A832CC00DCF2B7 /* LoginScreenViewController.m in Sources */,
 				95799FF31A1AE1FF006A209F /* PHFComposeBarView_Button.m in Sources */,
 				9540A5881A1D06A200EA9FEA /* CompletedRound.m in Sources */,
 				9540A57F1A1D05C200EA9FEA /* Game.m in Sources */,
 				9A2C6FCA19A852D200DCF2B7 /* Comms.m in Sources */,
-				959440D51A25895500944935 /* LoadingDialog.m in Sources */,
 				9A2C6F9A19A835CD00DCF2B7 /* SelectGameTableViewController.m in Sources */,
 				95881E9219D91117001202AB /* UIFont+AppFonts.m in Sources */,
 				95F05C5B1A30107E00752A16 /* PreviousRoundsTableViewCell.m in Sources */,
 				9A2C6FCD19A85BC600DCF2B7 /* DataStore.m in Sources */,
 				95799FF41A1AE1FF006A209F /* PHFComposeBarView_TextView.m in Sources */,
+				953287DE1A3246F000AC17EA /* GameHeaderView.m in Sources */,
 				9ADD437F19F7565700AFD160 /* UIButton+CustomButtons.m in Sources */,
 				9A2C6FD919AC526500DCF2B7 /* UserGames.m in Sources */,
 			);

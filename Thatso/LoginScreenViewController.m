@@ -47,7 +47,7 @@
     self.loginButton.frame = CGRectMake(20, self.view.frame.size.height - 70, self.view.frame.size.width -40, 50);
     [self.loginButton addTarget:self action:@selector(login:) forControlEvents:UIControlEventTouchUpInside];
     [self.loginButton fratButtonWithBorderWidth:2.0f fontSize:18.0 cornerRadius:10.0];
-    [self.loginButton setTitle:@"Login to Facebook" forState:UIControlStateNormal];
+    [self.loginButton setTitle:@"Login with Facebook" forState:UIControlStateNormal];
     [self.view addSubview:self.loginButton];
     
     self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];

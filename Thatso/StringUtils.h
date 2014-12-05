@@ -10,4 +10,5 @@
 @interface StringUtils : NSObject
 + (NSAttributedString *) makeRefreshText:(NSString *) string;
 + (NSString *) buildTextStringForPlayersInGame: (NSArray *)playersInGame fullName:(BOOL) fullName;
++ (CGSize) sizeWithFontAttribute:(UIFont *)font constrainedToSize:(CGSize)size withText: (NSString *)text;
 @end

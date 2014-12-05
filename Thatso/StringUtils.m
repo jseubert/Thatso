@@ -57,5 +57,13 @@
     return title;
 }
 
++ (CGSize) sizeWithFontAttribute:(UIFont *)font constrainedToSize:(CGSize)size withText: (NSString *)text{
+    CGRect res = [text boundingRectWithSize:size
+                                    options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin
+                                 attributes:@{NSFontAttributeName : font}
+                                    context:nil];
+    return CGSizeMake(ceilf(res.size.width), ceilf(res.size.height));
+}
+
 
 @end

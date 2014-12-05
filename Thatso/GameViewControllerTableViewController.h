@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "PHFComposeBarView.h"
+#import "GameHeaderView.h"
+
 
 @interface GameViewControllerTableViewController : UIViewController <SINMessageClientDelegate, DidAddCommentDelegate, DidGetCommentsDelegate, DidStartNewRound, PHFComposeBarViewDelegate,UITextViewDelegate, UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate>
 {
@@ -19,7 +21,7 @@
 @property (strong, nonatomic) id<SINMessageClient> messageClient;
 
 
-@property (strong, nonatomic) IBOutlet UILabel *headerView;
+@property (strong, nonatomic) IBOutlet GameHeaderView *headerView;
 @property (nonatomic, strong) UIAlertView *alertView;
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet UIRefreshControl *refreshControl;

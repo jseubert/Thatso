@@ -102,7 +102,9 @@
     if([DataStore instance].fbFriends.count <= 0)
     {
         [cell.nameLabel setText:@"No Friends :("];
+        [cell setUserInteractionEnabled:NO];
     }else if (indexPath.row < self.fbFriendsArray.count){
+        [cell setUserInteractionEnabled:YES];
         PFUser *user = [self.fbFriendsArray objectAtIndex:indexPath.row];
         [cell.nameLabel setText:[DataStore getFriendFullNameWithID:[user objectForKey:UserFacebookID]]];
         [DataStore getFriendProfilePictureWithID:[user objectForKey:UserFacebookID] withBlock:^(UIImage *image) {
@@ -115,7 +117,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if(indexPath.row < self.fbFriendsArray.count)
+    if(indexPath.row < self.fbFriendsArray.count && [DataStore instance].fbFriends.count > 0)
     {
         [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryCheckmark;
     }
