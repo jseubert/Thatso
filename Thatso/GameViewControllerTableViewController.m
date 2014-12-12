@@ -15,7 +15,6 @@
 #import "PreviousRoundsTableViewController.h"
 #import "AppDelegate.h"
 
-
 @implementation GameViewControllerTableViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -146,15 +145,14 @@
 -(void) setupHeader
 {
     self.currentRound = self.currentGame.currentRound;
-    [self.currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-        [self.headerView.roundLabel setText:[NSString stringWithFormat:@"Round %@",self.currentRound.roundNumber]];
-        [self.headerView.caregoryLabel setText:[NSString stringWithFormat:@"%@",self.currentRound.category]];
-        [DataStore getFriendProfilePictureWithID:self.currentRound.subject withBlock:^(UIImage * image) {
-            [self.headerView.profilePicture setImage:image];
 
-        }];
-        [self layoutSubviews];
+    [self.headerView.roundLabel setText:[NSString stringWithFormat:@"Round %@",self.currentRound.roundNumber]];
+    [self.headerView.caregoryLabel setText:[NSString stringWithFormat:@"%@",self.currentRound.category]];
+    [DataStore getFriendProfilePictureWithID:self.currentRound.subject withBlock:^(UIImage * image) {
+        [self.headerView.profilePicture setImage:image];
     }];
+    [self layoutSubviews];
+
 }
 
 -(void)layoutSubviews
@@ -329,7 +327,7 @@
         [self.refreshControl setEnabled:NO];
     }
     NSLog(@"refreshGame: GameID: %@", self.currentGame.objectId);
-    [self.currentGame refreshInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+    [self.currentGame fetchInBackgroundWithBlock:^(PFObject *object, NSError *error) {
         self.currentRound = self.currentGame.currentRound;
         [self.currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
             
@@ -416,7 +414,7 @@
     
     [self.tableView reloadData];
     
-    [Comms addComment:comment forDelegate:self];
+    [Comms addComment:comment toRound:self.currentRound forDelegate:self];
    
 }
 
@@ -429,7 +427,6 @@
         [self.messageClient sendMessage:message];
         
     } else{
-        [self.tableView reloadData];
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error!"
                                                         message:info
                                                        delegate:nil
@@ -453,6 +450,7 @@
                     } else{
                         [self.comments removeObjectAtIndex:i];
                     }
+                    [self.tableView reloadData];
                     break;
                 }
             }
@@ -585,12 +583,13 @@
         }
         else if([message.text isEqualToString:NewGame])
         {
-            PFQuery *getGames = [PFQuery queryWithClassName:GameClass];
+            PFQuery *getGame = [PFQuery queryWithClassName:GameClass];
+            [getGame includeKey:GameCurrentRound];
             NSString* gameId = [message.headers objectForKey:ObjectID];
-            [getGames getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
+            [getGame getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
                 Game* game = (Game*)object;
                 //Add the game
-                [[[UserGames instance] games] addObject:game];
+                [[UserGames instance] addGame:game];
                 
                 //Notify?
                 [[NSNotificationCenter defaultCenter]
@@ -624,18 +623,18 @@
         else if([message.text isEqualToString:NewGame])
         {
             PFQuery *getGame = [PFQuery queryWithClassName:GameClass];
+            [getGame includeKey:GameCurrentRound];
             NSLog(@"GameID: %@",[message.headers objectForKey:ObjectID]);
             NSString* gameId = [message.headers objectForKey:ObjectID];
+            [getGame includeKey:GameCurrentRound];
             [getGame getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
                 Game* game = (Game*)object;
                 //Add the game
-                [[[UserGames instance] games] addObject:game];
+                [[UserGames instance] addGame:game];
                 
-                [game.currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-                    //Build alert
-                    NSString *summary = [NSString stringWithFormat:@"First category is \"%@\" with %@", game.currentRound.category,[StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
-                    [self showAlertWithTitle:@"You were added to a new game!" andSummary:summary];
-                }];
+                //Build alert
+                NSString *summary = [NSString stringWithFormat:@"First category is \"%@\" with %@", game.currentRound.category,[StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
+                [self showAlertWithTitle:@"You were added to a new game!" andSummary:summary];
                 
                 //Notify?
                 [[NSNotificationCenter defaultCenter]

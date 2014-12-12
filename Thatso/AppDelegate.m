@@ -15,7 +15,13 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [Parse setApplicationId:@"Riu6PqKr6bUkHTPDqZ7l8Z9YKCCgPD9ginQbW5Bh" clientKey:@"RRLGVt4cvUEEv1o1pU1a4s78O9FdKS7TQk4A3lfv"];
+    //Beta Testing
+    //[Parse setApplicationId:@"Riu6PqKr6bUkHTPDqZ7l8Z9YKCCgPD9ginQbW5Bh" clientKey:@"RRLGVt4cvUEEv1o1pU1a4s78O9FdKS7TQk4A3lfv"];
+    
+    //Internal Testing
+    [Parse setApplicationId:@"pSIZJTLx1s9w6TzozqIBMYeZGjQyk9XvbqyzoztM" clientKey:@"Xceuugh2wcGDs4bQ5mPt87gwJCuNl7tyUulWHWeV"];
+    
+    [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
     // Initialize Parse's Facebook Utilities singleton. This uses the FacebookAppID we specified in our App bundle's plist.
     [PFFacebookUtils initializeFacebook];

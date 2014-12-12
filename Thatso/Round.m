@@ -14,6 +14,7 @@
 @dynamic subject;
 @dynamic category;
 @dynamic roundNumber;
+@dynamic responded;
 + (void)load {
     [self registerSubclass];
 }

@@ -123,6 +123,9 @@
         //return;
     }
     
+    
+    
+    
     //Check if this game already exists
     //Query returns all games that contain the players above
     PFQuery *checkIfGameExistsQuery = [PFQuery queryWithClassName:GameClass];
@@ -159,6 +162,7 @@
         roundObject.judge = [[PFUser currentUser] objectForKey:UserFacebookID];
         roundObject.subject = [fbFriendsInGame objectAtIndex:0];
         roundObject.roundNumber = @1;
+        roundObject.responded = [[NSArray alloc] init];
       
         //Get new category
         [Comms getCategories];
@@ -170,15 +174,45 @@
         
         gameObject.currentRound = roundObject;
         
-        
+       
         [gameObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error)
         {
             if (succeeded) {
                 // 4 If the save was successful, save the comment in another new Parse object. Again, save the  user’s name and Facebook user ID along with the comment string.
+
                 
-                [[[UserGames instance] games] addObject:gameObject];
+                //Check to make sure that someone else didnt update at the exact same time. If so, delete this object
+                //Don't know a better way to do this at the moment...
+                PFQuery *checkIfGameExistsQuery = [PFQuery queryWithClassName:GameClass];
+                [checkIfGameExistsQuery whereKey:GamePlayers containsAllObjectsInArray:allPlayersInGame];
+                [checkIfGameExistsQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
+                 {
+                     //Error With Query
+                     if(error)
+                     {
+                         [delegate newGameUploadedToServer:NO game:nil info:error.fberrorUserMessage];
+                     }
+                     //Check if this game already exists
+                     else if(objects != NULL && [objects count] > 1)
+                     {
+                         //Check each game returned. If a game has a same amount of players as the original ID's passed, then it is a duplicate game
+                         for(int i = 0; i < [objects count]; i ++)
+                         {
+                             if([allPlayersInGame count] == [[[objects objectAtIndex:i] objectForKey:GamePlayers] count])
+                             {
+                                 [gameObject.currentRound deleteInBackground];
+                                 [gameObject deleteInBackground];
+                                 [delegate newGameUploadedToServer:NO game:nil info:@"An error occured creating this game. Someone else may be trying to start a game with these players too!"];
+                                 return;
+                             }
+                         }
+                     }
+                     
+                     //Everything looks good?
+                     [[UserGames instance] addGame:gameObject];
+                     [delegate newGameUploadedToServer:YES game:gameObject info:@"Success"];
+                 }];
              
-                [delegate newGameUploadedToServer:YES game:gameObject info:@"Success"];
             } else {
                     // 6 If there was an error saving the new game object, report the error
                 [delegate newGameUploadedToServer:NO game:nil info:error.fberrorUserMessage];
@@ -193,6 +227,7 @@
     PFQuery *getGames = [PFQuery queryWithClassName:GameClass];
     
     [getGames orderByDescending:UpdatedAt];
+    [getGames includeKey:GameCurrentRound];
     NSArray *user =[[NSArray alloc] initWithObjects:[[PFUser currentUser] objectForKey:UserFacebookID], nil];
     
     //find all games that have the current user as a player
@@ -202,8 +237,11 @@
         if (error) {
             [delegate didGetGamesDelegate:NO info: error.localizedDescription];
 		} else {
-            [[[UserGames instance] games] removeAllObjects];
-            [[[UserGames instance] games] addObjectsFromArray:objects];
+            [[UserGames instance] reset];
+            for(int i = 0; i < objects.count; i ++)
+            {
+                [[UserGames instance] addGame:[objects objectAtIndex:i]];
+            }
             
             // Notify that all the current games have been downloaded
             [delegate didGetGamesDelegate:YES info: nil];
@@ -212,14 +250,14 @@
 }
 
 
-+ (void) addComment:(Comment*)comment forDelegate:(id<DidAddCommentDelegate>)delegate{
++ (void) addComment:(Comment*)comment toRound:(Round*)round forDelegate:(id<DidAddCommentDelegate>)delegate{
     //Check if this round is still active
     PFQuery *roundQuery = [PFQuery queryWithClassName:RoundClass];
     [roundQuery whereKey:ObjectID equalTo:comment.roundID];
     [roundQuery getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
         if(error)
         {
-             [delegate didAddComment:NO needsRefresh:YES info:@"This round is over, getting new round!"];
+             [delegate didAddComment:NO needsRefresh:NO info:error.localizedDescription];
         }else{
             //round not active, need to refresh view
             if(!object)
@@ -240,6 +278,12 @@
                     //Comment does not exist. Add it.
                     if(!object)
                     {
+                        //Also add to round
+                        NSMutableArray *newArray = [[NSMutableArray alloc] initWithArray:((Round*)round).responded];
+                        [newArray addObject:comment.from];
+                        round.responded = newArray;
+                        [round saveInBackground];
+                        
                         [comment saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                             if (succeeded) {
                                 // Notify that the Comment has been uploaded, using NSNotificationCenter
@@ -356,6 +400,7 @@
                             [round deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                                 if(succeeded)
                                 {
+                                    [[UserGames instance] addGame:game];
                                     [delegate didStartNewRound:YES info: error.localizedDescription previousWinner:completedRound];
                                 }else{
                                     [delegate didStartNewRound:NO info: error.localizedDescription previousWinner:nil];
@@ -418,6 +463,7 @@
     }
 }
 
+
 + (void) getProfilePictureForUser: (NSString*) fbId withBlock:(void (^)(UIImage*))block
 {
     [[NSOperationQueue profilePictureOperationQueue] addOperationWithBlock:^ {
@@ -425,11 +471,12 @@
         NSString *profilePictureURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", fbId];
         NSData *profilePictureData = [NSData dataWithContentsOfURL:[NSURL URLWithString:profilePictureURL]];
         UIImage *profilePicture = [UIImage imageWithData:profilePictureData];
-        
         // Set the profile picture into the user object
         if (profilePicture)
         {
-            [[DataStore instance].fbFriendsProfilePictures setObject:profilePicture forKey:fbId];
+            @synchronized(self){
+                [[DataStore instance].fbFriendsProfilePictures setObject:profilePicture forKey:fbId];
+            }
         }
         if(block != nil)
         {

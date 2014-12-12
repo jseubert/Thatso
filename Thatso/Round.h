@@ -13,6 +13,7 @@
 @property (retain) NSString *subject;
 @property (retain) NSString *category;
 @property (retain) NSNumber *roundNumber;
+@property (retain) NSArray *responded;
 + (NSString *)parseClassName;
 @end
 

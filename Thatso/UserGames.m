@@ -23,16 +23,64 @@ static UserGames *instance = nil;
 {
     self = [super init];
     if (self) {
-        _games = [[NSMutableArray alloc] init];
+        self.games = [[NSMutableDictionary alloc] init];
+        [self.games setObject:[[NSMutableArray alloc] init] forKey:@"Judge"];
+        [self.games setObject:[[NSMutableArray alloc] init] forKey:@"CommentNeeded"];
+        [self.games setObject:[[NSMutableArray alloc] init] forKey:@"Completed"];
         self.activeGames =[[NSMutableDictionary alloc] init];
     }
     return self;
 }
 
+-(void) addGame: (Game*) game
+{
+    //Remove the game if it needs to be removed
+    for (NSString *key in [self.games allKeys])
+    {
+        NSMutableArray *gameArray =[self.games objectForKey:key];
+        
+        for(Game* existingGame in gameArray)
+        {
+            if([existingGame.objectId isEqualToString:game.objectId])
+            {
+                [gameArray removeObject:existingGame];
+            }
+        }
+    }
+  
+    //User is the judge of this game
+    if([game.currentRound.judge isEqualToString: [[PFUser currentUser] objectForKey:UserFacebookID]])
+    {
+        [[self.games objectForKey:@"Judge"] addObject:game];
+    } else if([game.currentRound.responded containsObject:[[PFUser currentUser] objectForKey:UserFacebookID]])
+    {
+        [[self.games objectForKey:@"Completed"] addObject:game];
+    } else
+    {
+        [[self.games objectForKey:@"CommentNeeded"] addObject:game];
+    }
+    
+}
+
+-(int) gameCount
+{
+    int count = 0;
+    //Remove the game if it needs to be removed
+    for (NSString *key in [self.games allKeys])
+    {
+        NSMutableArray *gameArray =[self.games objectForKey:key];
+        count += gameArray.count;
+    }
+    
+    return count;
+}
+
 - (void) reset
 {
-    [self.activeGames removeAllObjects];
-    [_games removeAllObjects];
+    [self.games removeAllObjects];
+    [self.games setObject:[[NSMutableArray alloc] init] forKey:@"Judge"];
+    [self.games setObject:[[NSMutableArray alloc] init] forKey:@"CommentNeeded"];
+    [self.games setObject:[[NSMutableArray alloc] init] forKey:@"Completed"];
 }
 
 - (void) markGame:(NSString*)gameId active:(BOOL)active

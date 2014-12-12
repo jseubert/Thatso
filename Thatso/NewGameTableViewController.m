@@ -207,12 +207,13 @@
         }
         else if([message.text isEqualToString:NewGame])
         {
-            PFQuery *getGames = [PFQuery queryWithClassName:GameClass];
+            PFQuery *getGame = [PFQuery queryWithClassName:GameClass];
+            [getGame includeKey:GameCurrentRound];
             NSString* gameId = [message.headers objectForKey:ObjectID];
-            [getGames getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
+            [getGame getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
                 Game* game = (Game*)object;
                 //Add the game
-                [[[UserGames instance] games] addObject:game];
+                [[UserGames instance] addGame:game];
                 
                 //Notify?
                 [[NSNotificationCenter defaultCenter]
@@ -240,18 +241,17 @@
         else if([message.text isEqualToString:NewGame])
         {
             PFQuery *getGame = [PFQuery queryWithClassName:GameClass];
+            [getGame includeKey:GameCurrentRound];
             NSLog(@"GameID: %@",[message.headers objectForKey:ObjectID]);
             NSString* gameId = [message.headers objectForKey:ObjectID];
             [getGame getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
                 Game* game = (Game*)object;
                 //Add the game
-                [[[UserGames instance] games] addObject:game];
+                [[UserGames instance] addGame:game];
                
-                [game.currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-                    //Build alert
-                    NSString *summary = [NSString stringWithFormat:@"First category is \"%@\" with %@", game.currentRound.category,[StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
-                    [self showAlertWithTitle:@"You were added to a new game!" andSummary:summary];
-                }];
+                //Build alert
+                NSString *summary = [NSString stringWithFormat:@"First category is \"%@\" with %@", game.currentRound.category,[StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
+                [self showAlertWithTitle:@"You were added to a new game!" andSummary:summary];
                 
                 //Notify?
                 [[NSNotificationCenter defaultCenter]

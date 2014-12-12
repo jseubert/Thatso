@@ -48,6 +48,7 @@ extern NSString * const RoundJudge;
 extern NSString * const RoundSubject;
 extern NSString * const RoundCategory;
 extern NSString * const RoundNumber;
+extern NSString * const RoundResponded; 
 
 #pragma mark Comment Fields
 extern NSString * const CommentGameID;

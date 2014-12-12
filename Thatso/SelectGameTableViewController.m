@@ -93,6 +93,7 @@
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     self.messageClient = [appDelegate.client messageClient];
     self.messageClient.delegate = self;
+    
     [self.tableView reloadData];
 }
 
@@ -107,13 +108,40 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
-    return 1;
+    
+    if(initialLoad)
+    {
+        return 1;
+    } else{
+        return 3;
+    }
 }
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     //Make Variable size height
     return 60;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    //Make Variable size height
+    if(initialLoad)
+    {
+        return 0;
+    }
+    else if(section == 0)
+    {
+        return ([[[UserGames instance].games objectForKey:@"Judge"] count] == 0) ? 0 : 40;
+    } else if (section == 1)
+    {
+        return ([[[UserGames instance].games objectForKey:@"CommentNeeded"] count] == 0) ? 0 : 40;
+    } else if (section == 2)
+    {
+        return ([[[UserGames instance].games objectForKey:@"Completed"] count] == 0) ? 0 : 40;
+    } else
+    {
+        return 0;
+    }
 }
 
 
@@ -123,15 +151,20 @@
     {
         return 1;
     } else{
-        if([[UserGames instance].games count] > 0)
+        if(section == 0)
         {
-            return (int)[[UserGames instance].games count];
-        }else
+            return [[[UserGames instance].games objectForKey:@"Judge"] count];
+        } else if (section == 1)
         {
-            return roundf(tableView.frame.size.height/60);
+            return [[[UserGames instance].games objectForKey:@"CommentNeeded"] count];
+        } else if (section == 2)
+        {
+            return [[[UserGames instance].games objectForKey:@"Completed"] count];
+        } else
+        {
+            return 0;
         }
     }
-
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -142,7 +175,7 @@
         cell = [[SelectGameTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     
-    if([[UserGames instance].games count] <= 0 && indexPath.row == 0)
+    if([[UserGames instance] gameCount] <= 0 && indexPath.row == 0)
     {
         if(initialLoad)
         {
@@ -153,23 +186,25 @@
             
         }
         [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
-    }else if([[UserGames instance].games count] > 0)
+    }else if([[UserGames instance] gameCount] > 0)
     {
-     
-        Game* game = [[UserGames instance].games objectAtIndex:indexPath.row];
-        Round *currentRound = game.currentRound;
-        [currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-            [cell.categoryLabel setText:[NSString stringWithFormat:@"Round %@: %@", currentRound[RoundNumber], currentRound[RoundCategory]]];
-        }];
         
-        [cell.namesLabel setText:[StringUtils buildTextStringForPlayersInGame:game.players fullName:NO]];
-        
-        if([[UserGames instance] isGameActive:game.objectId])
+        Game* game;
+        if(indexPath.section == 0)
         {
-            [cell.nextRoundLabel setHidden:YES];
-        } else{
-            [cell.nextRoundLabel setHidden:NO];
+            game = [[[UserGames instance].games objectForKey:@"Judge"] objectAtIndex:indexPath.row];
+        } else if (indexPath.section == 1)
+        {
+            game = [[[UserGames instance].games objectForKey:@"CommentNeeded"] objectAtIndex:indexPath.row];
+        } else if (indexPath.section == 2)
+        {
+            game = [[[UserGames instance].games objectForKey:@"Completed"] objectAtIndex:indexPath.row];
         }
+        Round *currentRound = game.currentRound;
+
+        [cell.categoryLabel setText:[NSString stringWithFormat:@"Round %@: %@", currentRound[RoundNumber], currentRound[RoundCategory]]];
+
+        [cell.namesLabel setText:[StringUtils buildTextStringForPlayersInGame:game.players fullName:NO]];
         [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
     }
     
@@ -177,14 +212,56 @@
     return cell;
 }
 
+- (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+       
+    NSString *cellIdentifier = @"SectionCell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    }
+    if(section == 0)
+    {
+        cell.textLabel.text = @"Games You're The Judge";
+    } else if (section == 1)
+    {
+        cell.textLabel.text = @"Games You Need To Add A Response";
+    } else if (section ==2)
+    {
+        cell.textLabel.text = @"Games Waiting For Judge";
+    }
+    
+    cell.textLabel.font = [UIFont defaultAppFontWithSize:16];
+    cell.textLabel.textColor = [UIColor whiteColor];
+    cell.backgroundColor = [UIColor pinkAppColor];
+    [[cell  layer] setBorderWidth:2.0f];
+    [[cell  layer] setBorderColor:[UIColor whiteColor].CGColor];
+    [[cell  layer] setCornerRadius:10.0f];
+    [cell setClipsToBounds:YES];
+    
+    
+    return cell;
+}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if([UserGames instance].games != nil && [UserGames instance].games.count > 0)
     {
         GameViewControllerTableViewController *vc = [[GameViewControllerTableViewController alloc] init];
-        Game* currentGame = [[UserGames instance].games objectAtIndex:indexPath.row];
-        [currentGame.currentRound fetchIfNeeded];
-        vc.currentGame = currentGame;
+        Game* game;
+        if(indexPath.section == 0)
+        {
+            game = [[[UserGames instance].games objectForKey:@"Judge"] objectAtIndex:indexPath.row];
+        } else if (indexPath.section == 1)
+        {
+            game = [[[UserGames instance].games objectForKey:@"CommentNeeded"] objectAtIndex:indexPath.row];
+        } else if (indexPath.section == 2)
+        {
+            game = [[[UserGames instance].games objectForKey:@"Completed"] objectAtIndex:indexPath.row];
+        }
+        [game.currentRound fetchIfNeeded];
+        vc.currentGame = game;
+        
+        
         [self.navigationController pushViewController:vc animated:YES];
     }
 }
@@ -273,12 +350,13 @@
         }
         else if([message.text isEqualToString:NewGame])
         {
-            PFQuery *getGames = [PFQuery queryWithClassName:GameClass];
+            PFQuery *getGame = [PFQuery queryWithClassName:GameClass];
             NSString* gameId = [message.headers objectForKey:ObjectID];
-            [getGames getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
+            [getGame includeKey:GameCurrentRound];
+            [getGame getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
                 Game* game = (Game*)object;
                 //Add the game
-                [[[UserGames instance] games] addObject:game];
+                [[UserGames instance] addGame:game];
                 
                 //Notify?
                 [[NSNotificationCenter defaultCenter]
@@ -304,18 +382,17 @@
         else if([message.text isEqualToString:NewGame])
         {
             PFQuery *getGame = [PFQuery queryWithClassName:GameClass];
+            [getGame includeKey:GameCurrentRound];
             NSLog(@"GameID: %@",[message.headers objectForKey:ObjectID]);
             NSString* gameId = [message.headers objectForKey:ObjectID];
             [getGame getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
                 Game* game = (Game*)object;
                 //Add the game
-                [[[UserGames instance] games] addObject:game];
+                [[UserGames instance] addGame:game];
                 
-                [game.currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-                    //Build alert
-                    NSString *summary = [NSString stringWithFormat:@"First category is \"%@\" with %@", game.currentRound.category,[StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
-                    [self showAlertWithTitle:@"You were added to a new game!" andSummary:summary];
-                }];
+                //Build alert
+                NSString *summary = [NSString stringWithFormat:@"First category is \"%@\" with %@", game.currentRound.category,[StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
+                [self showAlertWithTitle:@"You were added to a new game!" andSummary:summary];
                 
                 //Notify?
                 [[NSNotificationCenter defaultCenter]

@@ -51,6 +51,7 @@ NSString * const RoundJudge = @"judge";
 NSString * const RoundSubject = @"subject";
 NSString * const RoundCategory = @"category";
 NSString * const RoundNumber = @"roundNumber";
+NSString * const RoundResponded = @"responded";
 
 #pragma mark Comment Fields
 NSString * const CommentGameID = @"gameID";

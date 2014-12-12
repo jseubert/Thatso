@@ -49,7 +49,7 @@ typedef void (^ImageResultBlock)(UIImage* image);
 + (void) getAllFacebookFriends:(id<DidLoginDelegate>)delegate;
 + (void) startNewGameWithUsers: (NSMutableArray *)fbFriendsInGame forDelegate:(id<CreateGameDelegate>)delegate;
 + (void) getUsersGamesforDelegate:(id<GetGamesDelegate>)delegate;
-+ (void) addComment:(Comment*)comment forDelegate:(id<DidAddCommentDelegate>)delegate;
++ (void) addComment:(Comment*)comment toRound:(Round*)round forDelegate:(id<DidAddCommentDelegate>)delegate;
 + (void) getActiveCommentsForGame:(Game*)game inRound:(Round*)round forDelegate:(id<DidGetCommentsDelegate>)delegate;
 + (void) finishRound: (Round*)round inGame: (Game*)game withWinningComment: (Comment*)comment andOtherComments: (NSArray *)otherComments forDelegate:(id<DidStartNewRound>)delegate;
 + (void) getPreviousRoundsInGame: (Game*) game forDelegate:(id<DidGetPreviousRounds>)delegate;

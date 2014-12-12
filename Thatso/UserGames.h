@@ -10,12 +10,15 @@
 
 
 @interface UserGames : NSObject
-@property (nonatomic, strong) NSMutableArray *games;
+@property (nonatomic, strong) NSMutableDictionary *games;
 @property (nonatomic, strong) NSMutableDictionary *activeGames;
 +(UserGames *) instance;
 - (void) reset;
 - (void) markGame:(NSString*)gameId active:(BOOL)active;
--(BOOL) isGameActive:(NSString*)gameId;
+- (void) addGame: (Game *) game;
+- (int) gameCount;
+- (int) gameCount;
+- (BOOL) isGameActive:(NSString*)gameId;
 
 @end
 
