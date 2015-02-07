@@ -7,12 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BaseTableViewController.h"
 
-@interface NewGameTableViewController : UITableViewController <SINMessageClientDelegate>
+@interface NewGameTableViewController : BaseTableViewController
 
-@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
-@property (strong, nonatomic) id<SINMessageClient> messageClient;
 @property(nonatomic) NSArray* fbFriendsArray;
-@property (nonatomic, strong) UIAlertView *alertView;
+@property(nonatomic) NSString *gameName;
+@property(nonatomic) BOOL familyFriendly;
 
 @end

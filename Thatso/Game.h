@@ -13,5 +13,12 @@
 + (NSString *)parseClassName;
 @property (retain) NSArray *players;
 @property (retain) NSNumber *rounds;
+@property (retain) NSString *gameName;
+@property BOOL familyFriendly;
 @property (retain) Round *currentRound;
+
+- (User *) playerWithObjectId: (NSString *) objectId;
+
+- (User *) playerWithfbId: (NSString *) fbId;
+
 @end

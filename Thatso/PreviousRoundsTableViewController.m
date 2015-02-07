@@ -19,26 +19,11 @@
 
 @implementation PreviousRoundsTableViewController
 
--(void)viewDidAppear:(BOOL)animated
-{
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    
-    //Recieve messages
-    self.messageClient = [appDelegate.client messageClient];
-    self.messageClient.delegate = self;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self.tableView setBackgroundColor:[UIColor blueAppColor]];
     
     initialLoad = true;
     self.previousRounds = [[NSMutableArray alloc] init];
-    
-    // Create a re-usable NSDateFormatter
-    _dateFormatter = [[NSDateFormatter alloc] init];
-    [_dateFormatter setDateFormat:@"MMM d, h:mm a"];
-    
     
     //Back Button
     FratBarButtonItem *backButton= [[FratBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
@@ -60,6 +45,12 @@
     [self refreshGames:nil];
 }
 
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+}
+
+
 //Pull to refresh method
 - (void) refreshGames:(UIRefreshControl *)refreshControl
 {
@@ -77,6 +68,10 @@
 }
 
 #pragma mark - Table view data source
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    // Return the number of sections.
+    return 1;
+}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -100,7 +95,7 @@
             
         //get the size of the label given the text
         CGSize topLabelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:round.category];
-        NSString *winner = [DataStore getFriendFirstNameWithID:round.winningResponseFrom];
+        NSString *winner = round.winningResponseFrom.first_name;
         CGSize bottomeLabelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(width, width)) withText:[NSString stringWithFormat:@"%@: %@", winner, round.winningResponse]];
         
         
@@ -130,7 +125,7 @@
         cell.namesLabel.text = @"No previous rounds...";
     } else{
         CompletedRound* round = [self.previousRounds objectAtIndex:indexPath.row];
-        NSString *winner = [DataStore getFriendFirstNameWithID:round.winningResponseFrom];
+        NSString *winner = round.winningResponseFrom.first_name;
         [cell.namesLabel setText:round.category];
         [cell.categoryLabel setText:[NSString stringWithFormat:@"%@: %@", winner, round.winningResponse]];
     }
@@ -161,125 +156,9 @@
         [self.tableView reloadData];
         
     }else{
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error!"
-                                                        message:info
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil];
-        [alert show];
+        [self showAlertWithTitle:@"Error!" andSummary:info];
         
     }
 }
-
-#pragma mark - SINMessageClientDelegate
-#pragma mark - SINMessageClientDelegate
-
-- (void)messageClient:(id<SINMessageClient>)messageClient didReceiveIncomingMessage:(id<SINMessage>)message {
-    //In background
-    if([UIApplication sharedApplication].applicationState == UIApplicationStateBackground || [UIApplication sharedApplication].applicationState == UIApplicationStateBackground){
-        if([message.text isEqualToString:NewRound])
-        {
-            NSString *winner = [DataStore getFriendFirstNameWithID:[message.headers objectForKey:CompletedRoundWinningResponseFrom]];
-            
-            NSString* summary = [NSString stringWithFormat:@"New round starting: %@ won previous.", winner];
-            UILocalNotification* notification = [[UILocalNotification alloc] init];
-            notification.alertBody = summary;
-            
-            [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
-        }
-        else if([message.text isEqualToString:NewGame])
-        {
-            PFQuery *getGame = [PFQuery queryWithClassName:GameClass];
-            [getGame includeKey:GameCurrentRound];
-            NSString* gameId = [message.headers objectForKey:ObjectID];
-            [getGame getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
-                Game* game = (Game*)object;
-                //Add the game
-                [[UserGames instance] addGame:game];
-                
-                //Notify?
-                [[NSNotificationCenter defaultCenter]
-                 postNotificationName:N_GamesDownloaded
-                 object:self];
-                
-                //Build notification and send
-                NSString* summary = [NSString stringWithFormat:@"You were added to a new game with: %@", [StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
-                UILocalNotification* notification = [[UILocalNotification alloc] init];
-                notification.alertBody = summary;
-                [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
-            }];
-        }
-    }
-    //UserActive on this screen
-    else
-    {
-        if([message.text isEqualToString:NewRound])
-        {
-            NSString *winner = [DataStore getFriendFirstNameWithID:[message.headers objectForKey:CompletedRoundWinningResponseFrom]];
-            
-            NSString* summary = [NSString stringWithFormat:@"%@ won round %@ with: %@", winner, [message.headers objectForKey:CompletedRoundNumber], [message.headers objectForKey:CompletedRoundWinningResponse]];
-            [self showAlertWithTitle:@"New Round Started" andSummary:summary];
-        }
-        else if([message.text isEqualToString:NewGame])
-        {
-            PFQuery *getGame = [PFQuery queryWithClassName:GameClass];
-            [getGame includeKey:GameCurrentRound];
-            NSLog(@"GameID: %@",[message.headers objectForKey:ObjectID]);
-            NSString* gameId = [message.headers objectForKey:ObjectID];
-            [getGame getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
-                Game* game = (Game*)object;
-                //Add the game
-                [[UserGames instance] addGame:game];
-                
-                //Build alert
-                NSString *summary = [NSString stringWithFormat:@"First category is \"%@\" with %@", game.currentRound.category,[StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
-                [self showAlertWithTitle:@"You were added to a new game!" andSummary:summary];
-                
-                //Notify?
-                [[NSNotificationCenter defaultCenter]
-                 postNotificationName:N_GamesDownloaded
-                 object:self];
-                
-            }];
-        }
-    }
-}
-
-- (void)messageSent:(id<SINMessage>)message recipientId:(NSString *)recipientId {
-    NSLog(@"messageSent: %@ to: %@", message, recipientId);
-}
-
-- (void)message:(id<SINMessage>)message shouldSendPushNotifications:(NSArray *)pushPairs {
-    NSLog(@"Recipient not online. \
-          Should notify recipient using push (not implemented in this demo app). \
-          Please refer to the documentation for a comprehensive description.");
-}
-
-- (void)messageDelivered:(id<SINMessageDeliveryInfo>)info {
-    NSLog(@"Message to %@ was successfully delivered", info.recipientId);
-}
-
-- (void)messageFailed:(id<SINMessage>)message info:(id<SINMessageFailureInfo>)failureInfo {
-    NSLog(@"Failed delivering message to %@. Reason: %@", failureInfo.recipientId,
-          [failureInfo.error description]);
-}
-
-//Alert Views
-- (void) dismissAlert {
-    if (self.alertView && self.alertView.visible) {
-        [self.alertView dismissWithClickedButtonIndex:0 animated:YES];
-    }
-}
-
--(void) showAlertWithTitle: (NSString *)title andSummary:(NSString *)summary
-{
-    [self dismissAlert];
-    self.alertView = [[UIAlertView alloc]
-                      initWithTitle:title message:summary delegate:self  cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-    
-    // Display Alert Message
-    [self.alertView show];
-}
-
 
 @end

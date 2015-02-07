@@ -14,6 +14,7 @@
 #import "StringUtils.h"
 #import "AppDelegate.h"
 #import "UserGames.h"
+#import "NewGameDetailsViewController.h"
 #import <math.h>
 #import "Game.h"
 
@@ -23,22 +24,9 @@
 
 @implementation SelectGameTableViewController
 
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:style];
-    if (self) {
-        // Custom initialization
-        initialLoad = true;
-        
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    initialLoad = true;
-    self.tableView.backgroundColor = [UIColor blueAppColor];
     [self.tableView setSeparatorColor:[UIColor clearColor]];
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     self.navigationItem.title = @"Games";
@@ -47,10 +35,6 @@
      [NSDictionary dictionaryWithObjectsAndKeys:
       [UIFont fontWithName:@"mplus-1c-regular" size:50],
       NSFontAttributeName, nil]];
-    
-    // Create a re-usable NSDateFormatter
-    _dateFormatter = [[NSDateFormatter alloc] init];
-    [_dateFormatter setDateFormat:@"MMM d, h:mm a"];
     
     //Back button - needed for pushed view controllers
     FratBarButtonItem *backButton= [[FratBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
@@ -84,16 +68,14 @@
                                                  name:N_GamesDownloaded
                                                object:nil];
     
+    [self.tableView setHidden:YES];
+    
     [self refreshGames:nil];
 }
 
 -(void)viewDidAppear:(BOOL)animated
 {
-    //Recieve messages
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    self.messageClient = [appDelegate.client messageClient];
-    self.messageClient.delegate = self;
-    
+    [super viewDidAppear:animated];
     [self.tableView reloadData];
 }
 
@@ -107,14 +89,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    // Return the number of sections.
-    
-    if(initialLoad)
-    {
-        return 1;
-    } else{
-        return 3;
-    }
+    return 3;
 }
 
 
@@ -125,13 +100,14 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     //Make Variable size height
-    if(initialLoad)
+    if(section == 0)
     {
-        return 0;
-    }
-    else if(section == 0)
-    {
-        return ([[[UserGames instance].games objectForKey:@"Judge"] count] == 0) ? 0 : 40;
+        if([[UserGames instance] gameCount] == 0) {
+            return 40;
+        } else
+        {
+            return ([[[UserGames instance].games objectForKey:@"Judge"] count] == 0) ? 0 : 40;
+        }
     } else if (section == 1)
     {
         return ([[[UserGames instance].games objectForKey:@"CommentNeeded"] count] == 0) ? 0 : 40;
@@ -147,10 +123,6 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if(initialLoad)
-    {
-        return 1;
-    } else{
         if(section == 0)
         {
             return [[[UserGames instance].games objectForKey:@"Judge"] count];
@@ -164,7 +136,6 @@
         {
             return 0;
         }
-    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -175,18 +146,7 @@
         cell = [[SelectGameTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     
-    if([[UserGames instance] gameCount] <= 0 && indexPath.row == 0)
-    {
-        if(initialLoad)
-        {
-            cell.namesLabel.text = @"Loading games...";
-        } else
-        {
-             cell.namesLabel.text = @"No Games Found.";
-            
-        }
-        [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
-    }else if([[UserGames instance] gameCount] > 0)
+    if([[UserGames instance] gameCount] > 0)
     {
         
         Game* game;
@@ -204,7 +164,7 @@
 
         [cell.categoryLabel setText:[NSString stringWithFormat:@"Round %@: %@", currentRound[RoundNumber], currentRound[RoundCategory]]];
 
-        [cell.namesLabel setText:[StringUtils buildTextStringForPlayersInGame:game.players fullName:NO]];
+        [cell.nameLabel setText:game.gameName];
         [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
     }
     
@@ -222,7 +182,12 @@
     }
     if(section == 0)
     {
-        cell.textLabel.text = @"Games You're The Judge";
+        if([[UserGames instance] gameCount] == 0) {
+            cell.textLabel.text = @"No Games Found";
+        } else
+        {
+            cell.textLabel.text = @"Games You're The Judge";
+        }
     } else if (section == 1)
     {
         cell.textLabel.text = @"Games You Need To Add A Response";
@@ -269,7 +234,7 @@
 
 -(IBAction)logout:(id)sender{
     NSLog(@"Logout");
-    [PFUser logOut];
+    [User logOut];
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     [appDelegate logoutSinchClient];
     [self.navigationController popViewControllerAnimated:YES];
@@ -278,7 +243,7 @@
 -(IBAction)newGame:(id)sender{
     NSLog(@"newGame");
     // Seque to the Image Wall
-    NewGameTableViewController *vc = [[NewGameTableViewController alloc] init];
+    NewGameDetailsViewController *vc = [[NewGameDetailsViewController alloc] init];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -286,6 +251,7 @@
 //Pull to refresh method
 - (void) refreshGames:(UIRefreshControl *)refreshControl
 {
+    [self showLoadingAlert];
 	if (refreshControl) {
 		[refreshControl setAttributedTitle:[StringUtils makeRefreshText:@"Refreshing data..."]];
 		[refreshControl setEnabled:NO];
@@ -302,8 +268,8 @@
 //Call back delegate for new images finished
 - (void) didGetGamesDelegate:(BOOL)success info: (NSString *) info
 {
-    initialLoad = false;
-    
+    [self dismissAlert];
+     [self.tableView setHidden:NO];
 	// Refresh the table data to show the new games
 	[self.tableView reloadData];
     
@@ -317,112 +283,35 @@
 	}
 }
 
-- (void) dismissAlert {
-    if (self.alertView && self.alertView.visible) {
-        [self.alertView dismissWithClickedButtonIndex:0 animated:YES];
+- (void) newGameNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground
+{
+    if(inBackground)
+    {
+        [super newRoundNotification:message inBackground:inBackground];
+    } else{
+        [[UserGames instance] refreshGameID:[message.headers objectForKey:ObjectID] withBlock:^(Game * game) {
+            //Build alert
+            NSString *summary = [NSString stringWithFormat:@"First category is \"%@\" with %@", game.currentRound.category,[StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
+            [self showAlertWithTitle:@"You were added to a new game!" andSummary:summary];
+            [self.tableView reloadData];
+        }];
     }
 }
 
--(void) showAlertWithTitle: (NSString *)title andSummary:(NSString *)summary
+
+- (void) newRoundNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground
 {
-    [self dismissAlert];
-    self.alertView = [[UIAlertView alloc]
-                      initWithTitle:title message:summary delegate:self  cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-    
-    // Display Alert Message
-    [self.alertView show];
-}
-
-#pragma mark - SINMessageClientDelegate
-
-- (void)messageClient:(id<SINMessageClient>)messageClient didReceiveIncomingMessage:(id<SINMessage>)message {
-   
-    if([UIApplication sharedApplication].applicationState == UIApplicationStateBackground || [UIApplication sharedApplication].applicationState == UIApplicationStateBackground){
-        if([message.text isEqualToString:NewRound])
-        {
-            NSString *winner = [DataStore getFriendFirstNameWithID:[message.headers objectForKey:CompletedRoundWinningResponseFrom]];
-            
-            NSString* summary = [NSString stringWithFormat:@"New round starting: %@ won previous.", winner];
-            UILocalNotification* notification = [[UILocalNotification alloc] init];
-            notification.alertBody = summary;
-            
-            [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
-        }
-        else if([message.text isEqualToString:NewGame])
-        {
-            PFQuery *getGame = [PFQuery queryWithClassName:GameClass];
-            NSString* gameId = [message.headers objectForKey:ObjectID];
-            [getGame includeKey:GameCurrentRound];
-            [getGame getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
-                Game* game = (Game*)object;
-                //Add the game
-                [[UserGames instance] addGame:game];
-                
-                //Notify?
-                [[NSNotificationCenter defaultCenter]
-                 postNotificationName:N_GamesDownloaded
-                 object:self];
-                
-                //Build notification and send
-                NSString* summary = [NSString stringWithFormat:@"You were added to a new game with: %@", [StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
-                UILocalNotification* notification = [[UILocalNotification alloc] init];
-                notification.alertBody = summary;
-                [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
-            }];
-        }
-    } else {
-        // Update UI in-app
-        if([message.text isEqualToString:NewRound])
-        {
-            NSString *winner = [DataStore getFriendFirstNameWithID:[message.headers objectForKey:CompletedRoundWinningResponseFrom]];
-            
+    if(inBackground)
+    {
+        [super newRoundNotification:message inBackground:inBackground];
+    } else{
+        [[UserGames instance] refreshGameID:[message.headers objectForKey:CompletedRoundGameID] withBlock:^(Game * game) {
+            NSString *winner = [message.headers objectForKey:CompletedRoundWinningResponseFrom];
             NSString* summary = [NSString stringWithFormat:@"%@ won round %@ with: %@", winner, [message.headers objectForKey:CompletedRoundNumber], [message.headers objectForKey:CompletedRoundWinningResponse]];
             [self showAlertWithTitle:@"New Round Started" andSummary:summary];
-        }
-        else if([message.text isEqualToString:NewGame])
-        {
-            PFQuery *getGame = [PFQuery queryWithClassName:GameClass];
-            [getGame includeKey:GameCurrentRound];
-            NSLog(@"GameID: %@",[message.headers objectForKey:ObjectID]);
-            NSString* gameId = [message.headers objectForKey:ObjectID];
-            [getGame getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
-                Game* game = (Game*)object;
-                //Add the game
-                [[UserGames instance] addGame:game];
-                
-                //Build alert
-                NSString *summary = [NSString stringWithFormat:@"First category is \"%@\" with %@", game.currentRound.category,[StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
-                [self showAlertWithTitle:@"You were added to a new game!" andSummary:summary];
-                
-                //Notify?
-                [[NSNotificationCenter defaultCenter]
-                 postNotificationName:N_GamesDownloaded
-                 object:self];
-                
-            }];
-        }
+            [self.tableView reloadData];
+        }];
     }
-    
 }
-
-- (void)messageSent:(id<SINMessage>)message recipientId:(NSString *)recipientId {
-    NSLog(@"messageSent: %@ to: %@", message, recipientId);
-}
-
-- (void)message:(id<SINMessage>)message shouldSendPushNotifications:(NSArray *)pushPairs {
-    NSLog(@"Recipient not online. \
-          Should notify recipient using push (not implemented in this demo app). \
-          Please refer to the documentation for a comprehensive description.");
-}
-
-- (void)messageDelivered:(id<SINMessageDeliveryInfo>)info {
-    NSLog(@"Message to %@ was successfully delivered", info.recipientId);
-}
-
-- (void)messageFailed:(id<SINMessage>)message info:(id<SINMessageFailureInfo>)failureInfo {
-    NSLog(@"Failed delivering message to %@. Reason: %@", failureInfo.recipientId,
-          [failureInfo.error description]);
-}
-
 
 @end

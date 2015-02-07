@@ -7,6 +7,7 @@
 //
 
 #import "NewGameTableViewController.h"
+#import "NewGameDetailsViewController.h"
 #import "FratBarButtonItem.h"
 #import "ProfileViewTableViewCell.h"
 #import "UIImage+Scaling.h"
@@ -28,15 +29,6 @@
     return self;
 }
 
--(void)viewDidAppear:(BOOL)animated
-{
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    
-    //Recieve messages
-    self.messageClient = [appDelegate.client messageClient];
-    self.messageClient.delegate = self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -46,27 +38,14 @@
 
     
     //New Game Button
-    FratBarButtonItem *startButton  = [[FratBarButtonItem alloc] initWithTitle:@"Start Game" style:UIBarButtonItemStyleBordered target:self action:@selector(startGame:)];
+    FratBarButtonItem *startButton  = [[FratBarButtonItem alloc] initWithTitle:@"Next" style:UIBarButtonItemStyleBordered target:self action:@selector(nextPressed:)];
     self.navigationItem.rightBarButtonItem = startButton;
-    
-    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    self.activityIndicator.frame = CGRectMake(self.view.frame.size.width/2 - 40, self.view.frame.size.height/2 -40, 80, 80);
-    [self.view addSubview:self.activityIndicator];
-    
     self.tableView.allowsMultipleSelection = YES;
 }
 
--(void) enableUI: (BOOL)flag
+-(void)viewDidAppear:(BOOL)animated
 {
-    [self.view setUserInteractionEnabled:flag];
-    [self.navigationItem.rightBarButtonItem setEnabled:flag];
-    [self.navigationItem.leftBarButtonItem setEnabled:flag];
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    [super viewDidAppear:animated];
 }
 
 #pragma mark - Table view data source
@@ -105,8 +84,8 @@
         [cell setUserInteractionEnabled:NO];
     }else if (indexPath.row < self.fbFriendsArray.count){
         [cell setUserInteractionEnabled:YES];
-        PFUser *user = [self.fbFriendsArray objectAtIndex:indexPath.row];
-        [cell.nameLabel setText:[DataStore getFriendFullNameWithID:[user objectForKey:UserFacebookID]]];
+        User *user = [self.fbFriendsArray objectAtIndex:indexPath.row];
+        [cell.nameLabel setText:user.name];
         [DataStore getFriendProfilePictureWithID:[user objectForKey:UserFacebookID] withBlock:^(UIImage *image) {
             [cell.profilePicture setImage:[image imageScaledToFitSize:CGSizeMake(cell.frame.size.height, cell.frame.size.height)]];
         }];
@@ -136,168 +115,47 @@
     return NO;
 }
 
--(IBAction)startGame:(id)sender{
+-(IBAction)nextPressed:(id)sender{
     NSLog(@"startGame");
-    [self enableUI:NO];
-   if([self.tableView indexPathsForSelectedRows].count < 1) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Not enough Friends Selected"
-                                                        message:@"Must choose at least 2 other people."
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil];
-        [alert show];
-       [self enableUI:YES];
+    [self showLoadingAlertWithText:@"Starting New Game..."];
+    if([self.tableView indexPathsForSelectedRows].count < 1) {
+        [self showAlertWithTitle:@"Not enough Friends Selected" andSummary:@"Must choose at least 2 other people."];
+
     } else {
         NSMutableArray* selectedFriends = [[NSMutableArray alloc] init];
         for(NSIndexPath * indexPath in [self.tableView indexPathsForSelectedRows])
         {
             NSLog(@"addingFreind: %ld", (long)indexPath.row);
-            [selectedFriends addObject:[[self.fbFriendsArray objectAtIndex:indexPath.row] objectForKey:UserFacebookID]];
+            [selectedFriends addObject:[self.fbFriendsArray objectAtIndex:indexPath.row]];
         }
-        [self.activityIndicator startAnimating];
-        [Comms startNewGameWithUsers:selectedFriends forDelegate:self];
+        
+        
+        [Comms startNewGameWithUsers:selectedFriends withName:self.gameName familyFriendly:self.familyFriendly forDelegate:self];
 
     }
-        
-    
-    
 }
 
 - (void) newGameUploadedToServer:(BOOL)success game:(Game *)game info:(NSString *)info{
-    NSLog(@"newGameUploadedToServer: %d", success);
-    [self enableUI:YES];
-    [self.activityIndicator stopAnimating];
-    
+    [self dismissAlert];    
     if (success) {
         //Send out that a new game was added so other users can download it.
-        NSMutableArray *nonUserPlayers = [[NSMutableArray alloc] initWithArray:game.players];
-        [nonUserPlayers removeObject:[[PFUser currentUser] objectForKey:UserFacebookID]];
+        NSMutableArray *nonUserPlayers = [[NSMutableArray alloc] init];
+        for (User* user in game.players)
+        {
+            if(![user.objectId isEqualToString:[User currentUser].objectId])
+            {
+                [nonUserPlayers addObject:user.fbId];
+            }
+        }
+        
         SINOutgoingMessage *message = [SINOutgoingMessage messageWithRecipients:nonUserPlayers text:NewGame];
         [message addHeaderWithValue:game.objectId key:ObjectID];
         [self.messageClient sendMessage:message];
-        
-        [self.navigationController popViewControllerAnimated:YES];
     
+        NSUInteger ownIndex = [self.navigationController.viewControllers indexOfObject:self];
+        [self.navigationController popToViewController:[self.navigationController.viewControllers objectAtIndex:ownIndex - 2] animated:YES];
     }else{
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error!"
-                                                        message:info
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil];
-        [alert show];
-    }
-    
-
-}
-
-#pragma mark - SINMessageClientDelegate
-
-- (void)messageClient:(id<SINMessageClient>)messageClient didReceiveIncomingMessage:(id<SINMessage>)message {
-    //In background
-    if([UIApplication sharedApplication].applicationState == UIApplicationStateBackground || [UIApplication sharedApplication].applicationState == UIApplicationStateBackground){
-        if([message.text isEqualToString:NewRound])
-        {
-            NSString *winner = [DataStore getFriendFirstNameWithID:[message.headers objectForKey:CompletedRoundWinningResponseFrom]];
-            
-            NSString* summary = [NSString stringWithFormat:@"New round starting: %@ won previous.", winner];
-            UILocalNotification* notification = [[UILocalNotification alloc] init];
-            notification.alertBody = summary;
-            
-            [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
-        }
-        else if([message.text isEqualToString:NewGame])
-        {
-            PFQuery *getGame = [PFQuery queryWithClassName:GameClass];
-            [getGame includeKey:GameCurrentRound];
-            NSString* gameId = [message.headers objectForKey:ObjectID];
-            [getGame getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
-                Game* game = (Game*)object;
-                //Add the game
-                [[UserGames instance] addGame:game];
-                
-                //Notify?
-                [[NSNotificationCenter defaultCenter]
-                 postNotificationName:N_GamesDownloaded
-                 object:self];
-                
-                //Build notification and send
-                NSString* summary = [NSString stringWithFormat:@"You were added to a new game with: %@", [StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
-                UILocalNotification* notification = [[UILocalNotification alloc] init];
-                notification.alertBody = summary;
-                [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
-            }];
-        }
-    }
-    //UserActive on this screen
-    else
-    {
-        if([message.text isEqualToString:NewRound])
-        {
-            NSString *winner = [DataStore getFriendFirstNameWithID:[message.headers objectForKey:CompletedRoundWinningResponseFrom]];
-            
-            NSString* summary = [NSString stringWithFormat:@"%@ won round %@ with: %@", winner, [message.headers objectForKey:CompletedRoundNumber], [message.headers objectForKey:CompletedRoundWinningResponse]];
-            [self showAlertWithTitle:@"New Round Started" andSummary:summary];
-        }
-        else if([message.text isEqualToString:NewGame])
-        {
-            PFQuery *getGame = [PFQuery queryWithClassName:GameClass];
-            [getGame includeKey:GameCurrentRound];
-            NSLog(@"GameID: %@",[message.headers objectForKey:ObjectID]);
-            NSString* gameId = [message.headers objectForKey:ObjectID];
-            [getGame getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
-                Game* game = (Game*)object;
-                //Add the game
-                [[UserGames instance] addGame:game];
-               
-                //Build alert
-                NSString *summary = [NSString stringWithFormat:@"First category is \"%@\" with %@", game.currentRound.category,[StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
-                [self showAlertWithTitle:@"You were added to a new game!" andSummary:summary];
-                
-                //Notify?
-                [[NSNotificationCenter defaultCenter]
-                 postNotificationName:N_GamesDownloaded
-                 object:self];
-
-            }];
-        }
+        [self showAlertWithTitle:@"Error!" andSummary:info];
     }
 }
-
-- (void)messageSent:(id<SINMessage>)message recipientId:(NSString *)recipientId {
-    NSLog(@"messageSent: %@ to: %@", message, recipientId);
-}
-
-- (void)message:(id<SINMessage>)message shouldSendPushNotifications:(NSArray *)pushPairs {
-    NSLog(@"Recipient not online. \
-          Should notify recipient using push (not implemented in this demo app). \
-          Please refer to the documentation for a comprehensive description.");
-}
-
-- (void)messageDelivered:(id<SINMessageDeliveryInfo>)info {
-    NSLog(@"Message to %@ was successfully delivered", info.recipientId);
-}
-
-- (void)messageFailed:(id<SINMessage>)message info:(id<SINMessageFailureInfo>)failureInfo {
-    NSLog(@"Failed delivering message to %@. Reason: %@", failureInfo.recipientId,
-          [failureInfo.error description]);
-}
-
-//Alert Views
-- (void) dismissAlert {
-    if (self.alertView && self.alertView.visible) {
-        [self.alertView dismissWithClickedButtonIndex:0 animated:YES];
-    }
-}
-
--(void) showAlertWithTitle: (NSString *)title andSummary:(NSString *)summary
-{
-    [self dismissAlert];
-    self.alertView = [[UIAlertView alloc]
-                      initWithTitle:title message:summary delegate:self  cancelButtonTitle:@"Ok" otherButtonTitles:nil];
-    
-    // Display Alert Message
-    [self.alertView show];
-}
-
-
 @end

@@ -17,7 +17,7 @@
                BlueprintIdentifier = "9A2C6F6219A8324200DCF2B7"
                BuildableName = "Thatso.app"
                BlueprintName = "Thatso"
-               ReferencedContainer = "container:Thatso.xcodeproj">
+               ReferencedContainer = "container:ThatSo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,7 +35,7 @@
                BlueprintIdentifier = "9A2C6F7D19A8324200DCF2B7"
                BuildableName = "ThatsoTests.xctest"
                BlueprintName = "ThatsoTests"
-               ReferencedContainer = "container:Thatso.xcodeproj">
+               ReferencedContainer = "container:ThatSo.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -45,7 +45,7 @@
             BlueprintIdentifier = "9A2C6F6219A8324200DCF2B7"
             BuildableName = "Thatso.app"
             BlueprintName = "Thatso"
-            ReferencedContainer = "container:Thatso.xcodeproj">
+            ReferencedContainer = "container:ThatSo.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -64,7 +64,7 @@
             BlueprintIdentifier = "9A2C6F6219A8324200DCF2B7"
             BuildableName = "Thatso.app"
             BlueprintName = "Thatso"
-            ReferencedContainer = "container:Thatso.xcodeproj">
+            ReferencedContainer = "container:ThatSo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -82,7 +82,7 @@
             BlueprintIdentifier = "9A2C6F6219A8324200DCF2B7"
             BuildableName = "Thatso.app"
             BlueprintName = "Thatso"
-            ReferencedContainer = "container:Thatso.xcodeproj">
+            ReferencedContainer = "container:ThatSo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

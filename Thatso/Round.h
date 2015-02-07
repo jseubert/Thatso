@@ -7,6 +7,7 @@
 //
 
 #import <Parse/Parse.h>
+#import "User.h"
 
 @interface Round : PFObject<PFSubclassing>
 @property (retain) NSString *judge;

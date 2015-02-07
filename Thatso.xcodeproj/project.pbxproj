@@ -35,6 +35,9 @@
 		95F05C5B1A30107E00752A16 /* PreviousRoundsTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 95F05C5A1A30107E00752A16 /* PreviousRoundsTableViewCell.m */; };
 		9A10E2F71A380FE000C3B541 /* GenericCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A10E2F61A380FE000C3B541 /* GenericCategory.m */; };
 		9A10E2FA1A380FF500C3B541 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A10E2F91A380FF500C3B541 /* UIImage+Scaling.m */; };
+		9A10E2FD1A3AB01A00C3B541 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A10E2FC1A3AB01A00C3B541 /* User.m */; };
+		9A10E3001A3AD75A00C3B541 /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A10E2FF1A3AD75A00C3B541 /* BaseViewController.m */; };
+		9A10E3031A3ADF7B00C3B541 /* BaseTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A10E3021A3ADF7B00C3B541 /* BaseTableViewController.m */; };
 		9A1FFC961A0AAF9400A82788 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A1FFC951A0AAF9400A82788 /* Constants.m */; };
 		9A2C6F6719A8324200DCF2B7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A2C6F6619A8324200DCF2B7 /* Foundation.framework */; };
 		9A2C6F6919A8324200DCF2B7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A2C6F6819A8324200DCF2B7 /* CoreGraphics.framework */; };
@@ -72,6 +75,7 @@
 		9A49CA1B1A214B2200F7CFCA /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A49CA1A1A214B2200F7CFCA /* FacebookSDK.framework */; };
 		9A49CA1D1A214B4900F7CFCA /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A49CA1C1A214B4900F7CFCA /* Parse.framework */; };
 		9A49CA1F1A214B9600F7CFCA /* FBUserSettingsViewResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9A49CA1E1A214B9600F7CFCA /* FBUserSettingsViewResources.bundle */; };
+		9A8CAF9C1A70AFB3008BF741 /* NewGameDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A8CAF9B1A70AFB3008BF741 /* NewGameDetailsViewController.m */; };
 		9AA6DB941A2157EE0037EE09 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AA6DB931A2157EE0037EE09 /* AVFoundation.framework */; };
 		9AA6DB981A215A940037EE09 /* Sinch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AA6DB971A215A940037EE09 /* Sinch.framework */; };
 		9ADD437F19F7565700AFD160 /* UIButton+CustomButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ADD437E19F7565700AFD160 /* UIButton+CustomButtons.m */; };
@@ -120,6 +124,12 @@
 		9A10E2F61A380FE000C3B541 /* GenericCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GenericCategory.m; sourceTree = "<group>"; };
 		9A10E2F81A380FF500C3B541 /* UIImage+Scaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Scaling.h"; sourceTree = "<group>"; };
 		9A10E2F91A380FF500C3B541 /* UIImage+Scaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Scaling.m"; sourceTree = "<group>"; };
+		9A10E2FB1A3AB01A00C3B541 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		9A10E2FC1A3AB01A00C3B541 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		9A10E2FE1A3AD75A00C3B541 /* BaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseViewController.h; sourceTree = "<group>"; };
+		9A10E2FF1A3AD75A00C3B541 /* BaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseViewController.m; sourceTree = "<group>"; };
+		9A10E3011A3ADF7B00C3B541 /* BaseTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseTableViewController.h; sourceTree = "<group>"; };
+		9A10E3021A3ADF7B00C3B541 /* BaseTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseTableViewController.m; sourceTree = "<group>"; };
 		9A1FFC951A0AAF9400A82788 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		9A1FFC971A0AAFA500A82788 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		9A2C6F6319A8324200DCF2B7 /* Thatso.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thatso.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -174,6 +184,8 @@
 		9A49CA1E1A214B9600F7CFCA /* FBUserSettingsViewResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FBUserSettingsViewResources.bundle; sourceTree = "<group>"; };
 		9A893F081A0EC317002F6EEF /* NSString+FontSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+FontSize.m"; sourceTree = "<group>"; };
 		9A893F091A0EC366002F6EEF /* NSString+FontSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+FontSize.h"; sourceTree = "<group>"; };
+		9A8CAF9A1A70AFB3008BF741 /* NewGameDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewGameDetailsViewController.h; sourceTree = "<group>"; };
+		9A8CAF9B1A70AFB3008BF741 /* NewGameDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewGameDetailsViewController.m; sourceTree = "<group>"; };
 		9AA6DB931A2157EE0037EE09 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		9AA6DB971A215A940037EE09 /* Sinch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sinch.framework; sourceTree = "<group>"; };
 		9ADD437D19F7560100AFD160 /* UIButton+CustomButtons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+CustomButtons.h"; sourceTree = "<group>"; };
@@ -249,6 +261,8 @@
 				9540A57E1A1D05C200EA9FEA /* Game.m */,
 				9540A5801A1D068300EA9FEA /* Round.h */,
 				9540A5811A1D068300EA9FEA /* Round.m */,
+				9A10E2FB1A3AB01A00C3B541 /* User.h */,
+				9A10E2FC1A3AB01A00C3B541 /* User.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -281,6 +295,17 @@
 				9A893F081A0EC317002F6EEF /* NSString+FontSize.m */,
 			);
 			name = Extensions;
+			sourceTree = "<group>";
+		};
+		9A10E3041A3AE09C00C3B541 /* BaseViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				9A10E2FE1A3AD75A00C3B541 /* BaseViewController.h */,
+				9A10E2FF1A3AD75A00C3B541 /* BaseViewController.m */,
+				9A10E3011A3ADF7B00C3B541 /* BaseTableViewController.h */,
+				9A10E3021A3ADF7B00C3B541 /* BaseTableViewController.m */,
+			);
+			name = BaseViewControllers;
 			sourceTree = "<group>";
 		};
 		9A2C6F5A19A8324200DCF2B7 = {
@@ -361,6 +386,7 @@
 		9A38E83319CD25DF0063242D /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				9A10E3041A3AE09C00C3B541 /* BaseViewControllers */,
 				95799FF61A1AE368006A209F /* PHFDelegateChain.h */,
 				95799FF71A1AE368006A209F /* PHFDelegateChain.m */,
 				953D496E19DF57AC00596E7B /* Views */,
@@ -371,6 +397,8 @@
 				9A2C6F9919A835CD00DCF2B7 /* SelectGameTableViewController.m */,
 				9A2C6FD419A85EF300DCF2B7 /* NewGameTableViewController.h */,
 				9A2C6FD519A85EF300DCF2B7 /* NewGameTableViewController.m */,
+				9A8CAF9A1A70AFB3008BF741 /* NewGameDetailsViewController.h */,
+				9A8CAF9B1A70AFB3008BF741 /* NewGameDetailsViewController.m */,
 				9AFBF0CD19CD4826004F6550 /* GameViewControllerTableViewController.h */,
 				9AFBF0CE19CD4826004F6550 /* GameViewControllerTableViewController.m */,
 				9A49CA111A18588B00F7CFCA /* PreviousRoundsTableViewController.h */,
@@ -540,6 +568,7 @@
 				9A2C6F7319A8324200DCF2B7 /* main.m in Sources */,
 				95881E8F19D90B32001202AB /* UIColor+AppColors.m in Sources */,
 				9AFBF0CF19CD4826004F6550 /* GameViewControllerTableViewController.m in Sources */,
+				9A10E3001A3AD75A00C3B541 /* BaseViewController.m in Sources */,
 				9A10E2F71A380FE000C3B541 /* GenericCategory.m in Sources */,
 				9A2C6FD619A85EF300DCF2B7 /* NewGameTableViewController.m in Sources */,
 				9A428A4D19E7AAF500C80EE7 /* StringUtils.m in Sources */,
@@ -550,11 +579,13 @@
 				9540A5851A1D069100EA9FEA /* Comment.m in Sources */,
 				9A428A4619DF894900C80EE7 /* FratBarButtonItem.m in Sources */,
 				9AFBF0D319CD4B19004F6550 /* ProfileViewTableViewCell.m in Sources */,
+				9A10E2FD1A3AB01A00C3B541 /* User.m in Sources */,
 				9A1FFC961A0AAF9400A82788 /* Constants.m in Sources */,
 				9A2C6F9719A832CC00DCF2B7 /* LoginScreenViewController.m in Sources */,
 				95799FF31A1AE1FF006A209F /* PHFComposeBarView_Button.m in Sources */,
 				9540A5881A1D06A200EA9FEA /* CompletedRound.m in Sources */,
 				9540A57F1A1D05C200EA9FEA /* Game.m in Sources */,
+				9A10E3031A3ADF7B00C3B541 /* BaseTableViewController.m in Sources */,
 				9A2C6FCA19A852D200DCF2B7 /* Comms.m in Sources */,
 				9A2C6F9A19A835CD00DCF2B7 /* SelectGameTableViewController.m in Sources */,
 				95881E9219D91117001202AB /* UIFont+AppFonts.m in Sources */,
@@ -564,6 +595,7 @@
 				95799FF41A1AE1FF006A209F /* PHFComposeBarView_TextView.m in Sources */,
 				953287DE1A3246F000AC17EA /* GameHeaderView.m in Sources */,
 				9ADD437F19F7565700AFD160 /* UIButton+CustomButtons.m in Sources */,
+				9A8CAF9C1A70AFB3008BF741 /* NewGameDetailsViewController.m in Sources */,
 				9A2C6FD919AC526500DCF2B7 /* UserGames.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

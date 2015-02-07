@@ -32,7 +32,7 @@
     for(int i = 0; i < playersInGame.count; i ++)
     {
         //Don't add your own name
-        if(![((NSString *)[playersInGame objectAtIndex:i]) isEqualToString:(NSString *)[[PFUser currentUser] objectForKey:UserFacebookID]])
+        if(![((User *)[playersInGame objectAtIndex:i]).fbId isEqualToString:(NSString *)[[User currentUser] objectForKey:UserFacebookID]])
         {
             if([lastName length] != 0)
             {
@@ -40,9 +40,9 @@
             }
             if(fullName)
             {
-                lastName = [DataStore getFriendFullNameWithID:[playersInGame objectAtIndex:i]];
+                lastName = ((User*)[playersInGame objectAtIndex:i]).name;
             } else{
-                lastName = [DataStore getFriendFirstNameWithID:[playersInGame objectAtIndex:i]];
+                lastName = ((User*)[playersInGame objectAtIndex:i]).first_name;
             }
         }
     }

@@ -7,13 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BaseTableViewController.h"
 
-@interface SelectGameTableViewController : UITableViewController <GetGamesDelegate, SINMessageClientDelegate>
-{
-    NSDateFormatter *_dateFormatter;
-    BOOL initialLoad; 
-}
-@property (strong, nonatomic) id<SINMessageClient> messageClient;
-@property (nonatomic, strong) UIAlertView *alertView;
-
+@interface SelectGameTableViewController : BaseTableViewController <GetGamesDelegate>
 @end

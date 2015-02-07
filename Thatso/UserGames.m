@@ -32,6 +32,31 @@ static UserGames *instance = nil;
     return self;
 }
 
+-(void) refreshGameID:(NSString *)gameId
+{
+    PFQuery *getGame = [PFQuery queryWithClassName:GameClass];
+    [getGame includeKey:GameCurrentRound];
+    [getGame includeKey:GamePlayers];
+    [getGame getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
+        Game* game = (Game*)object;
+        //Re-add the game
+        [self addGame:game];
+        
+    }];
+}
+
+- (void) refreshGameID:(NSString *)gameId withBlock:(void (^)(Game*))block{
+    PFQuery *getGame = [PFQuery queryWithClassName:GameClass];
+    [getGame includeKey:GameCurrentRound];
+    [getGame includeKey:GamePlayers];
+    [getGame getObjectInBackgroundWithId:gameId block:^(PFObject *object, NSError *error) {
+        Game* game = (Game*)object;
+        //Re-add the game
+        [self addGame:game];
+        block(game);
+    }];
+}
+
 -(void) addGame: (Game*) game
 {
     //Remove the game if it needs to be removed
@@ -47,12 +72,12 @@ static UserGames *instance = nil;
             }
         }
     }
-  
+    NSLog(@"%@", game.currentRound.judge);
     //User is the judge of this game
-    if([game.currentRound.judge isEqualToString: [[PFUser currentUser] objectForKey:UserFacebookID]])
+    if([game.currentRound.judge isEqualToString: [[User currentUser] objectForKey:UserFacebookID]])
     {
         [[self.games objectForKey:@"Judge"] addObject:game];
-    } else if([game.currentRound.responded containsObject:[[PFUser currentUser] objectForKey:UserFacebookID]])
+    } else if([game.currentRound.responded containsObject:[[User currentUser] objectForKey:UserFacebookID]])
     {
         [[self.games objectForKey:@"Completed"] addObject:game];
     } else
@@ -62,6 +87,29 @@ static UserGames *instance = nil;
     
 }
 
+- (void) userDidRespondInGame: (Game*) game
+{
+    //Remove the game if it needs to be removed
+    for (NSString *key in [self.games allKeys])
+    {
+        NSMutableArray *gameArray =[self.games objectForKey:key];
+        
+        for(Game* existingGame in gameArray)
+        {
+            if([existingGame.objectId isEqualToString:game.objectId])
+            {
+                if(![existingGame.currentRound.responded containsObject:game.objectId])
+                {
+                    NSMutableArray *newArray = [[NSMutableArray alloc] initWithArray:existingGame.currentRound.responded];
+                    [newArray addObject:[User currentUser].fbId];
+                    existingGame.currentRound.responded = newArray;
+                    
+                    [self addGame:game];
+                }
+            }
+        }
+    }
+}
 -(int) gameCount
 {
     int count = 0;
@@ -121,6 +169,43 @@ static CurrentRounds *currentRound = nil;
 
 -(void) setComments: (NSArray*)comments forGameId: (NSString *) gameId{
     [self.currentComments setObject:comments forKey:gameId];
+}
+
+-(void) addComment: (Comment *)comment
+{
+
+    NSMutableArray *comments =[self.currentComments objectForKey: comment.gameID];
+    for(Comment* existingComment in comments)
+    {
+        if([comment.objectId isEqualToString:existingComment.objectId])
+        {
+                [comments removeObject:existingComment];
+        }
+    }
+    [comments addObject:comment];
+}
+
+-(void) refreshCommentID:(NSString *)commentId
+{
+    PFQuery *getComment = [PFQuery queryWithClassName:CommentClass];
+    [getComment includeKey:CommentFrom];
+    [getComment getObjectInBackgroundWithId:commentId block:^(PFObject *object, NSError *error) {
+        Comment* comment = (Comment*)object;
+        //Re-add the game
+        [self addComment: comment];
+        
+    }];
+}
+
+- (void) refreshCommentID:(NSString *)commentId withBlock:(void (^)(Comment*))block{
+    PFQuery *getComment = [PFQuery queryWithClassName:CommentClass];
+    [getComment includeKey:CommentFrom];
+    [getComment getObjectInBackgroundWithId:commentId block:^(PFObject *object, NSError *error) {
+        Comment* comment = (Comment*)object;
+        //Re-add the game
+        [self addComment: comment];
+        block(comment);
+    }];
 }
 
 - (void) reset

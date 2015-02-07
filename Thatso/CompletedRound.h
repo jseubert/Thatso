@@ -9,12 +9,12 @@
 #import <Parse/Parse.h>
 
 @interface CompletedRound : PFObject<PFSubclassing>
-@property (retain) NSString *judge;
-@property (retain) NSString *subject;
+@property (retain) User *judge;
+@property (retain) User *subject;
 @property (retain) NSString *category;
 @property (retain) NSNumber *roundNumber;
 @property (retain) NSString *gameID;
 @property (retain) NSString *winningResponse;
-@property (retain) NSString *winningResponseFrom;
+@property (retain) User *winningResponseFrom;
 + (NSString *)parseClassName;
 @end

@@ -13,6 +13,8 @@
 @dynamic players;
 @dynamic rounds;
 @dynamic currentRound;
+@dynamic familyFriendly;
+@dynamic gameName;
 
 + (void)load {
     [self registerSubclass];
@@ -20,6 +22,30 @@
 
 + (NSString *)parseClassName {
     return GameClass;
+}
+
+- (User *) playerWithObjectId: (NSString *) objectId
+{
+    for (User* user in self.players)
+    {
+        if([objectId isEqualToString:user.objectId])
+        {
+            return user;
+        }
+    }
+    return nil;
+}
+
+- (User *) playerWithfbId: (NSString *) fbId
+{
+    for (User* user in self.players)
+    {
+        if([fbId isEqualToString:user.fbId])
+        {
+            return user;
+        }
+    }
+    return nil;
 }
 
 @end

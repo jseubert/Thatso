@@ -62,12 +62,14 @@
     [super viewWillAppear:animated];
     
     // Check if user is cached and linked to Facebook, if so, bypass login
-    if ([PFUser currentUser] && [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]]) {
+    if ([User currentUser] && [PFFacebookUtils isLinkedWithUser:[User currentUser]]) {
         [Comms getAllFacebookFriends:nil];
+        [Comms getProfilePictureForUser:[[User currentUser] objectForKey:UserFacebookID] withBlock:nil];
+
         
         //Start Sinch!
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        [appDelegate initSinchClientWithUserId:[[PFUser currentUser] objectForKey:UserFacebookID]];
+        [appDelegate initSinchClientWithUserId:[[User currentUser] objectForKey:UserFacebookID]];
         
         SelectGameTableViewController *vc = [[SelectGameTableViewController alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
@@ -105,7 +107,7 @@
 	if (success) {
         //Start Sinch!
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        [appDelegate initSinchClientWithUserId:[[PFUser currentUser] objectForKey:UserFacebookID]];
+        [appDelegate initSinchClientWithUserId:[[User currentUser] objectForKey:UserFacebookID]];
         
 		// Seque to the Image Wall
 		SelectGameTableViewController *vc = [[SelectGameTableViewController alloc] init];

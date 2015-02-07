@@ -29,7 +29,7 @@ typedef void (^ImageResultBlock)(UIImage* image);
 @end
 
 @protocol DidAddCommentDelegate <NSObject>
-- (void) didAddComment:(BOOL)success needsRefresh:(BOOL)refresh info: (NSString *) info;
+- (void) didAddComment:(BOOL)success needsRefresh:(BOOL)refresh addedComment:(Comment *)comment info:(NSString *) info;
 @end
 
 @protocol DidGetCommentsDelegate <NSObject>
@@ -47,7 +47,7 @@ typedef void (^ImageResultBlock)(UIImage* image);
 @interface Comms : NSObject
 + (void) login:(id<DidLoginDelegate>)delegate;
 + (void) getAllFacebookFriends:(id<DidLoginDelegate>)delegate;
-+ (void) startNewGameWithUsers: (NSMutableArray *)fbFriendsInGame forDelegate:(id<CreateGameDelegate>)delegate;
++ (void) startNewGameWithUsers:(NSMutableArray *)fbFriendsInGame withName:(NSString*)gameName familyFriendly:(BOOL)familyFriendly forDelegate:(id<CreateGameDelegate>)delegate;
 + (void) getUsersGamesforDelegate:(id<GetGamesDelegate>)delegate;
 + (void) addComment:(Comment*)comment toRound:(Round*)round forDelegate:(id<DidAddCommentDelegate>)delegate;
 + (void) getActiveCommentsForGame:(Game*)game inRound:(Round*)round forDelegate:(id<DidGetCommentsDelegate>)delegate;

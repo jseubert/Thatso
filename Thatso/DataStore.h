@@ -16,9 +16,9 @@
 
 + (DataStore *) instance;
 - (void) reset;
-+ (NSString *) getFriendFirstNameWithID: (NSString *) fbId;
-+ (NSString *) getFriendLastNameWithID: (NSString *) fbId;
-+ (NSString *) getFriendFullNameWithID: (NSString *) fbId;
+//+ (NSString *) getFriendFirstNameWithID: (NSString *) fbId;
+//+ (NSString *) getFriendLastNameWithID: (NSString *) fbId;
+//+ (NSString *) getFriendFullNameWithID: (NSString *) fbId;
 + (void) getFriendProfilePictureWithID: (NSString *) fbId withBlock:(void (^)(UIImage*))block;
 
 @end

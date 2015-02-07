@@ -16,14 +16,49 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // configure control(s)
-        self.namesLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, self.frame.size.width -20, self.frame.size.height/2)];
-        self.namesLabel.font = [UIFont defaultAppFontWithSize:16.0];
-        self.namesLabel.text = @"";
-        self.namesLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-        self.namesLabel.numberOfLines = 0;
+        self.roundNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.frame.size.width - 20 - 10,
+                                                                          10,
+                                                                          20,
+                                                                          20)];
+        self.roundNumberLabel.font = [UIFont defaultAppFontWithSize:16.0];
+        self.roundNumberLabel.text = @"1";
+        [self.roundNumberLabel setTextAlignment:NSTextAlignmentCenter];
+        [self.roundNumberLabel setTextColor:[UIColor whiteColor]];
+        self.roundNumberLabel.numberOfLines = 0;
+        [[self.roundNumberLabel  layer] setCornerRadius:self.roundNumberLabel.frame.size.height/2];
+        [self.roundNumberLabel setClipsToBounds:YES];
+        [self.roundNumberLabel setBackgroundColor:[UIColor blueAppColor]];
+        [self addSubview:self.roundNumberLabel];
+        
+        self.roundLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.frame.size.width - 10 - self.roundNumberLabel.frame.size.width - 2 - 50,
+                                                                    10,
+                                                                    50,
+                                                                    20)];
+        self.roundLabel.font = [UIFont defaultAppFontWithSize:16.0];
+       // self.roundLabel.backgroundColor = [UIColor blueColor];
+        self.roundLabel.text = @"Round";
+        self.roundLabel.numberOfLines = 0;
+        [self addSubview:self.roundLabel];
+        
+        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(10,
+                                                                   10,
+                                                                   self.roundLabel.frame.origin.x - 10 - 5,
+                                                                   20)];
+        self.nameLabel.font = [UIFont defaultAppFontWithSize:16.0];
+        self.nameLabel.text = @"";
+        self.nameLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+       // self.nameLabel.backgroundColor = [UIColor redColor];
+        self.nameLabel.numberOfLines = 0;
+        [self addSubview:self.nameLabel];
+        
+
+        
+
         
         
-        [self addSubview:self.namesLabel];
+        
+        
+        
         
         self.categoryLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, self.frame.size.height/2 + 10, self.frame.size.width-20, self.frame.size.height/2)];
         self.categoryLabel.font = [UIFont defaultAppFontWithSize:14.0];
@@ -33,23 +68,8 @@
         
         [self addSubview:self.categoryLabel];
         
-        self.nextRoundLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.frame.size.width-10-40, 10, 40, self.frame.size.height/2)];
-        self.nextRoundLabel.font = [UIFont defaultAppFontWithSize:14.0];
-        self.nextRoundLabel.text = @"New";
-        self.nextRoundLabel.numberOfLines = 1;
-        self.nextRoundLabel.hidden = true;
-        [self.nextRoundLabel setBackgroundColor:[UIColor pinkAppColor]];
-        [self.nextRoundLabel setNumberOfLines:0];
-        [self.nextRoundLabel setLineBreakMode:NSLineBreakByWordWrapping];
-        [self.nextRoundLabel setTextColor:[UIColor whiteColor]];
-        [self.nextRoundLabel setTextAlignment:NSTextAlignmentCenter];
-        [[self.nextRoundLabel  layer] setBorderWidth:2.0f];
-        [[self.nextRoundLabel  layer] setBorderColor:[UIColor whiteColor].CGColor];
-        [[self.nextRoundLabel  layer] setCornerRadius:10.0f];
-        [self.nextRoundLabel setClipsToBounds:YES];
         
-        
-        [self addSubview:self.nextRoundLabel];
+
     }
     return self;
 }
@@ -57,7 +77,7 @@
 -(void)adjustLabels
 {
     
-    
+   /*
     CGFloat width = self.frame.size.width
     - 10    //left padding
     - 30    //New Button
@@ -68,7 +88,7 @@
     
     self.namesLabel.frame = CGRectMake(10, 10, self.frame.size.width -20, topLabelSize.height);
     self.categoryLabel.frame = CGRectMake(10, self.namesLabel.frame.origin.x + self.namesLabel.frame.size.height + 5, self.frame.size.width-20, bottomeLabelSize.height + 10);
-    
+    */
     
 }
 
@@ -80,6 +100,7 @@
 
 -(void)setColorScheme:(NSInteger) code
 {
+    /*
     switch(code%6)
     {
         case 0:
@@ -118,6 +139,7 @@
             self.categoryLabel.textColor = [UIColor pinkAppColor];
             break;
     }
+     */
     
 }
 

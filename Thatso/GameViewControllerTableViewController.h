@@ -9,22 +9,21 @@
 #import <UIKit/UIKit.h>
 #import "PHFComposeBarView.h"
 #import "GameHeaderView.h"
+#import "BaseViewController.h"
 
 
-@interface GameViewControllerTableViewController : UIViewController <SINMessageClientDelegate, DidAddCommentDelegate, DidGetCommentsDelegate, DidStartNewRound, PHFComposeBarViewDelegate,UITextViewDelegate, UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate>
+@interface GameViewControllerTableViewController : BaseViewController <DidAddCommentDelegate, DidGetCommentsDelegate, DidStartNewRound, PHFComposeBarViewDelegate,UITextViewDelegate, UITableViewDataSource, UITableViewDelegate>
 {
-    NSDateFormatter *_dateFormatter;
+
     NSMutableArray* nonUserPlayers;
     NSInteger* winningIndex;
 }
 
-@property (strong, nonatomic) id<SINMessageClient> messageClient;
+
 
 
 @property (strong, nonatomic) IBOutlet GameHeaderView *headerView;
-@property (nonatomic, strong) UIAlertView *alertView;
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
-@property (strong, nonatomic) IBOutlet UIRefreshControl *refreshControl;
 @property (strong, nonatomic) IBOutlet PHFComposeBarView *composeBarView;
 
 
@@ -34,4 +33,6 @@
 @property(nonatomic) NSString* previousComment;
 @property(nonatomic) NSMutableArray* votedForComments;
 @property(nonatomic) UITapGestureRecognizer *singleTap;
+
+@property (strong, nonatomic) IBOutlet UIRefreshControl *refreshControl;
 @end

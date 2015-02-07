@@ -41,11 +41,11 @@
             if (!error) {
                 //Update the user
                 NSDictionary<FBGraphUser> *me = (NSDictionary<FBGraphUser> *)result;
-                [[PFUser currentUser] setObject:[me objectForKey:ID] forKey:UserFacebookID];
-                [[PFUser currentUser] setObject:[me objectForKey:UserFirstName] forKey:UserFirstName];
-                [[PFUser currentUser] setObject:[me objectForKey:UserLastName] forKey:UserLastName];
-                [[PFUser currentUser] setObject:[me objectForKey:UserFullName] forKey:UserFullName];
-                [[PFUser currentUser] saveInBackground];
+                [[User currentUser] setObject:[me objectForKey:ID] forKey:UserFacebookID];
+                [[User currentUser] setObject:[me objectForKey:UserFirstName] forKey:UserFirstName];
+                [[User currentUser] setObject:[me objectForKey:UserLastName] forKey:UserLastName];
+                [[User currentUser] setObject:[me objectForKey:UserFullName] forKey:UserFullName];
+                [[User currentUser] saveInBackground];
                 
                 // Launch another thread to handle the download of the user's Facebook profile picture
                 [Comms getProfilePictureForUser:[user objectForKey:UserFacebookID] withBlock:nil];
@@ -64,7 +64,6 @@
 
 + (void) getAllFacebookFriends:(id<DidLoginDelegate>)delegate
 {
-    [Comms getProfilePictureForUser:[[PFUser currentUser] objectForKey:UserFacebookID] withBlock:nil];
     FBRequest *friendsRequest = [FBRequest requestForMyFriends];
     [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
                                                   NSDictionary* result,
@@ -85,7 +84,7 @@
                  NSLog(@"Friend: %@", [friend objectForKey:ID]);
              }
              
-             PFQuery *getFBFriends = [PFUser query];
+             PFQuery *getFBFriends = [User query];
              [getFBFriends whereKey:UserFacebookID containedIn:friendsIDs];
              //[getFBFriends whereKey:UserFacebookID containsString:@"1467121910205120"];
              
@@ -110,11 +109,11 @@
      }];
 }
 
-+ (void) startNewGameWithUsers: (NSArray *)fbFriendsInGame forDelegate:(id<CreateGameDelegate>)delegate
++ (void) startNewGameWithUsers:(NSMutableArray *)fbFriendsInGame withName:(NSString*)gameName familyFriendly:(BOOL)familyFriendly forDelegate:(id<CreateGameDelegate>)delegate
 {
     // Add Current User to the Game
     NSMutableArray *allPlayersInGame = [[NSMutableArray alloc] initWithArray:fbFriendsInGame];
-    [allPlayersInGame addObject:[[PFUser currentUser] objectForKey:UserFacebookID]];
+    [allPlayersInGame addObject:[User currentUser]];
     //Must Have more than 3 users
     if(allPlayersInGame.count < 3)
     {
@@ -129,6 +128,7 @@
     //Check if this game already exists
     //Query returns all games that contain the players above
     PFQuery *checkIfGameExistsQuery = [PFQuery queryWithClassName:GameClass];
+    [checkIfGameExistsQuery includeKey:GamePlayers];
     [checkIfGameExistsQuery whereKey:GamePlayers containsAllObjectsInArray:allPlayersInGame];
     [checkIfGameExistsQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
     {
@@ -156,11 +156,13 @@
         Game *gameObject = [Game object];
         gameObject.rounds = @1;
         gameObject.players = allPlayersInGame;
+        gameObject.gameName = gameName;
+        gameObject.familyFriendly = familyFriendly;
         
         //Create the first round for this Game
         Round *roundObject = [Round object];
-        roundObject.judge = [[PFUser currentUser] objectForKey:UserFacebookID];
-        roundObject.subject = [fbFriendsInGame objectAtIndex:0];
+        roundObject.judge = [User currentUser].fbId;
+        roundObject.subject = ((User *)[fbFriendsInGame objectAtIndex:0]).fbId;
         roundObject.roundNumber = @1;
         roundObject.responded = [[NSArray alloc] init];
       
@@ -168,7 +170,7 @@
         [Comms getCategories];
         GenericCategory *category = [[DataStore instance].categories objectAtIndex:(arc4random() % [DataStore instance].categories.count)];
         
-        roundObject[RoundCategory] = [NSString stringWithFormat:@"%@ %@%@", category.startText, [DataStore getFriendFirstNameWithID:roundObject.subject], category.endText];
+        roundObject[RoundCategory] = [NSString stringWithFormat:@"%@ %@%@", category.startText, [gameObject playerWithfbId:roundObject.subject].first_name, category.endText];
         
         
         
@@ -184,6 +186,7 @@
                 //Check to make sure that someone else didnt update at the exact same time. If so, delete this object
                 //Don't know a better way to do this at the moment...
                 PFQuery *checkIfGameExistsQuery = [PFQuery queryWithClassName:GameClass];
+                [checkIfGameExistsQuery includeKey:GamePlayers];
                 [checkIfGameExistsQuery whereKey:GamePlayers containsAllObjectsInArray:allPlayersInGame];
                 [checkIfGameExistsQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
                  {
@@ -228,8 +231,9 @@
     
     [getGames orderByDescending:UpdatedAt];
     [getGames includeKey:GameCurrentRound];
-    NSArray *user =[[NSArray alloc] initWithObjects:[[PFUser currentUser] objectForKey:UserFacebookID], nil];
+    [getGames includeKey:GamePlayers];
     
+    NSArray *user =[[NSArray alloc] initWithObjects:[User currentUser], nil];
     //find all games that have the current user as a player
     [getGames whereKey:GamePlayers containsAllObjectsInArray:user];
     
@@ -257,12 +261,12 @@
     [roundQuery getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
         if(error)
         {
-             [delegate didAddComment:NO needsRefresh:NO info:error.localizedDescription];
+             [delegate didAddComment:NO needsRefresh:NO addedComment:nil info:error.localizedDescription];
         }else{
             //round not active, need to refresh view
             if(!object)
             {
-                [delegate didAddComment:NO needsRefresh:YES info:@"This round is over, getting new round!"];
+                [delegate didAddComment:NO needsRefresh:YES addedComment:nil info:@"This round is over, getting new round!"];
             }
             //active round
             else{
@@ -272,25 +276,27 @@
                 [query whereKey:CommentGameID equalTo:comment.gameID];
                 [query whereKey:CommentRoundID equalTo:comment.roundID];
                 [query whereKey:CommentFrom equalTo:comment.from];
+                [query includeKey:CommentFrom];
                 //Check if
                 
                 [query getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
                     //Comment does not exist. Add it.
                     if(!object)
                     {
-                        //Also add to round
-                        NSMutableArray *newArray = [[NSMutableArray alloc] initWithArray:((Round*)round).responded];
-                        [newArray addObject:comment.from];
-                        round.responded = newArray;
-                        [round saveInBackground];
                         
                         [comment saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                             if (succeeded) {
-                                // Notify that the Comment has been uploaded, using NSNotificationCenter
-                                [delegate didAddComment:YES needsRefresh:NO info:nil];
+                                // Notify that the Comment has been uploaded
+                                //Also add to round
+                                NSMutableArray *newArray = [[NSMutableArray alloc] initWithArray:((Round*)round).responded];
+                                [newArray addObject:comment.from.fbId];
+                                round.responded = newArray;
+                                [round saveInBackground];
+                                
+                                [delegate didAddComment:YES needsRefresh:NO addedComment:comment info:nil];
                             }
                             else{
-                                [delegate didAddComment:NO needsRefresh:NO info:error.localizedDescription];
+                                [delegate didAddComment:NO needsRefresh:NO addedComment:nil info:error.localizedDescription];
                             }
                         }];
                         
@@ -299,10 +305,10 @@
                         [object saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                             if (succeeded) {
                                 // Notify that the Comment has been uploaded, using NSNotificationCenter
-                                [delegate didAddComment:YES needsRefresh:NO info:@"Success"];
+                                [delegate didAddComment:YES needsRefresh:NO addedComment:(Comment*)object info:@"Success"];
                             }
                             else{
-                                [delegate didAddComment:NO needsRefresh:NO info:error.localizedDescription];
+                                [delegate didAddComment:NO needsRefresh:NO addedComment:nil info:error.localizedDescription];
                             }
                         }];
                     }
@@ -319,6 +325,7 @@
     PFQuery *query = [PFQuery queryWithClassName:CommentClass];
     [query whereKey:CommentGameID equalTo:game.objectId];
     [query whereKey:CommentRoundID equalTo:round.objectId];
+    [query includeKey:CommentFrom];
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (error) {
             NSLog(@"Objects error: %@", error.localizedDescription);
@@ -335,7 +342,7 @@
 
 + (void) finishRound: (Round *)round inGame: (Game *)game withWinningComment: (Comment *)comment andOtherComments: (NSArray *)otherComments forDelegate:(id<DidStartNewRound>)delegate
 {
-    NSString *previousJudge = round.judge;
+
     NSArray *players = game.players;
     
     //increment round number for game
@@ -347,42 +354,48 @@
     //Get new judge, next in array
     for(int i = 0; i < players.count; i ++)
     {
-        if([players[i] isEqualToString:previousJudge])
+        if([((User*)players[i]).fbId isEqualToString:round.judge])
         {
             //last one so now cycle to first one
             if(i == players.count -1)
             {
-                roundObject.judge = players[0];
+                roundObject.judge = ((User*)players[0]).fbId;
             }else{
-                roundObject.judge = players[i + 1];
+                roundObject.judge = ((User*)players[i + 1]).fbId;
             }
             break;
         }
     }
         
     //get new subject, make sure its not the judge
-    NSMutableArray *nonJudgePlayers = [[NSMutableArray alloc] initWithArray:players];
-    [nonJudgePlayers removeObject:roundObject.judge];
+    NSMutableArray *nonJudgePlayers = [[NSMutableArray alloc] init];
+    for (User* player in players)
+    {
+        if(![player.fbId isEqualToString:roundObject.judge])
+        {
+            [nonJudgePlayers addObject:player.fbId];
+        }
+    }
     roundObject.subject = [nonJudgePlayers objectAtIndex:(arc4random() % nonJudgePlayers.count)];
         
     //Get new category
     [Comms getCategories];
     GenericCategory *category = [[DataStore instance].categories objectAtIndex:(arc4random() % [DataStore instance].categories.count)];
     
-    roundObject.category = [NSString stringWithFormat:@"%@ %@%@", category.startText, [DataStore getFriendFirstNameWithID:roundObject.subject], category.endText];
+    roundObject.category = [NSString stringWithFormat:@"%@ %@%@", category.startText, [game playerWithfbId:roundObject.subject].first_name, category.endText];
         
     //new round round
     roundObject.roundNumber = game.rounds;
     
     game.currentRound = roundObject;
-        
+    
     [game saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if(succeeded)
         {
             //Build archivedRound object and save it
             CompletedRound *completedRound = [CompletedRound object];
-            completedRound.judge = round.judge;
-            completedRound.subject = round.subject;
+            completedRound.judge = [game playerWithfbId:round.judge];
+            completedRound.subject = [game playerWithfbId:round.subject];
             completedRound.category = round.category;
             completedRound.roundNumber = round.roundNumber;
             completedRound.gameID = game.objectId;
@@ -428,6 +441,9 @@
     
     [getRounds orderByDescending:CompletedRoundNumber];
     [getRounds whereKey:CompletedRoundGameID equalTo:game.objectId];
+    [getRounds includeKey:CompletedRoundJudge];
+    [getRounds includeKey:CompletedRoundSubject];
+    [getRounds includeKey:CompletedRoundWinningResponseFrom];
     
     [getRounds findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (error) {
@@ -446,15 +462,15 @@
     
     [DataStore instance].categories = [[NSMutableArray alloc] initWithArray:[getCategory findObjects]];
     
-    NSLog(@"Categories: %@", [DataStore instance].categories);
+   // NSLog(@"Categories: %@", [DataStore instance].categories);
 }
 
 + (void) getuser: (NSString *)fbId
 {
-    PFQuery *getUser = [PFUser query];
+    PFQuery *getUser = [User query];
     [getUser whereKey:UserFacebookID containsString:fbId];
     
-    PFUser* user = (PFUser *)[getUser getFirstObject];
+    User* user = (User *)[getUser getFirstObject];
     if(user != nil)
     {
         [[DataStore instance].fbFriends setObject:user forKey:fbId];

@@ -13,8 +13,10 @@
 -(void)setColorScheme:(NSInteger) code;
 -(void)adjustLabels;
 
-@property (nonatomic, strong) UILabel *namesLabel;
+@property (nonatomic, strong) UILabel *nameLabel;
+@property (nonatomic, strong) UILabel *roundLabel;
+@property (nonatomic, strong) UILabel *roundNumberLabel;
+
 @property (nonatomic, strong) UILabel *categoryLabel;
-@property (nonatomic, strong) UILabel *nextRoundLabel;
 
 @end

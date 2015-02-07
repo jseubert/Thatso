@@ -11,7 +11,7 @@
 @interface Comment : PFObject<PFSubclassing>
 @property (retain) NSString *gameID;
 @property (retain) NSString *roundID;
-@property (retain) NSString *from;
+@property (retain) User *from;
 @property (retain) NSString *response;
 
 + (NSString *)parseClassName;
