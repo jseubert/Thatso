@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface BaseTableViewController : UITableViewController <SINMessageClientDelegate, UIAlertViewDelegate>
+@interface BaseTableViewController : UITableViewController  <UIAlertViewDelegate>
 {
     NSDateFormatter *_dateFormatter;
 }
@@ -18,12 +18,7 @@
 - (void) showLoadingAlert;
 - (void) showLoadingAlertWithText: (NSString *)title;
 
-- (void) newRoundNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground;
-- (void) newGameNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground;
-- (void) newCommentNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground;
-
-@property (strong, nonatomic) id<SINMessageClient> messageClient;
-
 @property (nonatomic, strong) UIAlertView *alertView;
 @property (strong, nonatomic) IBOutlet UIRefreshControl *refreshControl;
+@property (strong, nonatomic) UIActivityIndicatorView *activityIndicator;
 @end

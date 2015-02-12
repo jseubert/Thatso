@@ -124,7 +124,7 @@
     
     
     
-    
+    /*
     //Check if this game already exists
     //Query returns all games that contain the players above
     PFQuery *checkIfGameExistsQuery = [PFQuery queryWithClassName:GameClass];
@@ -223,6 +223,46 @@
         }];
         
     }];
+    */
+    //Create the game
+    
+    Game *gameObject = [Game object];
+    gameObject.rounds = @1;
+    gameObject.players = allPlayersInGame;
+    gameObject.gameName = gameName;
+    gameObject.familyFriendly = familyFriendly;
+    
+    //Create the first round for this Game
+    Round *roundObject = [Round object];
+    roundObject.judge = [User currentUser].fbId;
+    roundObject.subject = ((User *)[fbFriendsInGame objectAtIndex:0]).fbId;
+    roundObject.roundNumber = @1;
+    roundObject.responded = [[NSArray alloc] init];
+    
+    //Get new category
+    [Comms getCategories];
+    GenericCategory *category = [[DataStore instance].categories objectAtIndex:(arc4random() % [DataStore instance].categories.count)];
+    
+    roundObject[RoundCategory] = [NSString stringWithFormat:@"%@ %@%@", category.startText, [gameObject playerWithfbId:roundObject.subject].first_name, category.endText];
+    
+    
+    
+    gameObject.currentRound = roundObject;
+    
+    
+    [gameObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error)
+     {
+         if (succeeded) {
+             // 4 If the save was successful, save the comment in another new Parse object. Again, save the  user’s name and Facebook user ID along with the comment string.
+             //Everything looks good?
+            [[UserGames instance] addGame:gameObject];
+            [delegate newGameUploadedToServer:YES game:gameObject info:@"Success"];
+             
+         } else {
+             // 6 If there was an error saving the new game object, report the error
+             [delegate newGameUploadedToServer:NO game:nil info:error.fberrorUserMessage];
+         }
+     }];
 }
 
 +(void) getUsersGamesforDelegate:(id<GetGamesDelegate>)delegate
@@ -258,10 +298,18 @@
     //Check if this round is still active
     PFQuery *roundQuery = [PFQuery queryWithClassName:RoundClass];
     [roundQuery whereKey:ObjectID equalTo:comment.roundID];
-    [roundQuery getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+    [roundQuery getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error)
+    {
         if(error)
         {
-             [delegate didAddComment:NO needsRefresh:NO addedComment:nil info:error.localizedDescription];
+            //no game found, must be wrong round
+             if(error.code == 101)
+             {
+                [delegate didAddComment:NO needsRefresh:YES addedComment:nil info:@"This round is over, getting new round!"];
+             } else {
+                [delegate didAddComment:NO needsRefresh:NO addedComment:nil info:error.localizedDescription];
+             }
+        
         }else{
             //round not active, need to refresh view
             if(!object)

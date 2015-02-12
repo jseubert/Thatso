@@ -31,6 +31,12 @@ NSInteger const CommentTableViewCellIconSize = 20;
         self.circle.layer.borderWidth = 2;
         
         [self addSubview:self.circle];
+        
+        self.activityIndicator = [[UIActivityIndicatorView alloc] initWithFrame:self.circle.frame];
+        [self.activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
+        [self.activityIndicator setHidden:YES];
+        [self.activityIndicator stopAnimating];
+        [self addSubview:self.activityIndicator];
                 
                        
         self.commentLabel = [[UILabel alloc] initWithFrame:CGRectMake(10 + self.circle.frame.size.width + self.circle.frame.origin.x,

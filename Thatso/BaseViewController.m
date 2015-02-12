@@ -20,19 +20,29 @@
     
     [self.view setBackgroundColor:[UIColor blueAppColor]];
     
+    
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithFrame:(CGRectMake(0,
+                                                                                        0,
+                                                                                        150,
+                                                                                        100))];
+    [self.activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    [self.activityIndicator setBackgroundColor:[UIColor pinkAppColor]];
+    [[self.activityIndicator  layer] setCornerRadius:40.0f];
+    [self.activityIndicator setClipsToBounds:YES];
+    [[self.activityIndicator  layer] setBorderWidth:2.0f];
+    [[self.activityIndicator  layer] setBorderColor:[UIColor whiteColor].CGColor];
+    [self.activityIndicator setCenter:[self.view center]];
+    
+    UILabel *loading = [[UILabel alloc] initWithFrame:CGRectMake(0, self.activityIndicator.frame.size.height - 30, self.activityIndicator.frame.size.width, 20)];
+    [loading setTextColor:[UIColor whiteColor]];
+    [loading setFont:[UIFont defaultAppFontWithSize:16.0f]];
+    [loading setTextAlignment:NSTextAlignmentCenter];
+    [loading setText:@"Loading..."];
+    [self.activityIndicator addSubview:loading];
+    
     // Create a re-usable NSDateFormatter
     _dateFormatter = [[NSDateFormatter alloc] init];
     [_dateFormatter setDateFormat:@"MMM d, h:mm a"];
-}
-
--(void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    //Recieve messages
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    
-    self.messageClient = [appDelegate.client messageClient];
-    self.messageClient.delegate = self;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -77,7 +87,7 @@
 }
 
 #pragma mark - SINMessageClientDelegate
-
+/*
 - (void)messageClient:(id<SINMessageClient>)messageClient didReceiveIncomingMessage:(id<SINMessage>)message {
     NSLog(@"didReceiveIncomingMessage: %@ %@", message.text, message.headers );
     //If user is inactive, send a notification
@@ -181,6 +191,6 @@
 - (void)messageFailed:(id<SINMessage>)message info:(id<SINMessageFailureInfo>)failureInfo {
     NSLog(@"Failed delivering message to %@. Reason: %@", failureInfo.recipientId,
           [failureInfo.error description]);
-}
+}*/
 
 @end

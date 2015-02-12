@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "StringUtils.h"
 
-@interface BaseViewController : UIViewController <SINMessageClientDelegate, UIAlertViewDelegate>
+@interface BaseViewController : UIViewController <UIAlertViewDelegate>
 {
     NSDateFormatter *_dateFormatter;
 }
@@ -19,11 +19,6 @@
 - (void) showLoadingAlert;
 - (void) showLoadingAlertWithText: (NSString *)title;
 
-- (void) newRoundNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground;
-- (void) newGameNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground;
-- (void) newCommentNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground;
-
-@property (strong, nonatomic) id<SINMessageClient> messageClient;
-
 @property (nonatomic, strong) UIAlertView *alertView;
+@property (strong, nonatomic) UIActivityIndicatorView *activityIndicator;
 @end

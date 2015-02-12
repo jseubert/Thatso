@@ -147,10 +147,6 @@
                 [nonUserPlayers addObject:user.fbId];
             }
         }
-        
-        SINOutgoingMessage *message = [SINOutgoingMessage messageWithRecipients:nonUserPlayers text:NewGame];
-        [message addHeaderWithValue:game.objectId key:ObjectID];
-        [self.messageClient sendMessage:message];
     
         NSUInteger ownIndex = [self.navigationController.viewControllers indexOfObject:self];
         [self.navigationController popToViewController:[self.navigationController.viewControllers objectAtIndex:ownIndex - 2] animated:YES];

@@ -17,6 +17,7 @@
 #import "NewGameDetailsViewController.h"
 #import <math.h>
 #import "Game.h"
+#import "CommentTableViewCell.h"
 
 @interface SelectGameTableViewController ()
 
@@ -28,6 +29,8 @@
 {
     [super viewDidLoad];
     [self.tableView setSeparatorColor:[UIColor clearColor]];
+    [self.view setBackgroundColor:[UIColor blueAppColor]];
+    [self.tableView setBackgroundColor:[UIColor blueAppColor]];
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     self.navigationItem.title = @"Games";
    
@@ -35,6 +38,11 @@
      [NSDictionary dictionaryWithObjectsAndKeys:
       [UIFont fontWithName:@"mplus-1c-regular" size:50],
       NSFontAttributeName, nil]];
+    
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectZero];
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    [self.view addSubview: self.tableView];
     
     //Back button - needed for pushed view controllers
     FratBarButtonItem *backButton= [[FratBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
@@ -48,7 +56,7 @@
     FratBarButtonItem *logoutButton = [[FratBarButtonItem alloc] initWithTitle:@"Logout" style:UIBarButtonItemStyleBordered target:self action:@selector(logout:)];
     self.navigationItem.leftBarButtonItem = logoutButton;
     
-    
+    [self.view addSubview:self.activityIndicator];
     
     // If we are using iOS 6+, put a pull to refresh control in the table
     if (NSClassFromString(@"UIRefreshControl") != Nil) {
@@ -58,8 +66,10 @@
         refreshControl.attributedTitle = [StringUtils makeRefreshText:@"Pull to refresh"];
         [refreshControl addTarget:self action:@selector(refreshGames:) forControlEvents:UIControlEventValueChanged];
         [refreshControl setTintColor:[UIColor whiteColor]];
+        [refreshControl setBackgroundColor:[UIColor blueAppColor]];
     
         self.refreshControl = refreshControl;
+        [self.tableView addSubview:self.refreshControl];
         
     }
     
@@ -70,13 +80,21 @@
     
     [self.tableView setHidden:YES];
     
+    [self.tableView setShowsVerticalScrollIndicator:NO];
+    
     [self refreshGames:nil];
+}
+
+-(void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    [self.tableView setFrame:(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height))];
 }
 
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [self.tableView reloadData];
+    [self refreshGames:nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -95,7 +113,29 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     //Make Variable size height
-    return 60;
+    Game* game;
+    if(indexPath.section == 0)
+    {
+        game = [[[UserGames instance].games objectForKey:@"Judge"] objectAtIndex:indexPath.row];
+    } else if (indexPath.section == 1)
+    {
+        game = [[[UserGames instance].games objectForKey:@"CommentNeeded"] objectAtIndex:indexPath.row];
+    } else if (indexPath.section == 2)
+    {
+        game = [[[UserGames instance].games objectForKey:@"Completed"] objectAtIndex:indexPath.row];
+    }
+    Round *currentRound = game.currentRound;
+    
+    CGSize categoryHeight = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(self.tableView.frame.size.width -20, self.tableView.frame.size.width -20)) withText:currentRound.category];
+    int height =    5 +
+                    20 + //roundlabel
+                    5 +
+                    40 + //profile images height
+                    20 + //name label
+                    categoryHeight.height +
+                    5 + 2;
+    
+    return height;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
@@ -103,7 +143,7 @@
     if(section == 0)
     {
         if([[UserGames instance] gameCount] == 0) {
-            return 40;
+            return 42;
         } else
         {
             return ([[[UserGames instance].games objectForKey:@"Judge"] count] == 0) ? 0 : 40;
@@ -161,10 +201,30 @@
             game = [[[UserGames instance].games objectForKey:@"Completed"] objectAtIndex:indexPath.row];
         }
         Round *currentRound = game.currentRound;
+        
+        //[cell.categoryLabel setText:[NSString stringWithFormat:@"Round %@: %@", currentRound[RoundNumber], currentRound[RoundCategory]]];
 
-        [cell.categoryLabel setText:[NSString stringWithFormat:@"Round %@: %@", currentRound[RoundNumber], currentRound[RoundCategory]]];
-
-        [cell.nameLabel setText:game.gameName];
+      //  [cell.nameLabel setText:game.gameName];
+        
+        CGSize categoryHeight = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(self.tableView.frame.size.width -20, self.tableView.frame.size.width -20)) withText:currentRound.category];
+        int height =    5 +
+        20 + //roundlabel
+        5 +
+        40 + //profile images height
+        20 + //name label
+        categoryHeight.height +
+        5 + 2;
+        
+        UIView *viewLeft = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, height)];
+        viewLeft.backgroundColor = [UIColor blueAppColor];
+    [cell.contentView addSubview:viewLeft];
+        
+        
+        UIView *viewRight = [[UIView alloc] initWithFrame:CGRectMake(315, 0, 5, height)];
+        viewRight.backgroundColor = [UIColor blueAppColor];
+        [cell.contentView addSubview:viewRight];
+        
+        [cell setGame:game andRound:currentRound];
         [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
     }
     
@@ -201,7 +261,7 @@
     cell.backgroundColor = [UIColor pinkAppColor];
     [[cell  layer] setBorderWidth:2.0f];
     [[cell  layer] setBorderColor:[UIColor whiteColor].CGColor];
-    [[cell  layer] setCornerRadius:10.0f];
+    [[cell  layer] setCornerRadius:5.0f];
     [cell setClipsToBounds:YES];
     
     
@@ -251,7 +311,7 @@
 //Pull to refresh method
 - (void) refreshGames:(UIRefreshControl *)refreshControl
 {
-    [self showLoadingAlert];
+    [self showActivityIndicator];
 	if (refreshControl) {
 		[refreshControl setAttributedTitle:[StringUtils makeRefreshText:@"Refreshing data..."]];
 		[refreshControl setEnabled:NO];
@@ -268,7 +328,7 @@
 //Call back delegate for new images finished
 - (void) didGetGamesDelegate:(BOOL)success info: (NSString *) info
 {
-    [self dismissAlert];
+    [self hideActivityIndicator];
      [self.tableView setHidden:NO];
 	// Refresh the table data to show the new games
 	[self.tableView reloadData];
@@ -283,35 +343,18 @@
 	}
 }
 
-- (void) newGameNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground
+- (void) showActivityIndicator
 {
-    if(inBackground)
-    {
-        [super newRoundNotification:message inBackground:inBackground];
-    } else{
-        [[UserGames instance] refreshGameID:[message.headers objectForKey:ObjectID] withBlock:^(Game * game) {
-            //Build alert
-            NSString *summary = [NSString stringWithFormat:@"First category is \"%@\" with %@", game.currentRound.category,[StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
-            [self showAlertWithTitle:@"You were added to a new game!" andSummary:summary];
-            [self.tableView reloadData];
-        }];
-    }
+    [self.activityIndicator startAnimating];
+    [self.activityIndicator setHidden:NO];
+    [self.tableView setUserInteractionEnabled:NO];
 }
 
-
-- (void) newRoundNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground
+-(void) hideActivityIndicator
 {
-    if(inBackground)
-    {
-        [super newRoundNotification:message inBackground:inBackground];
-    } else{
-        [[UserGames instance] refreshGameID:[message.headers objectForKey:CompletedRoundGameID] withBlock:^(Game * game) {
-            NSString *winner = [message.headers objectForKey:CompletedRoundWinningResponseFrom];
-            NSString* summary = [NSString stringWithFormat:@"%@ won round %@ with: %@", winner, [message.headers objectForKey:CompletedRoundNumber], [message.headers objectForKey:CompletedRoundWinningResponse]];
-            [self showAlertWithTitle:@"New Round Started" andSummary:summary];
-            [self.tableView reloadData];
-        }];
-    }
+    [self.activityIndicator stopAnimating];
+    [self.activityIndicator setHidden:YES];
+    [self.tableView setUserInteractionEnabled:YES];
 }
 
 @end

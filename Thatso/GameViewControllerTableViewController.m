@@ -11,7 +11,6 @@
 #import "FratBarButtonItem.h"
 #import "StringUtils.h"
 #import "UIImage+Scaling.h"
-#import "CommentTableViewCell.h"
 #import "PreviousRoundsTableViewController.h"
 #import "AppDelegate.h"
 
@@ -22,7 +21,6 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         self.comments = [[NSMutableArray alloc] init];
-        self.votedForComments = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -43,7 +41,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    uploadingComment = false;
     //self.navigationController.title = @"Category";
     //setup Subviews
     self.headerView = [[GameHeaderView alloc] initWithFrame:CGRectMake(0,
@@ -63,6 +61,7 @@
     self.tableView.backgroundColor = [UIColor blueAppColor];
     [self.tableView setSeparatorColor:[UIColor clearColor]];
     [self.view addSubview:self.tableView];
+
     
     CGRect viewBounds = [[self view] bounds];
     CGRect frame = CGRectMake(0.0f,
@@ -81,6 +80,8 @@
     [self.composeBarView setBackgroundColor:[UIColor whiteColor]];
     
     [self.view addSubview:self.composeBarView];
+    
+    [self.view addSubview:self.activityIndicator];
     
     self.singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resignOnTap:)];
     [self.singleTap setNumberOfTapsRequired:1];
@@ -255,10 +256,18 @@
     if([comment.from.objectId isEqualToString:[User currentUser].objectId])
     {
         [cell setCommentLabelText:[NSString stringWithFormat:@"(Your Response) %@",comment.response]];
+        self.userCommentCell = cell;
+        if(uploadingComment)
+        {
+            [cell.activityIndicator startAnimating];
+            [cell.activityIndicator setHidden:NO];
+            [self.userCommentCell.circle setHidden:YES];
+        }
     } else
     {
         [cell setCommentLabelText:comment.response];
     }
+    
     if([self isJudge])
     {
         [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
@@ -282,6 +291,8 @@
         [self showAlertWithTitle:title andSummary:summary];
         
         //Start next round
+        
+        [self showActivityIndicator];
         [Comms finishRound:self.currentRound inGame:self.currentGame withWinningComment:winningComment andOtherComments:self.comments forDelegate:self];
     }
 }
@@ -292,7 +303,7 @@
 //Pull to refresh method
 - (void) refreshGame:(UIRefreshControl *)refreshControl
 {
-    [self showLoadingAlert];
+    [self showActivityIndicator];
     
     if (self.refreshControl) {
         [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:@"Refreshing data..."]];
@@ -310,7 +321,8 @@
 }
 
 - (void) didGetComments:(BOOL)success info: (NSString *) info{
-    [self dismissAlert];
+    //[self dismissAlert];
+    [self hideActivityIndicator];
     if(success)
     {
     
@@ -333,6 +345,16 @@
         [self showAlertWithTitle:@"Error!" andSummary:info];
         
     }
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    //Recieve messages
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    
+    self.messageClient = [appDelegate.client messageClient];
+    self.messageClient.delegate = self;
 }
 
 
@@ -373,7 +395,7 @@
         
         [self.comments addObject:comment];
     }
-    
+    uploadingComment = true;
     [self.tableView reloadData];
     
     [Comms addComment:comment toRound:self.currentRound forDelegate:self];
@@ -383,6 +405,13 @@
 //callback
 - (void) didAddComment:(BOOL)success needsRefresh:(BOOL)refresh addedComment:(Comment*)comment info: (NSString *) info
 {
+    if(self.userCommentCell != nil)
+    {
+        [self.userCommentCell.activityIndicator setHidden:YES];
+        [self.userCommentCell.activityIndicator stopAnimating];
+        [self.userCommentCell.circle setHidden:NO];
+    }
+    uploadingComment = false;
     if(success)
     {
         //Update local
@@ -395,6 +424,8 @@
         }
         SINOutgoingMessage *message = [SINOutgoingMessage messageWithRecipients:nonUserPlayersIDs text:NewComment];
         [message addHeaderWithValue:comment.objectId key:ObjectID];
+        [message addHeaderWithValue:comment.roundID key:CommentRoundID];
+        [message addHeaderWithValue:comment.gameID key:CommentGameID];
         [self.messageClient sendMessage:message];
         
     } else{
@@ -427,6 +458,7 @@
 #pragma staring new round
 - (void) didStartNewRound:(BOOL)success info: (NSString *) info previousWinner:(CompletedRound *)winningRound;
 {
+    [self hideActivityIndicator];
     if(success)
     {
         self.comments = [[NSMutableArray alloc] init];
@@ -513,40 +545,78 @@
 
 #pragma mark - SINMessageClientDelegate
 
-- (void) newRoundNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground
-{
-    if(inBackground)
+ - (void)messageClient:(id<SINMessageClient>)messageClient didReceiveIncomingMessage:(id<SINMessage>)message {
+ NSLog(@"didReceiveIncomingMessage: %@ %@", message.text, message.headers );
+
+    if([message.text isEqualToString:NewRound])
     {
-        [[UserGames instance] refreshGameID:[message.headers objectForKey:CompletedRoundGameID] withBlock:^(Game * game) {
-            NSString *winner = [message.headers objectForKey:CompletedRoundWinningResponseFrom];
-            NSString* summary = [NSString stringWithFormat:@"New round starting: %@ won previous.", winner];
-            UILocalNotification* notification = [[UILocalNotification alloc] init];
-            notification.alertBody = summary;
-            [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
-        }];
-    } else{
-        //Show alert that a new game has started
-        NSString *winner = [message.headers objectForKey:CompletedRoundWinningResponseFrom];
-        NSString* summary = [NSString stringWithFormat:@"%@ won round %@ with: %@", winner, [message.headers objectForKey:CompletedRoundNumber], [message.headers objectForKey:CompletedRoundWinningResponse]];
-        [self showAlertWithTitle:@"New Round Started" andSummary:summary];
-        
+        [self newRoundNotification:message inBackground:NO];
+    }
+    else if([message.text isEqualToString:NewComment])
+    {
+        [self newCommentNotification:message inBackground:NO];
+    }
+}
+
+
+ 
+ - (void)messageSent:(id<SINMessage>)message recipientId:(NSString *)recipientId {
+     NSLog(@"messageSent: %@ to: %@", message, recipientId);
+ }
+ 
+ - (void)message:(id<SINMessage>)message shouldSendPushNotifications:(NSArray *)pushPairs {
+     NSLog(@"Recipient not online. \
+           Should notify recipient using push (not implemented in this demo app). \
+           Please refer to the documentation for a comprehensive description.");
+ }
+ 
+ - (void)messageDelivered:(id<SINMessageDeliveryInfo>)info {
+     NSLog(@"Message to %@ was successfully delivered", info.recipientId);
+ }
+ 
+ - (void)messageFailed:(id<SINMessage>)message info:(id<SINMessageFailureInfo>)failureInfo {
+     NSLog(@"Failed delivering message to %@. Reason: %@", failureInfo.recipientId,
+       [failureInfo.error description]);
+ }
+
+-(void) newRoundNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground
+{
+    if([[message.headers objectForKey:CompletedRoundGameID] isEqualToString:self.currentGame.objectId])
+    {
         [[UserGames instance] refreshGameID:[message.headers objectForKey:CompletedRoundGameID] withBlock:^(Game * game) {
             [self refreshGame:nil];
         }];
     }
 }
-
 - (void) newCommentNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground
 {
-    if(inBackground)
+    if([[message.headers objectForKey:CommentRoundID] isEqualToString:self.currentRound.objectId])
     {
-        [super newCommentNotification:message inBackground:inBackground];
-    } else{
         [[CurrentRounds instance] refreshCommentID:[message.headers objectForKey:ObjectID] withBlock:^(Comment *comment) {
             self.comments = [[CurrentRounds instance].currentComments objectForKey:self.currentGame.objectId];
             [self.tableView reloadData];
         }];
     }
+    else if([[message.headers objectForKey:CommentGameID] isEqualToString:self.currentGame.objectId]){
+        [self showAlertWithTitle:@"New Round Started!" andSummary:@""];
+        [self refreshGame:nil];
+    }
 }
 
+- (void) showActivityIndicator
+{
+    [self.activityIndicator startAnimating];
+    [self.activityIndicator setHidden:NO];
+    [self.tableView setUserInteractionEnabled:NO];
+    [self.composeBarView setUserInteractionEnabled:NO];
+}
+
+-(void) hideActivityIndicator
+{
+    
+    [self.activityIndicator stopAnimating];
+    [self.activityIndicator setHidden:YES];
+    [self.tableView setUserInteractionEnabled:YES];
+    [self.composeBarView setUserInteractionEnabled:YES];
+}
 @end

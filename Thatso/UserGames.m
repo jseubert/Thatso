@@ -60,17 +60,27 @@ static UserGames *instance = nil;
 -(void) addGame: (Game*) game
 {
     //Remove the game if it needs to be removed
+  //  Game *newgame = [game copy];
+    bool found = false;
+    NSMutableArray *gameArray;
     for (NSString *key in [self.games allKeys])
     {
-        NSMutableArray *gameArray =[self.games objectForKey:key];
+        gameArray =[self.games objectForKey:key];
         
         for(Game* existingGame in gameArray)
         {
             if([existingGame.objectId isEqualToString:game.objectId])
             {
-                [gameArray removeObject:existingGame];
+                found = true;
+                //[gameArray removeObject:existingGame];
+
+                break;
             }
         }
+    }
+    if(found)
+    {
+        [gameArray removeObject:game];
     }
     NSLog(@"%@", game.currentRound.judge);
     //User is the judge of this game
@@ -89,7 +99,8 @@ static UserGames *instance = nil;
 
 - (void) userDidRespondInGame: (Game*) game
 {
-    //Remove the game if it needs to be removed
+    BOOL addGame = false;
+    //Move the game to
     for (NSString *key in [self.games allKeys])
     {
         NSMutableArray *gameArray =[self.games objectForKey:key];
@@ -103,11 +114,16 @@ static UserGames *instance = nil;
                     NSMutableArray *newArray = [[NSMutableArray alloc] initWithArray:existingGame.currentRound.responded];
                     [newArray addObject:[User currentUser].fbId];
                     existingGame.currentRound.responded = newArray;
+                    addGame = true;
                     
-                    [self addGame:game];
+                    break;
                 }
             }
         }
+    }
+    if(addGame)
+    {
+        [self addGame:game];
     }
 }
 -(int) gameCount
@@ -179,7 +195,8 @@ static CurrentRounds *currentRound = nil;
     {
         if([comment.objectId isEqualToString:existingComment.objectId])
         {
-                [comments removeObject:existingComment];
+            [comments removeObject:existingComment];
+            break;
         }
     }
     [comments addObject:comment];

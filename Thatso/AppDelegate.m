@@ -90,7 +90,6 @@
         _client.delegate = self;
         
         [_client setSupportMessaging:YES];
-        [_client setSupportActiveConnectionInBackground:YES];
         [_client setSupportPushNotifications:YES];
         
         [_client start];

@@ -22,21 +22,29 @@
     [self.view setBackgroundColor:[UIColor blueAppColor]];
     [self.tableView setBackgroundColor:[UIColor blueAppColor]];
     
+    self.activityIndicator = [[UIActivityIndicatorView alloc] initWithFrame:(CGRectMake(0,
+                                                                                        0,
+                                                                                        150,
+                                                                                        100))];
+    [self.activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    [self.activityIndicator setBackgroundColor:[UIColor pinkAppColor]];
+    [[self.activityIndicator  layer] setCornerRadius:40.0f];
+    [self.activityIndicator setClipsToBounds:YES];
+    [[self.activityIndicator  layer] setBorderWidth:2.0f];
+    [[self.activityIndicator  layer] setBorderColor:[UIColor whiteColor].CGColor];
+    [self.activityIndicator setCenter:CGPointMake(self.view.center.x, 250)];
+    
+    UILabel *loading = [[UILabel alloc] initWithFrame:CGRectMake(0, self.activityIndicator.frame.size.height - 30, self.activityIndicator.frame.size.width, 20)];
+    [loading setTextColor:[UIColor whiteColor]];
+    [loading setFont:[UIFont defaultAppFontWithSize:16.0f]];
+    [loading setTextAlignment:NSTextAlignmentCenter];
+    [loading setText:@"Loading..."];
+    [self.activityIndicator addSubview:loading];
+    
     // Create a re-usable NSDateFormatter
     _dateFormatter = [[NSDateFormatter alloc] init];
     [_dateFormatter setDateFormat:@"MMM d, h:mm a"];
 }
-
--(void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    //Recieve messages
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    
-    self.messageClient = [appDelegate.client messageClient];
-    self.messageClient.delegate = self;
-}
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -77,178 +85,5 @@
     // Display Alert Message
     [self.alertView show];
 }
-
-#pragma mark - SINMessageClientDelegate
-
-- (void)messageClient:(id<SINMessageClient>)messageClient didReceiveIncomingMessage:(id<SINMessage>)message {
-    NSLog(@"didReceiveIncomingMessage: %@ %@", message.text, message.headers );
-    //If user is inactive, send a notification
-    if([UIApplication sharedApplication].applicationState == UIApplicationStateBackground || [UIApplication sharedApplication].applicationState == UIApplicationStateInactive){
-        if([message.text isEqualToString:NewRound])
-        {
-            [self newRoundNotification:message inBackground:YES];
-        }
-        else if([message.text isEqualToString:NewComment])
-        {
-            [self newCommentNotification:message inBackground:YES];
-        }
-        else if([message.text isEqualToString:NewGame])
-        {
-            [self newGameNotification:message inBackground:YES];
-        }
-    } else {
-        if([message.text isEqualToString:NewRound])
-        {
-             [self newRoundNotification:message inBackground:NO];
-        }
-        else if([message.text isEqualToString:NewComment])
-        {
-             [self newCommentNotification:message inBackground:NO];
-        }
-        else if([message.text isEqualToString:NewGame])
-        {
-            [self newGameNotification:message inBackground:NO];
-        }
-    }
-}
-
-- (void) newRoundNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground
-{
-     if(inBackground)
-     {
-         [[UserGames instance] refreshGameID:[message.headers objectForKey:CompletedRoundGameID] withBlock:^(Game * game) {
-             NSString *winner = [message.headers objectForKey:CompletedRoundWinningResponseFrom];
-             NSString* summary = [NSString stringWithFormat:@"New round starting: %@ won previous.", winner];
-             UILocalNotification* notification = [[UILocalNotification alloc] init];
-             notification.alertBody = summary;
-             [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
-         }];
-     } else{
-         //Show alert that a new game has started
-         NSString *winner = [message.headers objectForKey:CompletedRoundWinningResponseFrom];
-         NSString* summary = [NSString stringWithFormat:@"%@ won round %@ with: %@", winner, [message.headers objectForKey:CompletedRoundNumber], [message.headers objectForKey:CompletedRoundWinningResponse]];
-         [self showAlertWithTitle:@"New Round Started" andSummary:summary];
-         
-         [[UserGames instance] refreshGameID:[message.headers objectForKey:CompletedRoundGameID]];
-     }
-}
-
-- (void) newCommentNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground
-{
-    if(inBackground)
-    {
-        [[CurrentRounds instance] refreshCommentID:[message.headers objectForKey:ObjectID]];
-    } else{
-        [[CurrentRounds instance] refreshCommentID:[message.headers objectForKey:ObjectID]];
-    }
-    
-}
-
-- (void) newGameNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground
-{
-    if(inBackground)
-    {
-        [[UserGames instance] refreshGameID:[message.headers objectForKey:ObjectID] withBlock:^(Game * game) {
-            //Build notification and send
-            NSString* summary = [NSString stringWithFormat:@"You were added to a new game with: %@", [StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
-            UILocalNotification* notification = [[UILocalNotification alloc] init];
-            notification.alertBody = summary;
-            [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
-            
-        }];
-    } else{
-        [[UserGames instance] refreshGameID:[message.headers objectForKey:ObjectID] withBlock:^(Game * game) {
-            //Build alert
-            NSString *summary = [NSString stringWithFormat:@"First category is \"%@\" with %@", game.currentRound.category,[StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
-            [self showAlertWithTitle:@"You were added to a new game!" andSummary:summary];
-            
-        }];
-    }
-}
-
-- (void)messageSent:(id<SINMessage>)message recipientId:(NSString *)recipientId {
-    NSLog(@"messageSent: %@ to: %@", message, recipientId);
-}
-
-- (void)message:(id<SINMessage>)message shouldSendPushNotifications:(NSArray *)pushPairs {
-    NSLog(@"Recipient not online. \
-          Should notify recipient using push (not implemented in this demo app). \
-          Please refer to the documentation for a comprehensive description.");
-}
-
-- (void)messageDelivered:(id<SINMessageDeliveryInfo>)info {
-    NSLog(@"Message to %@ was successfully delivered", info.recipientId);
-}
-
-- (void)messageFailed:(id<SINMessage>)message info:(id<SINMessageFailureInfo>)failureInfo {
-    NSLog(@"Failed delivering message to %@. Reason: %@", failureInfo.recipientId,
-          [failureInfo.error description]);
-}
-
-#pragma mark - Table view data source
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    // Return the number of sections.
-    return 0;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    // Return the number of rows in the section.
-    return 0;
-}
-
-/*
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
-    
-    // Configure the cell...
-    
-    return cell;
-}
-*/
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
