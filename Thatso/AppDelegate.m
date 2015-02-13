@@ -40,6 +40,9 @@
     
     //Need to set navigation bar item color here. Since this is the big one i guess
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+    [navController.navigationBar  setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
+                                                                       [UIColor whiteColor], NSForegroundColorAttributeName,
+                                                                       [UIFont defaultAppFontWithSize:21.0], NSFontAttributeName, nil]];
     
     [self.window makeKeyAndVisible];
     [self.window addSubview:navController.view];

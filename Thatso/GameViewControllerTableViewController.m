@@ -42,7 +42,8 @@
 {
     [super viewDidLoad];
     uploadingComment = false;
-    //self.navigationController.title = @"Category";
+
+    self.navigationItem.title = self.currentGame.gameName;
     //setup Subviews
     self.headerView = [[GameHeaderView alloc] initWithFrame:CGRectMake(0,
                                                                 self.navigationController.navigationBar.frame.size.height + 20 ,
@@ -92,7 +93,7 @@
     self.navigationItem.backBarButtonItem = newGameButton;
     
     //New Game Button
-    FratBarButtonItem *previousGames= [[FratBarButtonItem alloc] initWithTitle:@"Previous Games" style:UIBarButtonItemStyleBordered target:self action:@selector(previousGames:)];
+    FratBarButtonItem *previousGames= [[FratBarButtonItem alloc] initWithTitle:@"Past Rounds" style:UIBarButtonItemStyleBordered target:self action:@selector(previousGames:)];
     self.navigationItem.rightBarButtonItem = previousGames;
     
     // If we are using iOS 6+, put a pull to refresh control in the table
@@ -131,13 +132,27 @@
 
 -(void) setupHeader
 {
+    NSString *previousProfileId = self.currentRound.subject;
     self.currentRound = self.currentGame.currentRound;
 
     [self.headerView.roundLabel setText:[NSString stringWithFormat:@"Round %@",self.currentRound.roundNumber]];
     [self.headerView.caregoryLabel setText:[NSString stringWithFormat:@"%@",self.currentRound.category]];
-    [DataStore getFriendProfilePictureWithID:self.currentRound.subject withBlock:^(UIImage * image) {
-        [self.headerView.profilePicture setImage:image];
-    }];
+    if(![previousProfileId isEqual:self.currentRound.subject])
+    {
+        [DataStore getFriendProfilePictureWithID:self.currentRound.subject withBlock:^(UIImage * image) {
+
+            [self.headerView.profilePicture setImage:[image imageScaledToFitSize:CGSizeMake(40, 40)]];
+            self.headerView.profilePicture.frame = CGRectMake(self.headerView.profilePicture.frame.origin.x + 20, self.headerView.profilePicture.frame.origin.y + 20, 0, 0);
+            [UIView animateWithDuration:0.5
+                         animations:^{
+                             [[self.headerView.profilePicture  layer] setCornerRadius:20];
+                             self.headerView.profilePicture.frame = CGRectMake(self.headerView.profilePicture.frame.origin.x - 20, self.headerView.profilePicture.frame.origin.y -20, 40, 40);
+                         }
+                         completion:^(BOOL finished){
+                         }];
+        
+        }];
+    }
     [self layoutSubviews];
 
 }
@@ -230,6 +245,15 @@
     
     [DataStore getFriendProfilePictureWithID:self.currentRound.judge withBlock:^(UIImage *image) {
         [cell.profilePicture setImage:[image imageScaledToFitSize:CGSizeMake(cell.frame.size.height, cell.frame.size.height)]];
+        cell.profilePicture.frame = CGRectMake(cell.profilePicture.frame.origin.x + 20, cell.profilePicture.frame.origin.y + 20, 0, 0);
+        [[cell.profilePicture  layer] setCornerRadius:0];
+        [UIView animateWithDuration:0.5
+                         animations:^{
+                             cell.profilePicture.frame = CGRectMake(cell.profilePicture.frame.origin.x - 20, cell.profilePicture.frame.origin.y -20, 40, 40);
+                             [[cell.profilePicture  layer] setCornerRadius:cell.profilePicture.frame.size.height/2];
+                         }
+                         completion:^(BOOL finished){
+                         }];
     }];
     
     //set color
@@ -237,6 +261,19 @@
     
     return cell;
   
+}
+
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
+    cell.frame = CGRectMake(-cell.frame.size.width, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
+    [UIView animateWithDuration:0.5
+                     animations:^{
+                         cell.frame = CGRectMake(0, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
+
+                     }
+                     completion:^(BOOL finished){
+                     }];
+    
+    
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

@@ -35,7 +35,7 @@
         [self.roundNumberLabel setTextAlignment:NSTextAlignmentCenter];
         [self.roundNumberLabel setTextColor:[UIColor whiteColor]];
         self.roundNumberLabel.numberOfLines = 0;
-        [[self.roundNumberLabel  layer] setCornerRadius:self.roundNumberLabel.frame.size.height/2];
+        [[self.roundNumberLabel  layer] setCornerRadius:20/2];
         [self.roundNumberLabel setClipsToBounds:YES];
         [self.roundNumberLabel setBackgroundColor:[UIColor blueAppColor]];
         [self addSubview:self.roundNumberLabel];
@@ -58,7 +58,7 @@
         self.gameNameLabel.font = [UIFont defaultAppFontWithSize:16.0];
         self.gameNameLabel.text = @"";
         self.gameNameLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-        self.gameNameLabel.numberOfLines = 0;
+        self.gameNameLabel.numberOfLines = 1;
         [self.gameNameLabel setTextColor:[UIColor blueAppColor]];
         [self addSubview:self.gameNameLabel];
         
@@ -135,9 +135,34 @@
 
 -(void) setGame: (Game*)game andRound: (Round*)round
 {
+    //Start with everything hidden
+    [self.end setHidden:YES];
+    for(int i = 0; i < 6; i ++)
+    {
+        [[self.nameLabels objectAtIndex:i] setHidden:YES];
+        [[self.profileViews objectAtIndex:i] setHidden:YES];
+        [[self.activityIndicators objectAtIndex:i] setHidden:YES];
+    }
+    
     [self.gameNameLabel setText: game.gameName];
     [self.roundNumberLabel setText: [NSString stringWithFormat:@"%@",round.roundNumber]];
     [self.categoryLabel setText:round.category];
+    int width = [CommentTableViewCell sizeWithFontAttribute:self.roundNumberLabel.font constrainedToSize:(CGSizeMake(self.frame.size.width, 20)) withText:self.roundNumberLabel.text].width +10;
+    self.roundNumberLabel.frame = CGRectMake(self.frame.size.width - width - 10,
+                                                                      5,
+                                                                      width,
+                                                                      20);
+    
+    self.roundLabel.frame = CGRectMake(self.frame.size.width - 10 - self.roundNumberLabel.frame.size.width - 2 - 50,
+                                                                5,
+                                                                50,
+                                                                20);
+    
+    self.gameNameLabel.frame = CGRectMake(10,
+                                                                   5,
+                                                                   self.roundLabel.frame.origin.x - 10 - 5,
+                                                                   20);
+
     
     int count = 0;
     int iconNumber = 0;
@@ -162,9 +187,27 @@
             [activityIndicator startAnimating];
         
             [DataStore getFriendProfilePictureWithID:user.fbId withBlock:^(UIImage *image) {
+               // dispatch_async(dispatch_get_main_queue(), ^(void){
+                    //Run UI Updates
                 [profileView setImage:[image imageScaledToFitSize:CGSizeMake(40, 40)]];
-                [activityIndicator stopAnimating];
-                [activityIndicator setHidden:YES];
+                profileView.frame = CGRectMake(profileView.frame.origin.x + 20, profileView.frame.origin.y + 20, 0, 0);
+                [[profileView  layer] setCornerRadius:0];
+                [UIView animateWithDuration:0.5
+                                 animations:^{
+                                     profileView.frame = CGRectMake(profileView.frame.origin.x - 20, profileView.frame.origin.y -20, 40, 40);
+                                     [[profileView  layer] setCornerRadius:profileView.frame.size.height/2];
+                                 }
+                                 completion:^(BOOL finished){
+                                    // [theView removeFromSuperview];
+                                     [activityIndicator stopAnimating];
+                                     [activityIndicator setHidden:YES];
+                                 }];
+                
+                //profileView.frame = CGRectMake(profileView.frame.origin.x, profileView.frame.origin.y, 40, 40);
+
+                    [activityIndicator stopAnimating];
+                    [activityIndicator setHidden:YES];
+               // });
             }];
         
 

@@ -35,10 +35,12 @@
     
     self.tableView.backgroundColor = [UIColor blueAppColor];
     [self.tableView setSeparatorColor:[UIColor clearColor]];
+    
+    self.navigationItem.title = @"Players";
 
     
     //New Game Button
-    FratBarButtonItem *startButton  = [[FratBarButtonItem alloc] initWithTitle:@"Next" style:UIBarButtonItemStyleBordered target:self action:@selector(nextPressed:)];
+    FratBarButtonItem *startButton  = [[FratBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleBordered target:self action:@selector(nextPressed:)];
     self.navigationItem.rightBarButtonItem = startButton;
     self.tableView.allowsMultipleSelection = YES;
 }

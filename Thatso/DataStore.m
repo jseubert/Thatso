@@ -70,7 +70,10 @@ static DataStore *instance = nil;
     }else{
         if(block != nil)
         {
-            block([[DataStore instance].fbFriendsProfilePictures objectForKey:fbId]);
+            dispatch_async(dispatch_get_main_queue(), ^(void){
+                //Run UI Updates
+                block([[DataStore instance].fbFriendsProfilePictures objectForKey:fbId]);
+            });
         }
     }
 }

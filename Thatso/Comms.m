@@ -544,7 +544,10 @@
         }
         if(block != nil)
         {
-            block(profilePicture);
+            dispatch_async(dispatch_get_main_queue(), ^(void){
+                //Run UI Updates
+                 block(profilePicture);
+            });
         }
     }];
 }

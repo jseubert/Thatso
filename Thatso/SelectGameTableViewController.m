@@ -28,20 +28,21 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self.tableView setSeparatorColor:[UIColor clearColor]];
     [self.view setBackgroundColor:[UIColor blueAppColor]];
-    [self.tableView setBackgroundColor:[UIColor blueAppColor]];
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     self.navigationItem.title = @"Games";
+
+    //self.navigationController.navigationBar.translucent = NO;
    
-    [self.navigationController.navigationBar setTitleTextAttributes:
-     [NSDictionary dictionaryWithObjectsAndKeys:
-      [UIFont fontWithName:@"mplus-1c-regular" size:50],
-      NSFontAttributeName, nil]];
+    [self.navigationController.navigationBar  setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
+                                                           [UIColor whiteColor], NSForegroundColorAttributeName,
+                                                                       [UIFont defaultAppFontWithSize:21.0], NSFontAttributeName, nil]];
     
     self.tableView = [[UITableView alloc] initWithFrame:CGRectZero];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
+    [self.tableView setBackgroundColor:[UIColor blueAppColor]];
+    [self.tableView setSeparatorColor:[UIColor clearColor]];
     [self.view addSubview: self.tableView];
     
     //Back button - needed for pushed view controllers
