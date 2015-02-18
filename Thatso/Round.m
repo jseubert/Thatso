@@ -15,6 +15,7 @@
 @dynamic category;
 @dynamic roundNumber;
 @dynamic responded;
+@dynamic categoryID;
 + (void)load {
     [self registerSubclass];
 }

@@ -17,6 +17,7 @@
 @dynamic gameID;
 @dynamic winningResponse;
 @dynamic winningResponseFrom;
+@dynamic categoryID;
 + (void)load {
     [self registerSubclass];
 }

@@ -48,7 +48,8 @@ extern NSString * const RoundJudge;
 extern NSString * const RoundSubject;
 extern NSString * const RoundCategory;
 extern NSString * const RoundNumber;
-extern NSString * const RoundResponded; 
+extern NSString * const RoundResponded;
+extern NSString * const RoundCategoryID;
 
 #pragma mark Comment Fields
 extern NSString * const CommentGameID;
@@ -64,6 +65,7 @@ extern NSString * const CompletedRoundNumber;
 extern NSString * const CompletedRoundGameID;
 extern NSString * const CompletedRoundWinningResponse;
 extern NSString * const CompletedRoundWinningResponseFrom;
+extern NSString * const CompletedRoundCategoryID;
 
 #pragma mark Category Fields
 extern NSString * const CategoryStartText;
@@ -72,3 +74,5 @@ extern NSString * const CategoryCount;
 extern NSString * const CategoryVersionAdded;
 extern NSString * const CategoryIsPG;
 extern NSString * const CategoryIsAdult;
+
+

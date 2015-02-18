@@ -243,9 +243,9 @@
     [Comms getCategories];
     GenericCategory *category = [[DataStore instance].categories objectAtIndex:(arc4random() % [DataStore instance].categories.count)];
     
-    roundObject[RoundCategory] = [NSString stringWithFormat:@"%@ %@%@", category.startText, [gameObject playerWithfbId:roundObject.subject].first_name, category.endText];
+    roundObject.category = [NSString stringWithFormat:@"%@ %@%@", category.startText, [gameObject playerWithfbId:roundObject.subject].first_name, category.endText];
     
-    
+    roundObject.categoryID = category.objectId;
     
     gameObject.currentRound = roundObject;
     
@@ -431,7 +431,9 @@
     GenericCategory *category = [[DataStore instance].categories objectAtIndex:(arc4random() % [DataStore instance].categories.count)];
     
     roundObject.category = [NSString stringWithFormat:@"%@ %@%@", category.startText, [game playerWithfbId:roundObject.subject].first_name, category.endText];
-        
+    
+    roundObject.categoryID = category.objectId;
+    
     //new round round
     roundObject.roundNumber = game.rounds;
     
@@ -447,6 +449,7 @@
             completedRound.category = round.category;
             completedRound.roundNumber = round.roundNumber;
             completedRound.gameID = game.objectId;
+            completedRound.categoryID = round.categoryID;
             completedRound.winningResponse = comment.response;
             completedRound.winningResponseFrom = comment.from;
             
@@ -482,6 +485,81 @@
     }];
 }
 
++(void) getNewCategoryWithSubjects: (NSMutableArray *)players inGame:(NSString *)gameId familyRated:(BOOL)familyRated withBlock:(void (^)(GenericCategory*category, NSString* userId, BOOL success,  NSString* info))block
+{
+    NSMutableArray *shuffledPlayers = [[NSMutableArray alloc] init];
+    while(players.count > 0)
+    {
+        int randomIndex = arc4random()%players.count;
+        [shuffledPlayers addObject:[players objectAtIndex:randomIndex]];
+        [players removeObjectAtIndex:randomIndex];
+    }
+    
+    NSMutableArray *shuffledCategories = [[NSMutableArray alloc] init];
+    NSMutableArray *categoriesFrom;
+    if(familyRated)
+    {
+        categoriesFrom = [[DataStore instance].familyCategories copy];
+    }else{
+        categoriesFrom = [[DataStore instance].categories copy];
+    }
+    while(categoriesFrom.count > 0)
+    {
+        int randomIndex = arc4random()%categoriesFrom.count;
+        [shuffledCategories addObject:[categoriesFrom objectAtIndex:randomIndex]];
+        [categoriesFrom removeObjectAtIndex:randomIndex];
+    }
+    
+    PFQuery *getCompletedCategories = [PFQuery queryWithClassName:CompletedRoundCategory];
+    [getCompletedCategories whereKey: CompletedRoundGameID equalTo:gameId];
+    //[getCompletedCategories whereKey: CompletedRoundSubject equalTo:userId];
+    [getCompletedCategories includeKey:CompletedRoundCategoryID];
+    [getCompletedCategories includeKey:CompletedRoundJudge];
+    [getCompletedCategories findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (error) {
+            block(nil, nil, NO, error.description);
+        } else if(objects != NULL && [objects count] > 0)
+        {
+            block(shuffledCategories[0],shuffledPlayers[0],NO, @"");
+        } else
+        {
+            BOOL categoryOK = false;
+            for(GenericCategory *potentialCategory in shuffledCategories)
+            {
+                BOOL found = false;
+                for(NSString *userID in shuffledPlayers)
+                {
+                    for(CompletedRound *completedRound in objects)
+                    {
+                        //This category was already done with this person
+                        if([potentialCategory.objectId isEqualToString:completedRound.categoryID] && [userID isEqualToString:completedRound.subject.fbId])
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if(found == true)
+                    {
+                        break;
+                    }
+                    //Category does not match user. use it!
+                    else{
+                        block(potentialCategory, userID, YES, @"");
+                        return;
+                    }
+                }
+                
+            }
+            block(nil, nil, NO, @"Blimey, every category has been played! Either start a new game or wait for an update with more categories!");
+            return;
+        }
+    }];
+    
+}
+
+    
+
+
 
 + (void) getPreviousRoundsInGame: (Game * ) game forDelegate:(id<DidGetPreviousRounds>)delegate
 {
@@ -510,7 +588,12 @@
     
     [DataStore instance].categories = [[NSMutableArray alloc] initWithArray:[getCategory findObjects]];
     
-   // NSLog(@"Categories: %@", [DataStore instance].categories);
+    PFQuery *getFamilyCategory = [PFQuery queryWithClassName:CategoryClass];
+    [getFamilyCategory whereKey:CategoryIsPG equalTo:[NSNumber numberWithBool:YES]];
+    [DataStore instance].familyCategories = [[NSMutableArray alloc] initWithArray:[getFamilyCategory findObjects]];
+    
+    NSLog(@"Categories: %@", [DataStore instance].categories);
+    NSLog(@"FamilyCategoreis: %@", [DataStore instance].familyCategories);
 }
 
 + (void) getuser: (NSString *)fbId

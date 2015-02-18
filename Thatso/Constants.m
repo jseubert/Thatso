@@ -28,6 +28,7 @@ NSString * const RoundClass = @"Round";
 NSString * const CompletedRoundClass = @"CompletedRound";
 NSString * const CategoryClass = @"Category";
 
+
 #pragma mark universal class fields
 NSString * const UpdatedAt = @"updatedAt";
 NSString * const CreatedAt = @"createdAt";
@@ -52,6 +53,7 @@ NSString * const RoundSubject = @"subject";
 NSString * const RoundCategory = @"category";
 NSString * const RoundNumber = @"roundNumber";
 NSString * const RoundResponded = @"responded";
+NSString * const RoundCategoryID;
 
 #pragma mark Comment Fields
 NSString * const CommentGameID = @"gameID";
@@ -65,6 +67,7 @@ NSString * const CompletedRoundSubject = @"subject";
 NSString * const CompletedRoundCategory = @"category";
 NSString * const CompletedRoundNumber = @"roundNumber";
 NSString * const CompletedRoundGameID = @"gameID";
+NSString * const CompletedRoundCategoryID = @"categoryID";
 NSString * const CompletedRoundWinningResponse = @"winningResponse";
 NSString * const CompletedRoundWinningResponseFrom = @"winningResponseFrom";
 
@@ -75,3 +78,8 @@ NSString * const CategoryCount = @"categoryCount";
 NSString * const CategoryVersionAdded = @"versionAdded";
 NSString * const CategoryIsPG = @"isPG";
 NSString * const CategoryIsAdult = @"isAdult";
+
+#pragma mark Completed Category Fields
+NSString * const CompletedCategoryGameID = @"gameID";
+NSString * const CompletedCategoryCategoryID = @"categoryID";
+NSString * const CompletedCategoryUserID = @"userID";

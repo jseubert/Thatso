@@ -14,6 +14,7 @@
 @property (retain) NSString *category;
 @property (retain) NSNumber *roundNumber;
 @property (retain) NSString *gameID;
+@property (retain) NSString *categoryID;
 @property (retain) NSString *winningResponse;
 @property (retain) User *winningResponseFrom;
 + (NSString *)parseClassName;

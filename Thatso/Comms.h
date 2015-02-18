@@ -44,6 +44,10 @@ typedef void (^ImageResultBlock)(UIImage* image);
 - (void) didGetPreviousRounds:(BOOL)success info: (NSString *) info;
 @end
 
+@protocol DidGetCatgegory <NSObject>
+- (void) didGetCatgegory:(BOOL)success info: (NSString *) info;
+@end
+
 @interface Comms : NSObject
 + (void) login:(id<DidLoginDelegate>)delegate;
 + (void) getAllFacebookFriends:(id<DidLoginDelegate>)delegate;
@@ -56,5 +60,6 @@ typedef void (^ImageResultBlock)(UIImage* image);
 + (void) getCategories;
 + (void) getuser: (NSString *)fbId;
 + (void) getProfilePictureForUser: (NSString*) fbId withBlock:(void (^)(UIImage*))block;
+//+(void) getNewCategoryWithSubject: (NSString *)userId inGame:(NSString *)gameId  withBlock:(void (^)(Category*))block;
 @end
 

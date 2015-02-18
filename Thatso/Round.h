@@ -15,6 +15,7 @@
 @property (retain) NSString *category;
 @property (retain) NSNumber *roundNumber;
 @property (retain) NSArray *responded;
+@property (retain) NSString *categoryID;
 + (NSString *)parseClassName;
 @end
 
