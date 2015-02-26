@@ -16,7 +16,6 @@
 @interface GameViewControllerTableViewController : BaseViewController <DidAddCommentDelegate, DidGetCommentsDelegate, DidStartNewRound, PHFComposeBarViewDelegate,UITextViewDelegate, UITableViewDataSource, UITableViewDelegate, SINMessageClientDelegate>
 {
 
-    NSMutableArray* nonUserPlayers;
     NSInteger* winningIndex;
     BOOL uploadingComment; 
 }
@@ -30,6 +29,7 @@
 @property(nonatomic) Game *currentGame;
 @property(nonatomic) Round *currentRound;
 @property(nonatomic) NSMutableArray* comments;
+@property(nonatomic) NSMutableArray* nonUserPlayers;
 @property(nonatomic) NSString* previousComment;
 @property(nonatomic) UITapGestureRecognizer *singleTap;
 @property(nonatomic) CommentTableViewCell *userCommentCell;

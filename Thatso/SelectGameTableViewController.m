@@ -287,9 +287,13 @@
 
 -(IBAction)logout:(id)sender{
     NSLog(@"Logout");
-    [User logOut];
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     [appDelegate logoutSinchClient];
+    
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    currentInstallation.channels = [NSArray array];
+    [currentInstallation saveInBackground];
+    [User logOut];
     [self.navigationController popViewControllerAnimated:YES];
 }
 

@@ -24,11 +24,7 @@ NSInteger const ProfileViewTableViewCellHeight = 54;
         self.nameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         self.nameLabel.font = [UIFont defaultAppFontWithSize:16.0];
         [self addSubview:self.nameLabel];
-        
-        
     }
-    
-    
     
     return self;
 }
@@ -41,6 +37,7 @@ NSInteger const ProfileViewTableViewCellHeight = 54;
                                         10,
                                         self.frame.size.width - self.profilePicture.frame.origin.x + self.profilePicture.frame.size.width + 10,
                                         self.frame.size.height - 10)];
+    [[self.profilePicture layer] setCornerRadius:self.profilePicture.frame.size.height/2];
 }
 
 -(void)setColorScheme:(NSInteger) code

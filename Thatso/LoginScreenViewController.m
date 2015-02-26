@@ -78,15 +78,14 @@
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         [appDelegate initSinchClientWithUserId:[[User currentUser] objectForKey:UserFacebookID]];
         
+        //Register for push notifications
+        PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+        [currentInstallation addUniqueObject:[NSString stringWithFormat:@"c%@",[User currentUser].fbId] forKey:@"channels"];
+        [currentInstallation saveInBackground];
+        
         SelectGameTableViewController *vc = [[SelectGameTableViewController alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
     }
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 -(IBAction)login:(id)sender
@@ -116,7 +115,12 @@
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         [appDelegate initSinchClientWithUserId:[[User currentUser] objectForKey:UserFacebookID]];
         
-		// Seque to the Image Wall
+        //Register for push notifications
+        PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+        [currentInstallation addUniqueObject:[NSString stringWithFormat:@"c%@",[User currentUser].fbId] forKey:@"channels"];
+        [currentInstallation saveInBackground];
+        
+		//Move to Fist Screen 
 		SelectGameTableViewController *vc = [[SelectGameTableViewController alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
         

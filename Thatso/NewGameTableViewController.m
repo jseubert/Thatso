@@ -49,7 +49,6 @@
 {
     [super viewDidLayoutSubviews];
     [self.tableView setFrame:(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height))];
-    [self.tableView reloadData];
 }
 
 #pragma mark - Table view data source
@@ -148,9 +147,20 @@
         {
             if(![user.objectId isEqualToString:[User currentUser].objectId])
             {
-                [nonUserPlayers addObject:user.fbId];
+                [nonUserPlayers addObject:[NSString stringWithFormat:@"c%@", user.fbId]];
             }
         }
+        
+        //Send push notification to other players
+        PFPush *push = [[PFPush alloc] init];
+        NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
+                              [NSString stringWithFormat:@"%@ has added you to a game: %@", [User currentUser].first_name, game.gameName], @"alert",
+                              @"woop.caf", @"sound",
+                              nil];
+    
+        [push setChannels:nonUserPlayers];
+        [push setData:data];
+        [push sendPushInBackground];
     
         NSUInteger ownIndex = [self.navigationController.viewControllers indexOfObject:self];
         [self.navigationController popToViewController:[self.navigationController.viewControllers objectAtIndex:ownIndex - 2] animated:YES];

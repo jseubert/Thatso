@@ -60,6 +60,12 @@
     [self.alertView show];
 }
 
+- (void) dismissAlert {
+    if (self.alertView && self.alertView.visible) {
+        [self.alertView dismissWithClickedButtonIndex:0 animated:YES];
+    }
+}
+
 -(void) showLoadingAlert
 {
     [self dismissAlert];

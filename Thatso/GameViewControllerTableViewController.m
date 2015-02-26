@@ -124,10 +124,14 @@
     
     //Remove yourself from the game's players
     
-    nonUserPlayers = [[NSMutableArray alloc] initWithArray:self.currentGame.players];
-    [nonUserPlayers removeObject:[[User currentUser] objectForKey:UserFacebookID]];
-
-
+    self.nonUserPlayers = [[NSMutableArray alloc] init];
+    for (User* user in self.currentGame.players)
+    {
+        if(![user.objectId isEqualToString:[User currentUser].objectId])
+        {
+            [self.nonUserPlayers  addObject:user];
+        }
+    }
 }
 
 -(void)viewDidLayoutSubviews
@@ -462,7 +466,7 @@
         [[UserGames instance] userDidRespondInGame: self.currentGame];
         
         NSMutableArray *nonUserPlayersIDs = [[NSMutableArray alloc] init];
-        for(User * user in nonUserPlayers)
+        for(User * user in self.nonUserPlayers)
         {
             [nonUserPlayersIDs addObject:user.fbId];
         }
@@ -510,9 +514,11 @@
 
         [self refreshGame:nil];
         NSMutableArray *nonUserPlayersIDs = [[NSMutableArray alloc] init];
-        for(User * user in nonUserPlayers)
+        NSMutableArray *nonUserPlayersPushIDs = [[NSMutableArray alloc] init];
+        for(User * user in self.nonUserPlayers)
         {
             [nonUserPlayersIDs addObject:user.fbId];
+            [nonUserPlayersPushIDs addObject:[NSString stringWithFormat:@"c%@",user.fbId]];
         }
         SINOutgoingMessage *message = [SINOutgoingMessage messageWithRecipients:nonUserPlayersIDs text:NewRound];
         [message addHeaderWithValue:winningRound.category key:CompletedRoundCategory];
@@ -522,6 +528,18 @@
         [message addHeaderWithValue:winningRound.gameID key:CompletedRoundGameID];
         NSLog(@"%@", message.headers);
         [self.messageClient sendMessage:message];
+        
+        //Send push notification to other players
+        PFPush *push = [[PFPush alloc] init];
+        NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
+                              [NSString stringWithFormat:@"Next Round Staring in %@: \"%@\"\nPrevious Round:%@\n%@", self.currentGame.gameName, self.currentRound.category, winningRound.category, winningRound.winningResponse], @"alert",
+                              //@"New Round", @"alert",
+                              @"woop.caf", @"sound",
+                              nil];
+        
+        [push setChannels:nonUserPlayersPushIDs];
+        [push setData:data];
+        [push sendPushInBackground];
         
     }else{
         [self showAlertWithTitle:@"Error!" andSummary:info];

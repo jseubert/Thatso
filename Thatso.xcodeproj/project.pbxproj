@@ -60,6 +60,7 @@
 		9A49CA1D1A214B4900F7CFCA /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A49CA1C1A214B4900F7CFCA /* Parse.framework */; };
 		9A49CA1F1A214B9600F7CFCA /* FBUserSettingsViewResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9A49CA1E1A214B9600F7CFCA /* FBUserSettingsViewResources.bundle */; };
 		9A8CAF9C1A70AFB3008BF741 /* NewGameDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A8CAF9B1A70AFB3008BF741 /* NewGameDetailsViewController.m */; };
+		9A9A17ED1A9EFE31005855F2 /* woop.caf in Resources */ = {isa = PBXBuildFile; fileRef = 9A9A17EC1A9EFE24005855F2 /* woop.caf */; };
 		9AA6DB941A2157EE0037EE09 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AA6DB931A2157EE0037EE09 /* AVFoundation.framework */; };
 		9AA6DB981A215A940037EE09 /* Sinch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AA6DB971A215A940037EE09 /* Sinch.framework */; };
 		9ABCFA651A8C770B003BFC6F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9ABCFA641A8C770B003BFC6F /* StoreKit.framework */; };
@@ -159,6 +160,7 @@
 		9A893F091A0EC366002F6EEF /* NSString+FontSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+FontSize.h"; sourceTree = "<group>"; };
 		9A8CAF9A1A70AFB3008BF741 /* NewGameDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewGameDetailsViewController.h; sourceTree = "<group>"; };
 		9A8CAF9B1A70AFB3008BF741 /* NewGameDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewGameDetailsViewController.m; sourceTree = "<group>"; };
+		9A9A17EC1A9EFE24005855F2 /* woop.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = woop.caf; sourceTree = "<group>"; };
 		9AA6DB931A2157EE0037EE09 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		9AA6DB971A215A940037EE09 /* Sinch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sinch.framework; sourceTree = "<group>"; };
 		9ABCFA641A8C770B003BFC6F /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -276,6 +278,7 @@
 		9A2C6F5A19A8324200DCF2B7 = {
 			isa = PBXGroup;
 			children = (
+				9A9A17EA1A9EFE02005855F2 /* Resouces.bundle */,
 				9A2C6F6C19A8324200DCF2B7 /* Thatso */,
 				9A2C6F6519A8324200DCF2B7 /* Frameworks */,
 				9A2C6F6419A8324200DCF2B7 /* Products */,
@@ -403,6 +406,14 @@
 			name = Utils;
 			sourceTree = "<group>";
 		};
+		9A9A17EA1A9EFE02005855F2 /* Resouces.bundle */ = {
+			isa = PBXGroup;
+			children = (
+				9A9A17EC1A9EFE24005855F2 /* woop.caf */,
+			);
+			name = Resouces.bundle;
+			sourceTree = "<group>";
+		};
 		9AFBF0D019CD4A76004F6550 /* TableCells */ = {
 			isa = PBXGroup;
 			children = (
@@ -482,6 +493,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A9A17ED1A9EFE31005855F2 /* woop.caf in Resources */,
 				9A49CA1F1A214B9600F7CFCA /* FBUserSettingsViewResources.bundle in Resources */,
 				9A2C6F7119A8324200DCF2B7 /* InfoPlist.strings in Resources */,
 				9A2C6F7919A8324200DCF2B7 /* Images.xcassets in Resources */,
@@ -564,7 +576,8 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: John Seubert (BAY63V48XK)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: John Seubert (BAY63V48XK)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -603,7 +616,8 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: John Seubert (BAY63V48XK)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: John Seubert (BAY63V48XK)";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
