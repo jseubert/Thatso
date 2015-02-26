@@ -60,6 +60,8 @@ typedef void (^ImageResultBlock)(UIImage* image);
 + (void) getCategories;
 + (void) getuser: (NSString *)fbId;
 + (void) getProfilePictureForUser: (NSString*) fbId withBlock:(void (^)(UIImage*))block;
++(void) getNewCategoryWithSubjects: (NSMutableArray *)players inGame:(NSString *)gameId familyRated:(BOOL)familyRated reloadCategories:(BOOL)reloadCategories withBlock:(void (^)(GenericCategory*category, NSString* userId, BOOL success,  NSString* info))block;
+
 //+(void) getNewCategoryWithSubject: (NSString *)userId inGame:(NSString *)gameId  withBlock:(void (^)(Category*))block;
 @end
 

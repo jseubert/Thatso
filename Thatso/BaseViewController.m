@@ -31,7 +31,6 @@
     [self.activityIndicator setClipsToBounds:YES];
     [[self.activityIndicator  layer] setBorderWidth:2.0f];
     [[self.activityIndicator  layer] setBorderColor:[UIColor whiteColor].CGColor];
-    [self.activityIndicator setCenter:[self.view center]];
     
     UILabel *loading = [[UILabel alloc] initWithFrame:CGRectMake(0, self.activityIndicator.frame.size.height - 30, self.activityIndicator.frame.size.width, 20)];
     [loading setTextColor:[UIColor whiteColor]];
@@ -45,15 +44,10 @@
     [_dateFormatter setDateFormat:@"MMM d, h:mm a"];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-- (void) dismissAlert {
-    if (self.alertView && self.alertView.visible) {
-        [self.alertView dismissWithClickedButtonIndex:0 animated:YES];
-    }
+-(void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    [self.activityIndicator setCenter:[self.view center]];
 }
 
 -(void) showAlertWithTitle: (NSString *)title andSummary:(NSString *)summary

@@ -32,8 +32,7 @@
     [super viewDidLoad];
 
     self.navigationController.navigationBar.barTintColor = [UIColor blueAppColor];
-    self.titleLabel = [[UILabel alloc] init];
-    self.titleLabel.frame = CGRectMake(20, self.view.frame.size.height/2 - 60, self.view.frame.size.width -40, 50);
+    self.titleLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     [self.titleLabel setText:@"ThatSo"];
     [self.view addSubview:self.titleLabel];
     [self.titleLabel setFont:[UIFont defaultAppFontWithSize:48.0f]];
@@ -43,20 +42,28 @@
     [[self.titleLabel layer] setBorderColor:[UIColor whiteColor].CGColor];
     
     
-    self.loginButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    self.loginButton.frame = CGRectMake(20, self.view.frame.size.height - 70, self.view.frame.size.width -40, 50);
+    self.loginButton = [UIButton  buttonWithType:UIButtonTypeRoundedRect];
     [self.loginButton addTarget:self action:@selector(login:) forControlEvents:UIControlEventTouchUpInside];
     [self.loginButton fratButtonWithBorderWidth:2.0f fontSize:18.0 cornerRadius:10.0];
     [self.loginButton setTitle:@"Login with Facebook" forState:UIControlStateNormal];
     [self.view addSubview:self.loginButton];
     
     self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    self.activityIndicator.frame = CGRectMake(self.view.frame.size.width/2 - 40, self.view.frame.size.height/2 -30, 80, 80);
     [self.view addSubview:self.activityIndicator];
 
     
     [self.view setBackgroundColor:[UIColor blueAppColor]];
 }
+
+-(void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    
+     self.titleLabel.frame = CGRectMake(20, self.view.frame.size.height/2 - 60, self.view.frame.size.width -40, 50);
+    self.loginButton.frame = CGRectMake(20, self.view.frame.size.height - 70, self.view.frame.size.width -40, 50);
+    self.activityIndicator.frame = CGRectMake(self.view.frame.size.width/2 - 40, self.view.frame.size.height/2 -30, 80, 80);
+}
+
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];

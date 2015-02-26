@@ -22,14 +22,8 @@
         bgColorView.backgroundColor = [UIColor lightBlueAppColor];
         [self setSelectedBackgroundView:bgColorView];
         
-        UIView *top = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, 1)];
-        [top setBackgroundColor:[UIColor blueAppColor]];
-        [self addSubview:top];
         
-        self.roundNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.frame.size.width - 20 - 10,
-                                                                          5,
-                                                                          20,
-                                                                          20)];
+        self.roundNumberLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         self.roundNumberLabel.font = [UIFont defaultAppFontWithSize:16.0];
         self.roundNumberLabel.text = @"1";
         [self.roundNumberLabel setTextAlignment:NSTextAlignmentCenter];
@@ -40,21 +34,14 @@
         [self.roundNumberLabel setBackgroundColor:[UIColor blueAppColor]];
         [self addSubview:self.roundNumberLabel];
         
-        self.roundLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.frame.size.width - 10 - self.roundNumberLabel.frame.size.width - 2 - 50,
-                                                                    5,
-                                                                    50,
-                                                                    20)];
+        self.roundLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         self.roundLabel.font = [UIFont defaultAppFontWithSize:16.0];
-       // self.roundLabel.backgroundColor = [UIColor blueColor];
         self.roundLabel.text = @"Round";
         self.roundLabel.numberOfLines = 0;
         [self.roundLabel setTextColor:[UIColor blueAppColor]];
         [self addSubview:self.roundLabel];
         
-        self.gameNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(10,
-                                                                   5,
-                                                                   self.roundLabel.frame.origin.x - 10 - 5,
-                                                                   20)];
+        self.gameNameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         self.gameNameLabel.font = [UIFont defaultAppFontWithSize:16.0];
         self.gameNameLabel.text = @"";
         self.gameNameLabel.lineBreakMode = NSLineBreakByTruncatingTail;
@@ -80,10 +67,7 @@
         while (count < 6)
         {
 
-                UIImageView* profileView = [[UIImageView alloc] initWithFrame:CGRectMake(x,
-                                                                            self.gameNameLabel.frame.origin.y + self.gameNameLabel.frame.size.height + 5,
-                                                                            40,
-                                                                            40)];
+                UIImageView* profileView = [[UIImageView alloc] initWithFrame:CGRectZero];
                 [[profileView  layer] setCornerRadius:profileView.frame.size.height/2];
                 [profileView setClipsToBounds:YES];
                 [profileView setBackgroundColor:[UIColor blueAppColor]];
@@ -92,10 +76,7 @@
             
                 [self.profileViews addObject:profileView];
             
-                UIActivityIndicatorView* activityIndicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(x,
-                                                                                              self.gameNameLabel.frame.origin.y + self.gameNameLabel.frame.size.height + 5,
-                                                                                              40,
-                                                                                              40)];
+                UIActivityIndicatorView* activityIndicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectZero];
                 [activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
                 [activityIndicator setHidden:YES];
                 [self addSubview:activityIndicator];
@@ -103,10 +84,7 @@
                 [self.activityIndicators addObject:activityIndicator];
 
                 
-                UILabel *nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(x,
-                                                                      profileView.frame.origin.y + profileView.frame.size.height,
-                                                                      40,
-                                                                      20)];
+                UILabel *nameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
                 [nameLabel setFont:[UIFont defaultAppFontWithSize:12.0]];
                 [nameLabel setTextAlignment:NSTextAlignmentCenter];
                 [nameLabel setTextColor:[UIColor blueAppColor]];
@@ -118,10 +96,7 @@
             count ++;
         }
         
-        self.end = [[UILabel alloc] initWithFrame:CGRectMake(self.frame.size.width -10 -40,
-                                                        self.gameNameLabel.frame.origin.y + self.gameNameLabel.frame.size.height + 5,
-                                                        40,
-                                                        40)];
+        self.end = [[UILabel alloc] initWithFrame:CGRectZero];
         [self.end  setTextAlignment:NSTextAlignmentRight];
         [self.end  setNumberOfLines:1];
         [self.end  setFont:[UIFont defaultAppFontWithSize:20.0]];
@@ -130,7 +105,81 @@
         [self addSubview:self.end ];
     }
     
+    self.left = [[UIView alloc] initWithFrame:CGRectZero];
+    [self.left setBackgroundColor:[UIColor blueAppColor]];
+    [self addSubview:self.left];
+    
+    self.right = [[UIView alloc] initWithFrame:CGRectZero];
+    [self.right setBackgroundColor:[UIColor blueAppColor]];
+    [self addSubview:self.right];
+    
     return self;
+}
+
+-(void) layoutSubviews
+{
+    [super layoutSubviews];
+    UIView *top = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, 1)];
+    [top setBackgroundColor:[UIColor blueAppColor]];
+    [self addSubview:top];
+    
+    [self.left setFrame:CGRectMake(0, 0, 5, self.frame.size.height)];
+    
+    [self.right setFrame:CGRectMake(self.frame.size.width - 5, 0, 5, self.frame.size.height)];
+    
+    int width = [CommentTableViewCell sizeWithFontAttribute:self.roundNumberLabel.font constrainedToSize:(CGSizeMake(self.frame.size.width, 20)) withText:self.roundNumberLabel.text].width +10;
+    self.roundNumberLabel.frame = CGRectMake(self.frame.size.width - width - 10,
+                                             5,
+                                             width,
+                                             20);
+    
+    [self.roundLabel setFrame:CGRectMake(self.frame.size.width - 10 - self.roundNumberLabel.frame.size.width - 2 - 50,
+                                         5,
+                                         50,
+                                         20)];
+    
+    [self.gameNameLabel setFrame:CGRectMake(10,
+                                            5,
+                                            self.roundLabel.frame.origin.x - 10 - 5,
+                                            20)];
+    
+    int x = 10;
+    int count = 0;
+    while (count < 6)
+    {
+        
+        [self.profileViews[count] setFrame:CGRectMake(x,
+                                                    self.gameNameLabel.frame.origin.y + self.gameNameLabel.frame.size.height + 5,
+                                                    40,
+                                                    40)];
+        [[self.profileViews[count]  layer] setCornerRadius:[self.profileViews[count] frame].size.height/2];
+        
+
+        
+        [self.activityIndicators[count] setFrame:CGRectMake(x,
+                                                            self.gameNameLabel.frame.origin.y + self.gameNameLabel.frame.size.height + 5,
+                                                            40,
+                                                            40)];
+        
+        [self.nameLabels[count] setFrame:CGRectMake(x,
+                                                                       [self.profileViews[count] frame].origin.y + [self.profileViews[count] frame].size.height,
+                                                                       40,
+                                                                       20)];
+        x += 46;
+        
+        count ++;
+    }
+    
+    CGSize categoryHeight = [CommentTableViewCell sizeWithFontAttribute:self.categoryLabel.font constrainedToSize:(CGSizeMake(self.frame.size.width -20, self.frame.size.width -20)) withText:self.categoryLabel.text];
+    
+    self.categoryLabel.frame = CGRectMake(10,
+                                          [self.nameLabels[0] frame].size.height + [self.nameLabels[0] frame].origin.y,
+                                          self.frame.size.width-20,
+                                          categoryHeight.height);
+
+    
+    
+    
 }
 
 -(void) setGame: (Game*)game andRound: (Round*)round
@@ -147,22 +196,6 @@
     [self.gameNameLabel setText: game.gameName];
     [self.roundNumberLabel setText: [NSString stringWithFormat:@"%@",round.roundNumber]];
     [self.categoryLabel setText:round.category];
-    int width = [CommentTableViewCell sizeWithFontAttribute:self.roundNumberLabel.font constrainedToSize:(CGSizeMake(self.frame.size.width, 20)) withText:self.roundNumberLabel.text].width +10;
-    self.roundNumberLabel.frame = CGRectMake(self.frame.size.width - width - 10,
-                                                                      5,
-                                                                      width,
-                                                                      20);
-    
-    self.roundLabel.frame = CGRectMake(self.frame.size.width - 10 - self.roundNumberLabel.frame.size.width - 2 - 50,
-                                                                5,
-                                                                50,
-                                                                20);
-    
-    self.gameNameLabel.frame = CGRectMake(10,
-                                                                   5,
-                                                                   self.roundLabel.frame.origin.x - 10 - 5,
-                                                                   20);
-
     
     int count = 0;
     int iconNumber = 0;
@@ -187,8 +220,6 @@
             [activityIndicator startAnimating];
         
             [DataStore getFriendProfilePictureWithID:user.fbId withBlock:^(UIImage *image) {
-               // dispatch_async(dispatch_get_main_queue(), ^(void){
-                    //Run UI Updates
                 [profileView setImage:[image imageScaledToFitSize:CGSizeMake(40, 40)]];
                 profileView.frame = CGRectMake(profileView.frame.origin.x + 20, profileView.frame.origin.y + 20, 0, 0);
                 [[profileView  layer] setCornerRadius:0];
@@ -202,12 +233,8 @@
                                      [activityIndicator stopAnimating];
                                      [activityIndicator setHidden:YES];
                                  }];
-                
-                //profileView.frame = CGRectMake(profileView.frame.origin.x, profileView.frame.origin.y, 40, 40);
-
                     [activityIndicator stopAnimating];
                     [activityIndicator setHidden:YES];
-               // });
             }];
         
 
@@ -239,7 +266,7 @@
                                           self.frame.size.width-20,
                                           categoryHeight.height);
 
-
+    [self layoutSubviews];
     
 }
 -(void)setColorScheme:(NSInteger) code

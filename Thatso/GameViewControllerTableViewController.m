@@ -130,6 +130,13 @@
 
 }
 
+-(void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+
+    [self layoutSubviews];
+}
+
 -(void) setupHeader
 {
     NSString *previousProfileId = self.currentRound.subject;
@@ -320,6 +327,7 @@
     NSLog(@"didSelectRowAtIndexPath");
     if([self isJudge])
     {
+        [self showActivityIndicator];
         Comment* winningComment = [self.comments objectAtIndex:indexPath.row];
         NSString *title = [NSString stringWithFormat:@"%@'s comment wins!", winningComment.from.first_name];
         NSString *summary = [NSString stringWithFormat:@"Click OK to start the next round!"];
@@ -329,7 +337,6 @@
         
         //Start next round
         
-        [self showActivityIndicator];
         [Comms finishRound:self.currentRound inGame:self.currentGame withWinningComment:winningComment andOtherComments:self.comments forDelegate:self];
     }
 }

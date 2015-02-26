@@ -17,12 +17,11 @@ NSInteger const ProfileViewTableViewCellHeight = 54;
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
-        self.profilePicture = [[UIImageView alloc] initWithFrame:(CGRectMake(5, 5, self.frame.size.height, self.frame.size.height))];
-        [[self.profilePicture  layer] setCornerRadius:self.profilePicture.frame.size.height/2];
+        self.profilePicture = [[UIImageView alloc] initWithFrame:CGRectZero];
         [self.profilePicture setClipsToBounds:YES];
         [self addSubview:self.profilePicture];
         
-        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.profilePicture.frame.origin.x + self.profilePicture.frame.size.width + 10, 10, self.frame.size.width - self.profilePicture.frame.origin.x + self.profilePicture.frame.size.width + 10, self.frame.size.height - 10)];
+        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         self.nameLabel.font = [UIFont defaultAppFontWithSize:16.0];
         [self addSubview:self.nameLabel];
         
@@ -32,6 +31,16 @@ NSInteger const ProfileViewTableViewCellHeight = 54;
     
     
     return self;
+}
+
+-(void) layoutSubviews
+{
+    [super layoutSubviews];
+    [self.profilePicture setFrame:(CGRectMake(5, 5, self.frame.size.height-10, self.frame.size.height-10))];
+    [self.nameLabel setFrame:CGRectMake(self.profilePicture.frame.origin.x + self.profilePicture.frame.size.width + 10,
+                                        10,
+                                        self.frame.size.width - self.profilePicture.frame.origin.x + self.profilePicture.frame.size.width + 10,
+                                        self.frame.size.height - 10)];
 }
 
 -(void)setColorScheme:(NSInteger) code

@@ -30,21 +30,14 @@
         FratBarButtonItem *newGameButton= [[FratBarButtonItem alloc] initWithTitle:@"Next" style:UIBarButtonItemStyleBordered target:self action:@selector(nextClicked:)];
         self.navigationItem.rightBarButtonItem = newGameButton;
 
-    self.gameNameLabel = [[UILabel alloc] initWithFrame:(CGRectMake(10,
-                                                                    self.navigationController.navigationBar.frame.size.height + 20,
-                                                                    self.view.frame.size.width-20,
-                                                                    40))];
+    self.gameNameLabel = [[UILabel alloc] initWithFrame:(CGRectZero)];
     [self.gameNameLabel setText:@"Game Name"];
     [self.gameNameLabel setFont:[UIFont defaultAppFontWithSize:16.0f]];
     [self.gameNameLabel setTextColor:[UIColor whiteColor]];
     [self.view addSubview:self.gameNameLabel];
     
-    self.gameNameTextField = [[UITextField alloc] initWithFrame:(CGRectMake(10,
-                                                                            self.gameNameLabel.frame.origin.y + self.gameNameLabel.frame.size.height,
-                                                                            self.view.frame.size.width-20,
-                                                                            40))];
-    UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 40)];
-    self.gameNameTextField.leftView = paddingView;
+    self.gameNameTextField = [[UITextField alloc] initWithFrame:(CGRectZero)];
+    
     self.gameNameTextField.leftViewMode = UITextFieldViewModeAlways;
     [self.gameNameTextField setDelegate:self];
     [self.gameNameTextField setPlaceholder:@"What do you want to call this game?"];
@@ -54,20 +47,43 @@
     [self.gameNameTextField setTextColor:[UIColor blackColor]];
     [self.view addSubview:self.gameNameTextField];
     
-    self.adultContentLabel = [[UILabel alloc] initWithFrame:(CGRectMake(10,
-                                                                         self.gameNameTextField.frame.origin.y + self.gameNameTextField.frame.size.height + 10,
-                                                                         self.view.frame.size.width-20,
-                                                                         50))];
+    self.adultContentLabel = [[UILabel alloc] initWithFrame:(CGRectZero)];
     [self.adultContentLabel setText:@"Family Friendly Topics Only"];
     [self.adultContentLabel setFont:[UIFont defaultAppFontWithSize:16.0f]];
     [self.adultContentLabel setTextColor:[UIColor whiteColor]];
     [self.view addSubview:self.adultContentLabel];
     
-    self.adultContentSwitch = [[UISwitch alloc] initWithFrame:(CGRectMake(self.view.frame.size.width -60,
-                                                                          self.adultContentLabel.frame.origin.y +10,
-                                                                          self.view.frame.size.width-20,
-                                                                          50))];
+    self.adultContentSwitch = [[UISwitch alloc] initWithFrame:(CGRectZero)];
     [self.view addSubview:self.adultContentSwitch];
+    
+}
+
+-(void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    [self.gameNameLabel setFrame:(CGRectMake(10,
+                                            self.navigationController.navigationBar.frame.size.height + 20,
+                                            self.view.frame.size.width-20,
+                                            40))];
+    
+    [self.gameNameTextField setFrame:(CGRectMake(10,
+                                                 self.gameNameLabel.frame.origin.y + self.gameNameLabel.frame.size.height,
+                                                 self.view.frame.size.width-20,
+                                                 40))];
+    
+    UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 40)];
+    self.gameNameTextField.leftView = paddingView;
+    
+    [self.adultContentLabel setFrame:(CGRectMake(10,
+                                                self.gameNameTextField.frame.origin.y + self.gameNameTextField.frame.size.height + 10,
+                                                self.view.frame.size.width-20,
+                                                50))];
+    
+    [self.adultContentSwitch setFrame:(CGRectMake(self.view.frame.size.width -60,
+                                                  self.adultContentLabel.frame.origin.y +10,
+                                                  self.view.frame.size.width-20,
+                                                  50))];
+    
     
 }
 

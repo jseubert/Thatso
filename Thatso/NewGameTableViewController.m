@@ -45,9 +45,11 @@
     self.tableView.allowsMultipleSelection = YES;
 }
 
--(void)viewDidAppear:(BOOL)animated
+-(void)viewDidLayoutSubviews
 {
-    [super viewDidAppear:animated];
+    [super viewDidLayoutSubviews];
+    [self.tableView setFrame:(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height))];
+    [self.tableView reloadData];
 }
 
 #pragma mark - Table view data source

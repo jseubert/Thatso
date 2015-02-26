@@ -83,25 +83,21 @@
     
     [self.tableView setShowsVerticalScrollIndicator:NO];
     
-    [self refreshGames:nil];
+   /// [self refreshGames:nil];
 }
 
 -(void)viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
     [self.tableView setFrame:(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height))];
+    [self.tableView reloadData];
 }
 
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    [self.tableView reloadData];
     [self refreshGames:nil];
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 #pragma mark - Table view data source
@@ -203,10 +199,6 @@
         }
         Round *currentRound = game.currentRound;
         
-        //[cell.categoryLabel setText:[NSString stringWithFormat:@"Round %@: %@", currentRound[RoundNumber], currentRound[RoundCategory]]];
-
-      //  [cell.nameLabel setText:game.gameName];
-        
         CGSize categoryHeight = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(self.tableView.frame.size.width -20, self.tableView.frame.size.width -20)) withText:currentRound.category];
         int height =    5 +
         20 + //roundlabel
@@ -218,12 +210,12 @@
         
         UIView *viewLeft = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, height)];
         viewLeft.backgroundColor = [UIColor blueAppColor];
-    [cell.contentView addSubview:viewLeft];
+        //[cell.contentView addSubview:viewLeft];
         
         
-        UIView *viewRight = [[UIView alloc] initWithFrame:CGRectMake(315, 0, 5, height)];
+        UIView *viewRight = [[UIView alloc] initWithFrame:CGRectMake(self.tableView.frame.size.width - 5, 0, 5, height)];
         viewRight.backgroundColor = [UIColor blueAppColor];
-        [cell.contentView addSubview:viewRight];
+      //  [cell.contentView addSubview:viewRight];
         
         [cell setGame:game andRound:currentRound];
         [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];

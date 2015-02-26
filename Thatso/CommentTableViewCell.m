@@ -21,28 +21,21 @@ NSInteger const CommentTableViewCellIconSize = 20;
         // configure control(s)
         [self setBackgroundColor:[UIColor blueAppColor]];
         
-        self.circle = [[UIView alloc] initWithFrame:CGRectMake(10,
-                                                               10,
-                                                               CommentTableViewCellIconSize,
-                                                               CommentTableViewCellIconSize)];
-       // [self.circle setCenter:(CGPointMake(self.circle.center.x, self.bounds.size.height/2))];
+        self.circle = [[UIView alloc] initWithFrame:CGRectZero];
         self.circle.backgroundColor = [UIColor whiteColor];
         self.circle.layer.borderColor = [UIColor lightBlueAppColor].CGColor;
         self.circle.layer.borderWidth = 2;
         
         [self addSubview:self.circle];
         
-        self.activityIndicator = [[UIActivityIndicatorView alloc] initWithFrame:self.circle.frame];
+        self.activityIndicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectZero];
         [self.activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
         [self.activityIndicator setHidden:YES];
         [self.activityIndicator stopAnimating];
         [self addSubview:self.activityIndicator];
                 
                        
-        self.commentLabel = [[UILabel alloc] initWithFrame:CGRectMake(10 + self.circle.frame.size.width + self.circle.frame.origin.x,
-                                                                      self.bounds.size.height/2,
-                                                                      self.bounds.size.width - (10 + self.circle.frame.size.width + self.circle.frame.origin.x) -10,
-                                                                      self.bounds.size.height - 20)];
+        self.commentLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         self.commentLabel.font = [UIFont defaultAppFontWithSize:16.0];
         self.commentLabel.textColor = [UIColor whiteColor];
         self.commentLabel.lineBreakMode = NSLineBreakByWordWrapping;
@@ -52,6 +45,23 @@ NSInteger const CommentTableViewCellIconSize = 20;
         
     }
     return self;
+}
+
+-(void) layoutSubviews
+{
+    [super layoutSubviews];
+    
+    [self.circle setFrame:CGRectMake(10,
+                                     10,
+                                     CommentTableViewCellIconSize,
+                                     CommentTableViewCellIconSize)];
+    
+    [self.activityIndicator setFrame:self.circle.frame];
+
+    [self.commentLabel setFrame:CGRectMake(10 + self.circle.frame.size.width + self.circle.frame.origin.x,
+                                           10,
+                                           self.bounds.size.width - (10 + self.circle.frame.size.width + self.circle.frame.origin.x) -10,
+                                           self.bounds.size.height - 20)];
 }
 
 -(void) setCommentLabelText: (NSString *) comment

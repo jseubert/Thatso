@@ -239,10 +239,30 @@
     roundObject.roundNumber = @1;
     roundObject.responded = [[NSArray alloc] init];
     
-    //Get new category
-    [Comms getCategories];
-    GenericCategory *category = [[DataStore instance].categories objectAtIndex:(arc4random() % [DataStore instance].categories.count)];
+    //get new subject, make sure its not the judge
+    NSMutableArray *nonJudgePlayers = [[NSMutableArray alloc] init];
+    for (User* player in allPlayersInGame)
+    {
+        if(![player.fbId isEqualToString:roundObject.judge])
+        {
+            [nonJudgePlayers addObject:player.fbId];
+        }
+    }
     
+    //Get new category
+    if([DataStore instance].familyCategories.count == 0 || [DataStore instance].familyCategories.count == 0)
+    {
+        [Comms getCategories];
+    }
+
+    GenericCategory *category;
+    if(familyFriendly)
+    {
+        category= [[DataStore instance].familyCategories objectAtIndex:(arc4random() % [DataStore instance].familyCategories.count)];
+    }else{
+        category= [[DataStore instance].categories objectAtIndex:(arc4random() % [DataStore instance].categories.count)];
+    }
+      
     roundObject.category = [NSString stringWithFormat:@"%@ %@%@", category.startText, [gameObject playerWithfbId:roundObject.subject].first_name, category.endText];
     
     roundObject.categoryID = category.objectId;
@@ -424,68 +444,76 @@
             [nonJudgePlayers addObject:player.fbId];
         }
     }
-    roundObject.subject = [nonJudgePlayers objectAtIndex:(arc4random() % nonJudgePlayers.count)];
         
     //Get new category
-    [Comms getCategories];
-    GenericCategory *category = [[DataStore instance].categories objectAtIndex:(arc4random() % [DataStore instance].categories.count)];
+    if([DataStore instance].familyCategories.count == 0 || [DataStore instance].familyCategories.count == 0)
+    {
+        [Comms getCategories];
+    }
     
-    roundObject.category = [NSString stringWithFormat:@"%@ %@%@", category.startText, [game playerWithfbId:roundObject.subject].first_name, category.endText];
-    
-    roundObject.categoryID = category.objectId;
-    
-    //new round round
-    roundObject.roundNumber = game.rounds;
-    
-    game.currentRound = roundObject;
-    
-    [game saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        if(succeeded)
-        {
-            //Build archivedRound object and save it
-            CompletedRound *completedRound = [CompletedRound object];
-            completedRound.judge = [game playerWithfbId:round.judge];
-            completedRound.subject = [game playerWithfbId:round.subject];
-            completedRound.category = round.category;
-            completedRound.roundNumber = round.roundNumber;
-            completedRound.gameID = game.objectId;
-            completedRound.categoryID = round.categoryID;
-            completedRound.winningResponse = comment.response;
-            completedRound.winningResponseFrom = comment.from;
-            
-            [completedRound saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                if(succeeded)
-                {
-                    //Remove all comments for the current round
-                    //Remove the current round
-                    [PFObject deleteAllInBackground:otherComments block:^(BOOL succeeded, NSError *error) {
-                        if(succeeded)
-                        {
-                            [round deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                                if(succeeded)
-                                {
-                                    [[UserGames instance] addGame:game];
-                                    [delegate didStartNewRound:YES info: error.localizedDescription previousWinner:completedRound];
-                                }else{
-                                    [delegate didStartNewRound:NO info: error.localizedDescription previousWinner:nil];
-                                }
-                            }];
-
-                        }else{
-                            [delegate didStartNewRound:NO info: error.localizedDescription previousWinner:nil];
-                        }
-                    }];
-                }else{
-                    [delegate didStartNewRound:NO info: error.localizedDescription previousWinner:nil];
-                }
-            }];
-        }else{
-            [delegate didStartNewRound:NO info: error.localizedDescription previousWinner:nil];
-        }
+    [self getNewCategoryWithSubjects:nonJudgePlayers inGame:game.objectId familyRated:game.familyFriendly reloadCategories:YES withBlock:
+     ^(GenericCategory *category, NSString *userId, BOOL success, NSString *info) {
+         if(!success)
+         {
+             [delegate didStartNewRound:NO info:info previousWinner:nil];
+         }else
+         {
+             //new round round
+             roundObject.roundNumber = game.rounds;
+             roundObject.subject = userId;
+             roundObject.category = [NSString stringWithFormat:@"%@ %@%@", category.startText, [game playerWithfbId:roundObject.subject].first_name, category.endText];
+             roundObject.categoryID = category.objectId;
+             
+             game.currentRound = roundObject;
+         
+             [game saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                 if(succeeded)
+                 {
+                     //Build archivedRound object and save it
+                     CompletedRound *completedRound = [CompletedRound object];
+                     completedRound.judge = [game playerWithfbId:round.judge];
+                     completedRound.subject = [game playerWithfbId:round.subject];
+                     completedRound.category = round.category;
+                     completedRound.roundNumber = round.roundNumber;
+                     completedRound.gameID = game.objectId;
+                     completedRound.categoryID = round.categoryID;
+                     completedRound.winningResponse = comment.response;
+                     completedRound.winningResponseFrom = comment.from;
+                 
+                     [completedRound saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                         if(succeeded)
+                         {
+                             //Remove all comments for the current round
+                             //Remove the current round
+                             [PFObject deleteAllInBackground:otherComments block:^(BOOL succeeded, NSError *error) {
+                                 if(succeeded)
+                                 {
+                                     [round deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                                         if(succeeded)
+                                         {
+                                             [[UserGames instance] addGame:game];
+                                             [delegate didStartNewRound:YES info: error.localizedDescription previousWinner:completedRound];
+                                         }else{
+                                             [delegate didStartNewRound:NO info: error.localizedDescription previousWinner:nil];
+                                         }
+                                     }];
+                                 }else{
+                                     [delegate didStartNewRound:NO info: error.localizedDescription previousWinner:nil];
+                                 }
+                             }];
+                         }else{
+                             [delegate didStartNewRound:NO info: error.localizedDescription previousWinner:nil];
+                         }
+                     }];
+                 }else{
+                     [delegate didStartNewRound:NO info: error.localizedDescription previousWinner:nil];
+                 }
+             }];
+         }
     }];
 }
 
-+(void) getNewCategoryWithSubjects: (NSMutableArray *)players inGame:(NSString *)gameId familyRated:(BOOL)familyRated withBlock:(void (^)(GenericCategory*category, NSString* userId, BOOL success,  NSString* info))block
++(void) getNewCategoryWithSubjects: (NSMutableArray *)players inGame:(NSString *)gameId familyRated:(BOOL)familyRated reloadCategories:(BOOL)reloadCategories withBlock:(void (^)(GenericCategory*category, NSString* userId, BOOL success,  NSString* info))block
 {
     NSMutableArray *shuffledPlayers = [[NSMutableArray alloc] init];
     while(players.count > 0)
@@ -499,31 +527,33 @@
     NSMutableArray *categoriesFrom;
     if(familyRated)
     {
-        categoriesFrom = [[DataStore instance].familyCategories copy];
+        categoriesFrom = [[NSMutableArray alloc] initWithArray:[DataStore instance].familyCategories];
     }else{
-        categoriesFrom = [[DataStore instance].categories copy];
+        categoriesFrom = [[NSMutableArray alloc] initWithArray:[DataStore instance].categories];
     }
     while(categoriesFrom.count > 0)
     {
         int randomIndex = arc4random()%categoriesFrom.count;
         [shuffledCategories addObject:[categoriesFrom objectAtIndex:randomIndex]];
+        NSLog(@"%@",[categoriesFrom objectAtIndex:randomIndex]);
         [categoriesFrom removeObjectAtIndex:randomIndex];
     }
     
-    PFQuery *getCompletedCategories = [PFQuery queryWithClassName:CompletedRoundCategory];
+    PFQuery *getCompletedCategories = [PFQuery queryWithClassName:CompletedRoundClass];
     [getCompletedCategories whereKey: CompletedRoundGameID equalTo:gameId];
     //[getCompletedCategories whereKey: CompletedRoundSubject equalTo:userId];
-    [getCompletedCategories includeKey:CompletedRoundCategoryID];
-    [getCompletedCategories includeKey:CompletedRoundJudge];
+    [getCompletedCategories includeKey:CompletedRoundSubject];
     [getCompletedCategories findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        //Check for errors
         if (error) {
             block(nil, nil, NO, error.description);
-        } else if(objects != NULL && [objects count] > 0)
+        }
+        //Check if no objects returned, that means anything can be added
+        else if(objects == NULL || [objects count] == 0)
         {
-            block(shuffledCategories[0],shuffledPlayers[0],NO, @"");
+            block(shuffledCategories[0],shuffledPlayers[0], YES, @"");
         } else
         {
-            BOOL categoryOK = false;
             for(GenericCategory *potentialCategory in shuffledCategories)
             {
                 BOOL found = false;
@@ -550,8 +580,19 @@
                 }
                 
             }
-            block(nil, nil, NO, @"Blimey, every category has been played! Either start a new game or wait for an update with more categories!");
-            return;
+            //No categories left. Try to reload the categories to see if there are any new ones
+            if(reloadCategories)
+            {
+                //Try seeing if there are more categories
+                [Comms getCategories];
+                [self getNewCategoryWithSubjects:players inGame:gameId familyRated:familyRated reloadCategories:NO withBlock:^(GenericCategory *category, NSString *userId, BOOL success, NSString *info) {
+                    block(category, userId, success, info);
+                }];
+                return;
+            }else{
+                block(nil, nil, NO, @"Blimey! Every category has been played! Either start a new game or wait for an update with more categories!");
+                return;
+            }
         }
     }];
     
