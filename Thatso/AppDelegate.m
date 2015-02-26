@@ -88,7 +88,7 @@
     // Store the deviceToken in the current installation and save it to Parse.
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     [currentInstallation setDeviceTokenFromData:deviceToken];
-    [currentInstallation addUniqueObject:[NSString stringWithFormat:@"c%@",[User currentUser].fbId] forKey:@"channels"];
+    //currentInstallation.channels = @[ @"global" ];
     [currentInstallation saveInBackground];
 }
 
