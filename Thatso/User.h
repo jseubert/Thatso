@@ -17,6 +17,5 @@
 + (User *)user;
 + (BOOL)isLoggedIn;
 + (User* )currentUser;
-+ (NSString* ) userChannel;
 
 @end

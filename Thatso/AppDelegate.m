@@ -69,8 +69,12 @@
     return YES;
 }
 
-- (void)applicationWillEnterForeground:(UIApplication *)application{
-    application.applicationIconBadgeNumber = 0;
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    if (currentInstallation.badge != 0) {
+        currentInstallation.badge = 0;
+        [currentInstallation saveEventually];
+    }
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {

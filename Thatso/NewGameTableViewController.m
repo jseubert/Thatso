@@ -43,6 +43,9 @@
     FratBarButtonItem *startButton  = [[FratBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleBordered target:self action:@selector(nextPressed:)];
     self.navigationItem.rightBarButtonItem = startButton;
     self.tableView.allowsMultipleSelection = YES;
+    
+    [self showLoadingAlert];
+    [Comms getAllFacebookFriends:self];
 }
 
 -(void)viewDidLayoutSubviews
@@ -156,6 +159,7 @@
         NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
                               [NSString stringWithFormat:@"%@ has added you to a game: %@", [User currentUser].first_name, game.gameName], @"alert",
                               @"woop.caf", @"sound",
+                              @"badge" , @"Increment",
                               nil];
     
         [push setChannels:nonUserPlayers];
@@ -167,5 +171,17 @@
     }else{
         [self showAlertWithTitle:@"Error!" andSummary:info];
     }
+}
+
+- (void) didlogin:(BOOL)success info: (NSString *) info
+{
+    [self dismissAlert];
+    if (success) {
+        self.fbFriendsArray = [[DataStore instance].fbFriends allValues];
+        [self.tableView reloadData];
+    }else{
+        [self showAlertWithTitle:@"Error!" andSummary:info];
+    }
+
 }
 @end

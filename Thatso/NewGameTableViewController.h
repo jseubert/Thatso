@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "BaseTableViewController.h"
 
-@interface NewGameTableViewController : BaseTableViewController
+@interface NewGameTableViewController : BaseTableViewController <DidLoginDelegate>
 
 @property(nonatomic) NSArray* fbFriendsArray;
 @property(nonatomic) NSString *gameName;

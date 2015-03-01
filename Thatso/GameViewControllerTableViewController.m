@@ -535,8 +535,8 @@
                               [NSString stringWithFormat:@"Next Round Staring in %@: \"%@\"\nPrevious Round:%@\n%@", self.currentGame.gameName, self.currentRound.category, winningRound.category, winningRound.winningResponse], @"alert",
                               //@"New Round", @"alert",
                               @"woop.caf", @"sound",
+                              @"badge" , @"Increment",
                               nil];
-        
         [push setChannels:nonUserPlayersPushIDs];
         [push setData:data];
         [push sendPushInBackground];
