@@ -44,7 +44,8 @@
     self.navigationItem.rightBarButtonItem = startButton;
     self.tableView.allowsMultipleSelection = YES;
     
-    [self showLoadingAlert];
+   // [self showLoadingAlert];
+    [self showActivityIndicator];
     [Comms getAllFacebookFriends:self];
 }
 
@@ -156,11 +157,11 @@
         
         //Send push notification to other players
         PFPush *push = [[PFPush alloc] init];
-        NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
-                              [NSString stringWithFormat:@"%@ has added you to a game: %@", [User currentUser].first_name, game.gameName], @"alert",
-                              @"woop.caf", @"sound",
-                              @"badge" , @"Increment",
-                              nil];
+        NSDictionary *data = @{
+                               @"alert" : [NSString stringWithFormat:@"%@ has added you to a game: %@", [User currentUser].first_name, game.gameName],
+                               @"badge" : @"Increment",
+                               @"sounds" : @"woop.caf"
+                               };
     
         [push setChannels:nonUserPlayers];
         [push setData:data];
@@ -175,7 +176,7 @@
 
 - (void) didlogin:(BOOL)success info: (NSString *) info
 {
-    [self dismissAlert];
+    [self hideActivityIndicator];
     if (success) {
         self.fbFriendsArray = [[DataStore instance].fbFriends allValues];
         [self.tableView reloadData];
@@ -183,5 +184,19 @@
         [self showAlertWithTitle:@"Error!" andSummary:info];
     }
 
+}
+
+- (void) showActivityIndicator
+{
+    [self.activityIndicator startAnimating];
+    [self.activityIndicator setHidden:NO];
+    [self.tableView setUserInteractionEnabled:NO];
+}
+
+-(void) hideActivityIndicator
+{
+    [self.activityIndicator stopAnimating];
+    [self.activityIndicator setHidden:YES];
+    [self.tableView setUserInteractionEnabled:YES];
 }
 @end

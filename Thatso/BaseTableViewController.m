@@ -52,6 +52,10 @@
     [self.activityIndicator setCenter:[self.view center]];
 }
 
+- (void)viewWillDisappear:(BOOL)animated {
+    [self dismissAlert];
+}
+
 - (void) dismissAlert {
     if (self.alertView && self.alertView.visible) {
         [self.alertView dismissWithClickedButtonIndex:0 animated:YES];

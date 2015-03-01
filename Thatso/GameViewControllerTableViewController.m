@@ -531,12 +531,12 @@
         
         //Send push notification to other players
         PFPush *push = [[PFPush alloc] init];
-        NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
-                              [NSString stringWithFormat:@"Next Round Staring in %@: \"%@\"\nPrevious Round:%@\n%@", self.currentGame.gameName, self.currentRound.category, winningRound.category, winningRound.winningResponse], @"alert",
-                              //@"New Round", @"alert",
-                              @"woop.caf", @"sound",
-                              @"badge" , @"Increment",
-                              nil];
+        
+        NSDictionary *data = @{
+                               @"alert" : [NSString stringWithFormat:@"Next Round Staring in %@: \"%@\"\nPrevious Round:%@\n%@", self.currentGame.gameName, self.currentRound.category, winningRound.category, winningRound.winningResponse],
+                               @"badge" : @"Increment",
+                               @"sounds" : @"woop.caf"
+                               };
         [push setChannels:nonUserPlayersPushIDs];
         [push setData:data];
         [push sendPushInBackground];
