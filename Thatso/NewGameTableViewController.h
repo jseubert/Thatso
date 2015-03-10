@@ -7,9 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "BaseTableViewController.h"
+#import "BaseViewController.h"
 
-@interface NewGameTableViewController : BaseTableViewController <DidLoginDelegate>
+@interface NewGameTableViewController : BaseViewController <DidLoginDelegate, UITableViewDataSource, UITableViewDelegate>
+
+@property (strong, nonatomic) IBOutlet UITableView *tableView;
+@property (strong, nonatomic) IBOutlet UIRefreshControl *refreshControl;
 
 @property(nonatomic) NSArray* fbFriendsArray;
 @property(nonatomic) NSString *gameName;

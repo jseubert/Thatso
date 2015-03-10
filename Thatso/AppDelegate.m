@@ -65,6 +65,8 @@
 
     application.applicationIconBadgeNumber = 0;
     
+    self.adView = [[ADBannerView alloc] init];
+    
     
     return YES;
 }

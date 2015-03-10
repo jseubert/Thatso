@@ -25,6 +25,8 @@
                                                                                         0,
                                                                                         150,
                                                                                         100))];
+    canShowBanner = NO;
+    
     [self.activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhiteLarge];
     [self.activityIndicator setBackgroundColor:[UIColor pinkAppColor]];
     [[self.activityIndicator  layer] setCornerRadius:40.0f];
@@ -42,12 +44,28 @@
     // Create a re-usable NSDateFormatter
     _dateFormatter = [[NSDateFormatter alloc] init];
     [_dateFormatter setDateFormat:@"MMM d, h:mm a"];
+    
 }
 
 -(void)viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
     [self.activityIndicator setCenter:[self.view center]];
+    if(canShowBanner)
+    {
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        [appDelegate.adView setFrame:CGRectMake(0, self.view.frame.size.height - [self bannerHeight], self.view.frame.size.width, [self bannerHeight])];
+    }
+}
+
+-(void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    if(canShowBanner)
+    {
+        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        [self.view addSubview:appDelegate.adView];
+    }
 }
 
 -(void) showAlertWithTitle: (NSString *)title andSummary:(NSString *)summary
@@ -86,111 +104,62 @@
     [self.alertView show];
 }
 
-#pragma mark - SINMessageClientDelegate
-/*
-- (void)messageClient:(id<SINMessageClient>)messageClient didReceiveIncomingMessage:(id<SINMessage>)message {
-    NSLog(@"didReceiveIncomingMessage: %@ %@", message.text, message.headers );
-    //If user is inactive, send a notification
-    if([UIApplication sharedApplication].applicationState == UIApplicationStateBackground || [UIApplication sharedApplication].applicationState == UIApplicationStateBackground){
-        if([message.text isEqualToString:NewRound])
-        {
-            [self newRoundNotification:message inBackground:YES];
-        }
-        else if([message.text isEqualToString:NewComment])
-        {
-            [self newCommentNotification:message inBackground:YES];
-        }
-        else if([message.text isEqualToString:NewGame])
-        {
-            [self newGameNotification:message inBackground:YES];
-        }
-    } else {
-        if([message.text isEqualToString:NewRound])
-        {
-            [self newRoundNotification:message inBackground:NO];
-        }
-        else if([message.text isEqualToString:NewComment])
-        {
-            [self newCommentNotification:message inBackground:NO];
-        }
-        else if([message.text isEqualToString:NewGame])
-        {
-            [self newGameNotification:message inBackground:NO];
-        }
-    }
-}
 
-- (void) newRoundNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground
+- (void)bannerViewDidLoadAd:(ADBannerView *)banner
 {
-    if(inBackground)
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    if (canShowBanner)
     {
-        [[UserGames instance] refreshGameID:[message.headers objectForKey:CompletedRoundGameID] withBlock:^(Game * game) {
-            NSString *winner = [message.headers objectForKey:CompletedRoundWinningResponseFrom];
-            NSString* summary = [NSString stringWithFormat:@"New round starting: %@ won previous.", winner];
-            UILocalNotification* notification = [[UILocalNotification alloc] init];
-            notification.alertBody = summary;
-            [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
-        }];
-    } else{
-        //Show alert that a new game has started
-        NSString *winner = [message.headers objectForKey:CompletedRoundWinningResponseFrom];
-        NSString* summary = [NSString stringWithFormat:@"%@ won round %@ with: %@", winner, [message.headers objectForKey:CompletedRoundNumber], [message.headers objectForKey:CompletedRoundWinningResponse]];
-        [self showAlertWithTitle:@"New Round Started" andSummary:summary];
+        // If banner isn't part of view hierarchy, add it
+        if (appDelegate.adView.superview == nil)
+        {
+       //     [self.view addSubview:appDelegate.adView];
+        }
         
-        [[UserGames instance] refreshGameID:[message.headers objectForKey:CompletedRoundGameID]];
+        [UIView beginAnimations:@"animateAdBannerOn" context:NULL];
+        
+        // Assumes the banner view is just off the bottom of the screen.
+        banner.frame = CGRectOffset(banner.frame, 0, -banner.frame.size.height);
+        
+        [UIView commitAnimations];
+        
+       // bannerIsVisible = YES;
+    }
+    
+    if(canShowBanner)
+    {
+        [self.view setNeedsLayout];
     }
 }
 
-- (void) newCommentNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground
+- (void)bannerView:(ADBannerView *)banner didFailToReceiveAdWithError:(NSError *)error
 {
-    if(inBackground)
+    NSLog(@"Failed to retrieve ad");
+    if (canShowBanner)
     {
-        [[CurrentRounds instance] refreshCommentID:[message.headers objectForKey:ObjectID]];
-    } else{
-        [[CurrentRounds instance] refreshCommentID:[message.headers objectForKey:ObjectID]];
+        [UIView beginAnimations:@"animateAdBannerOff" context:NULL];
+        
+        // Assumes the banner view is placed at the bottom of the screen.
+        banner.frame = CGRectOffset(banner.frame, 0, banner.frame.size.height);
+        
+        [UIView commitAnimations];
     }
     
 }
 
-- (void) newGameNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground
+- (CGFloat) bannerHeight
 {
-    if(inBackground)
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    if(appDelegate.adView.isBannerLoaded && canShowBanner)
     {
-        [[UserGames instance] refreshGameID:[message.headers objectForKey:ObjectID] withBlock:^(Game * game) {
-            //Build notification and send
-            NSString* summary = [NSString stringWithFormat:@"You were added to a new game with: %@", [StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
-            UILocalNotification* notification = [[UILocalNotification alloc] init];
-            notification.alertBody = summary;
-            [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
-            
-        }];
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad )
+        {
+            return 66.0f;
+        } else{
+            return 50.0f;
+        }
     } else{
-        [[UserGames instance] refreshGameID:[message.headers objectForKey:ObjectID] withBlock:^(Game * game) {
-            //Build alert
-            NSString *summary = [NSString stringWithFormat:@"First category is \"%@\" with %@", game.currentRound.category,[StringUtils buildTextStringForPlayersInGame:game.players fullName:YES]];
-            [self showAlertWithTitle:@"You were added to a new game!" andSummary:summary];
-            
-        }];
+        return 0.0f;
     }
 }
-
-- (void)messageSent:(id<SINMessage>)message recipientId:(NSString *)recipientId {
-    NSLog(@"messageSent: %@ to: %@", message, recipientId);
-}
-
-- (void)message:(id<SINMessage>)message shouldSendPushNotifications:(NSArray *)pushPairs {
-    NSLog(@"Recipient not online. \
-          Should notify recipient using push (not implemented in this demo app). \
-          Please refer to the documentation for a comprehensive description.");
-}
-
-- (void)messageDelivered:(id<SINMessageDeliveryInfo>)info {
-    NSLog(@"Message to %@ was successfully delivered", info.recipientId);
-}
-
-- (void)messageFailed:(id<SINMessage>)message info:(id<SINMessageFailureInfo>)failureInfo {
-    NSLog(@"Failed delivering message to %@. Reason: %@", failureInfo.recipientId,
-          [failureInfo.error description]);
-}*/
-
 @end

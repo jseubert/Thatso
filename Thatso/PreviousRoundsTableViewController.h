@@ -7,14 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "BaseTableViewController.h"
+#import "BaseViewController.h"
 
-@interface PreviousRoundsTableViewController : BaseTableViewController <DidGetPreviousRounds>
+@interface PreviousRoundsTableViewController : BaseViewController <DidGetPreviousRounds, UITableViewDataSource, UITableViewDelegate>
 {
     BOOL initialLoad; 
 }
 
 @property(nonatomic) Game *currentGame;
 @property(nonatomic) NSMutableArray* previousRounds;
+
+@property (strong, nonatomic) IBOutlet UITableView *tableView;
+@property (strong, nonatomic) IBOutlet UIRefreshControl *refreshControl;
 
 @end

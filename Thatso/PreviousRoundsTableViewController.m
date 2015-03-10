@@ -42,7 +42,18 @@
 
     }
     
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectZero];
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    [self.tableView setBackgroundColor:[UIColor blueAppColor]];
+    [self.tableView setSeparatorColor:[UIColor clearColor]];
+    [self.view addSubview: self.tableView];
+    
     [self refreshGames:nil];
+    
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    appDelegate.adView.delegate = self;
+    canShowBanner = YES;
 }
 
 -(void)viewDidAppear:(BOOL)animated

@@ -83,14 +83,21 @@
     
     [self.tableView setShowsVerticalScrollIndicator:NO];
     
-   /// [self refreshGames:nil];
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    appDelegate.adView.delegate = self;
+    canShowBanner = YES;
+    
+    
 }
 
 -(void)viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
-    [self.tableView setFrame:(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height))];
+
+    [self.tableView setFrame:(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-[self bannerHeight]))];
+    
     [self.tableView reloadData];
+    
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -99,6 +106,7 @@
     [self.tableView reloadData];
     [self refreshGames:nil];
 }
+
 
 #pragma mark - Table view data source
 

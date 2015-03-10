@@ -8,10 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import "StringUtils.h"
+#import <iAd/iAd.h>
 
-@interface BaseViewController : UIViewController <UIAlertViewDelegate>
+@interface BaseViewController : UIViewController <UIAlertViewDelegate, ADBannerViewDelegate>
 {
     NSDateFormatter *_dateFormatter;
+    BOOL canShowBanner;
 }
 
 - (void) dismissAlert;
@@ -19,6 +21,9 @@
 - (void) showLoadingAlert;
 - (void) showLoadingAlertWithText: (NSString *)title;
 
+- (CGFloat) bannerHeight;
+
 @property (nonatomic, strong) UIAlertView *alertView;
 @property (strong, nonatomic) UIActivityIndicatorView *activityIndicator;
+
 @end

@@ -20,21 +20,17 @@
 
 @implementation NewGameTableViewController
 
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:style];
-    if (self) {
-        self.fbFriendsArray = [[DataStore instance].fbFriends allValues];
-    }
-    return self;
-}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    self.tableView.backgroundColor = [UIColor blueAppColor];
+    self.fbFriendsArray = [[DataStore instance].fbFriends allValues];
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectZero];
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    [self.tableView setBackgroundColor:[UIColor blueAppColor]];
     [self.tableView setSeparatorColor:[UIColor clearColor]];
+    [self.view addSubview: self.tableView];
     
     self.navigationItem.title = @"Players";
 
@@ -47,12 +43,16 @@
    // [self showLoadingAlert];
     [self showActivityIndicator];
     [Comms getAllFacebookFriends:self];
+    
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    appDelegate.adView.delegate = self;
+    canShowBanner = YES;
 }
 
 -(void)viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
-    [self.tableView setFrame:(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height))];
+    [self.tableView setFrame:(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - [self bannerHeight]))];
 }
 
 #pragma mark - Table view data source

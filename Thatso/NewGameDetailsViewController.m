@@ -9,6 +9,7 @@
 #import "NewGameDetailsViewController.h"
 #import "FratBarButtonItem.h"
 #import "NewGameTableViewController.h"
+#import "AppDelegate.h"
 
 @interface NewGameDetailsViewController ()
 
@@ -55,6 +56,10 @@
     
     self.adultContentSwitch = [[UISwitch alloc] initWithFrame:(CGRectZero)];
     [self.view addSubview:self.adultContentSwitch];
+    
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    appDelegate.adView.delegate = self;
+    canShowBanner = YES;
     
 }
 
