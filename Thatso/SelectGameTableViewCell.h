@@ -22,11 +22,8 @@
 @property (nonatomic, strong) NSMutableArray *activityIndicators;
 
 
-@property (nonatomic, strong)UILabel *end;
-
-@property (nonatomic, strong)UIView *left;
-@property (nonatomic, strong)UIView *right;
-
+@property (nonatomic, strong) UILabel *end;
+@property (nonatomic, strong) UIView *top;
 @property (nonatomic, strong) UILabel *categoryLabel;
 
 @end

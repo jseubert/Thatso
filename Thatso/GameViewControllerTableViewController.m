@@ -89,7 +89,7 @@
     [self.singleTap setNumberOfTouchesRequired:1];
     
     //Back Button
-    FratBarButtonItem *newGameButton= [[FratBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:nil action:nil];
+    FratBarButtonItem *newGameButton= [[FratBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
     self.navigationItem.backBarButtonItem = newGameButton;
     
     //New Game Button
@@ -230,7 +230,7 @@
         labelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:comment.response];        
     }
     //1O padding on top and bottom
-    return 10 + labelSize.height + 10;
+    return 10 + labelSize.height + 5 +10;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
@@ -248,10 +248,10 @@
     
     if([self isJudge])
     {
-        [cell.nameLabel setText:[NSString stringWithFormat:@"You pick the best answer"]];
+        [cell.nameLabel setText:[NSString stringWithFormat:@"Your turn to pick"]];
      
     } else{
-        [cell.nameLabel setText:[NSString stringWithFormat:@"%@ picks the best answer", [self.currentGame playerWithfbId:self.currentRound.judge].first_name]];
+        [cell.nameLabel setText:[NSString stringWithFormat:@"%@'s turn to pick", [self.currentGame playerWithfbId:self.currentRound.judge].first_name]];
     }
     
     [DataStore getFriendProfilePictureWithID:self.currentRound.judge withBlock:^(UIImage *image) {
@@ -268,22 +268,39 @@
     }];
     
     //set color
-    [cell setColorScheme:4];
+    cell.backgroundColor = [UIColor pinkAppColor];
+    cell.nameLabel.textColor = [UIColor whiteColor];
     
     return cell;
   
 }
 
 -(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
-    cell.frame = CGRectMake(-cell.frame.size.width, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
-    [UIView animateWithDuration:0.5
-                     animations:^{
-                         cell.frame = CGRectMake(0, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
+    ((CommentTableViewCell *) cell).top.hidden = YES;
+    if(tableView.isDecelerating || tableView.isDragging)
+    {
+        cell.frame = CGRectMake(-cell.frame.size.width, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
+        [UIView animateWithDuration:0.5
+                         animations:^{
+                             cell.frame = CGRectMake(0, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
 
-                     }
-                     completion:^(BOOL finished){
-                     }];
-    
+                         }
+                         completion:^(BOOL finished){
+                                 ((CommentTableViewCell *) cell).top.hidden = NO;
+                         }];
+    } else{
+        cell.frame = CGRectMake(-cell.frame.size.width, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
+        [UIView animateWithDuration:0.5
+                              delay:indexPath.row * 0.05
+                            options:UIViewAnimationOptionTransitionNone
+                         animations:^{
+                                cell.frame = CGRectMake(0, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
+                                
+                            }
+                         completion:^(BOOL finished){
+                                 ((CommentTableViewCell *) cell).top.hidden = NO;
+                         }];
+    }
     
 }
 

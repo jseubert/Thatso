@@ -25,9 +25,12 @@
     initialLoad = true;
     self.previousRounds = [[NSMutableArray alloc] init];
     
+    self.navigationItem.title = @"Past Rounds";
+    
     //Back Button
     FratBarButtonItem *backButton= [[FratBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
     self.navigationItem.backBarButtonItem = backButton;
+
     
     // If we are using iOS 6+, put a pull to refresh control in the table
     if (NSClassFromString(@"UIRefreshControl") != Nil) {
@@ -37,7 +40,7 @@
         refreshControl.attributedTitle = [StringUtils makeRefreshText:@"Pull to refresh"];
         [refreshControl addTarget:self action:@selector(refreshGames:) forControlEvents:UIControlEventValueChanged];
         [refreshControl setTintColor:[UIColor whiteColor]];
-        
+        [self.tableView addSubview:self.refreshControl];
         self.refreshControl = refreshControl;
 
     }
@@ -56,9 +59,10 @@
     canShowBanner = YES;
 }
 
--(void)viewDidAppear:(BOOL)animated
+-(void)viewDidLayoutSubviews
 {
-    [super viewDidAppear:animated];
+    [super viewDidLayoutSubviews];
+    [self.tableView setFrame:(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - [self bannerHeight]))];
 }
 
 

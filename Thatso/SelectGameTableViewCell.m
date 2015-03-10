@@ -77,7 +77,7 @@
                 [self.profileViews addObject:profileView];
             
                 UIActivityIndicatorView* activityIndicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectZero];
-                [activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
+                [activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
                 [activityIndicator setHidden:YES];
                 [self addSubview:activityIndicator];
             
@@ -105,13 +105,8 @@
         [self addSubview:self.end ];
     }
     
-    self.left = [[UIView alloc] initWithFrame:CGRectZero];
-    [self.left setBackgroundColor:[UIColor blueAppColor]];
-    [self addSubview:self.left];
-    
-    self.right = [[UIView alloc] initWithFrame:CGRectZero];
-    [self.right setBackgroundColor:[UIColor blueAppColor]];
-    [self addSubview:self.right];
+    self.top = [[UIView alloc] initWithFrame:CGRectZero];
+    [self addSubview:self.top];
     
     return self;
 }
@@ -119,13 +114,12 @@
 -(void) layoutSubviews
 {
     [super layoutSubviews];
-    UIView *top = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, 1)];
-    [top setBackgroundColor:[UIColor blueAppColor]];
-    [self addSubview:top];
+    [self.top setFrame:CGRectMake(0, self.frame.size.height - 5, self.frame.size.width, 5)];
+    CAGradientLayer *gradient = [CAGradientLayer layer];
+    gradient.frame = self.top.bounds;
+    gradient.colors = [NSArray arrayWithObjects:(id)[[UIColor whiteColor] CGColor], (id)[[UIColor colorWithRed:199.0/255.0 green:199.0/255.0 blue:199.0/255.0 alpha:1.0] CGColor], nil];
+    [self.top.layer insertSublayer:gradient atIndex:0];
     
-    [self.left setFrame:CGRectMake(0, 0, 5, self.frame.size.height)];
-    
-    [self.right setFrame:CGRectMake(self.frame.size.width - 5, 0, 5, self.frame.size.height)];
     
     int width = [CommentTableViewCell sizeWithFontAttribute:self.roundNumberLabel.font constrainedToSize:(CGSizeMake(self.frame.size.width, 20)) withText:self.roundNumberLabel.text].width +10;
     self.roundNumberLabel.frame = CGRectMake(self.frame.size.width - width - 10,

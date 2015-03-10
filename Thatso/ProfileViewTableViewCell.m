@@ -36,7 +36,7 @@ NSInteger const ProfileViewTableViewCellHeight = 54;
     [self.nameLabel setFrame:CGRectMake(self.profilePicture.frame.origin.x + self.profilePicture.frame.size.width + 10,
                                         10,
                                         self.frame.size.width - self.profilePicture.frame.origin.x + self.profilePicture.frame.size.width + 10,
-                                        self.frame.size.height - 10)];
+                                        self.frame.size.height - 20)];
     [[self.profilePicture layer] setCornerRadius:self.profilePicture.frame.size.height/2];
 }
 

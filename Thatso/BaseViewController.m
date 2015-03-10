@@ -28,7 +28,7 @@
     canShowBanner = NO;
     
     [self.activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    [self.activityIndicator setBackgroundColor:[UIColor pinkAppColor]];
+    [self.activityIndicator setBackgroundColor:[UIColor blueAppColor]];
     [[self.activityIndicator  layer] setCornerRadius:40.0f];
     [self.activityIndicator setClipsToBounds:YES];
     [[self.activityIndicator  layer] setBorderWidth:2.0f];

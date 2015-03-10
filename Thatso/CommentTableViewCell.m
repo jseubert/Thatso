@@ -19,12 +19,13 @@ NSInteger const CommentTableViewCellIconSize = 20;
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // configure control(s)
-        [self setBackgroundColor:[UIColor blueAppColor]];
+        [self setBackgroundColor:[UIColor whiteColor]];
         
         self.circle = [[UIView alloc] initWithFrame:CGRectZero];
         self.circle.backgroundColor = [UIColor whiteColor];
-        self.circle.layer.borderColor = [UIColor lightBlueAppColor].CGColor;
+        self.circle.layer.borderColor = [UIColor pinkAppColor].CGColor;
         self.circle.layer.borderWidth = 2;
+        [self.circle setClipsToBounds:YES];
         
         [self addSubview:self.circle];
         
@@ -37,11 +38,15 @@ NSInteger const CommentTableViewCellIconSize = 20;
                        
         self.commentLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         self.commentLabel.font = [UIFont defaultAppFontWithSize:16.0];
-        self.commentLabel.textColor = [UIColor whiteColor];
+        self.commentLabel.textColor = [UIColor blueAppColor];
         self.commentLabel.lineBreakMode = NSLineBreakByWordWrapping;
         self.commentLabel.numberOfLines = 0;
         self.commentLabel.text = @"";
         [self addSubview:self.commentLabel];
+        
+        self.top = [[UIView alloc] initWithFrame:CGRectZero];
+        [self addSubview:self.top];
+        self.top.hidden = YES;
         
     }
     return self;
@@ -51,17 +56,23 @@ NSInteger const CommentTableViewCellIconSize = 20;
 {
     [super layoutSubviews];
     
-    [self.circle setFrame:CGRectMake(10,
+    [self.circle setFrame:CGRectMake(self.frame.size.width - CommentTableViewCellIconSize - 10,
                                      10,
                                      CommentTableViewCellIconSize,
                                      CommentTableViewCellIconSize)];
-    
+    [[self.circle layer] setCornerRadius:self.circle.frame.size.height/2];
     [self.activityIndicator setFrame:self.circle.frame];
 
-    [self.commentLabel setFrame:CGRectMake(10 + self.circle.frame.size.width + self.circle.frame.origin.x,
+    [self.commentLabel setFrame:CGRectMake(10,
                                            10,
-                                           self.bounds.size.width - (10 + self.circle.frame.size.width + self.circle.frame.origin.x) -10,
+                                           self.bounds.size.width - (10 + self.circle.frame.size.width + 10) -10,
                                            self.bounds.size.height - 20)];
+    
+    [self.top setFrame:CGRectMake(0, self.frame.size.height - 5, self.frame.size.width, 5)];
+    CAGradientLayer *gradient = [CAGradientLayer layer];
+    gradient.frame = self.top.bounds;
+    gradient.colors = [NSArray arrayWithObjects:(id)[[UIColor whiteColor] CGColor], (id)[[UIColor colorWithRed:199.0/255.0 green:199.0/255.0 blue:199.0/255.0 alpha:1.0] CGColor], nil];
+    [self.top.layer insertSublayer:gradient atIndex:0];
 }
 
 -(void) setCommentLabelText: (NSString *) comment

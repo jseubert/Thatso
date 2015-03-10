@@ -247,24 +247,21 @@
             cell.textLabel.text = @"No Games Found";
         } else
         {
-            cell.textLabel.text = @"Games You're The Judge";
+            cell.textLabel.text = @"Your Turn to Pick";
+            cell.backgroundColor = [UIColor lightBlueAppColor];
         }
     } else if (section == 1)
     {
-        cell.textLabel.text = @"Games You Need To Add A Response";
+        cell.textLabel.text = @"Add Your Response";
+        cell.backgroundColor = [UIColor blueAppColor];
     } else if (section ==2)
     {
-        cell.textLabel.text = @"Games Waiting For Judge";
+        cell.textLabel.text = @"Waiting On Judge";
+        cell.backgroundColor = [UIColor pinkAppColor];
     }
     
     cell.textLabel.font = [UIFont defaultAppFontWithSize:16];
     cell.textLabel.textColor = [UIColor whiteColor];
-    cell.backgroundColor = [UIColor pinkAppColor];
-    [[cell  layer] setBorderWidth:2.0f];
-    [[cell  layer] setBorderColor:[UIColor whiteColor].CGColor];
-    [[cell  layer] setCornerRadius:5.0f];
-    [cell setClipsToBounds:YES];
-    
     
     return cell;
 }
@@ -289,6 +286,70 @@
         
         
         [self.navigationController pushViewController:vc animated:YES];
+    }
+}
+
+/*-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
+    if(tableView.isDecelerating || tableView.isDragging)
+    {
+        CGRect original = cell.frame;
+        cell.frame = CGRectMake(cell.frame.origin.x, cell.frame.origin.y, 0,0);
+        NSMutableArray *orignalFrames = [[NSMutableArray alloc] init];
+        for(UIView *view in cell.subviews)
+        {
+            [orignalFrames addObject:[NSValue valueWithCGRect:view.frame]];
+            view.frame = CGRectMake(view.frame.origin.x, view.frame.origin.y, 0,0);
+        }
+        ((SelectGameTableViewCell *) cell).top.hidden = TRUE;
+        [UIView animateWithDuration:0.5
+                         animations:^{
+                             cell.frame = original;
+    
+                         
+                         }
+                         completion:^(BOOL finished){
+                             int i = 0;
+                             for(UIView *view in cell.subviews)
+                             {
+                                 [orignalFrames addObject:[NSValue valueWithCGRect:view.frame]];
+                                 view.frame = [[orignalFrames objectAtIndex:i] CGRectValue];
+                                 i ++;
+                             }
+                                ((SelectGameTableViewCell *) cell).top.hidden = FALSE;
+                     }];
+    
+    }
+}*/
+
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
+    if(tableView.isDecelerating || tableView.isDragging)
+    {
+        ((SelectGameTableViewCell *) cell).top.hidden = YES;
+        cell.frame = CGRectMake(-cell.frame.size.width, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
+        [UIView animateWithDuration:0.5
+                         animations:^{
+                             cell.frame = CGRectMake(0, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
+                             
+                         }
+                         completion:^(BOOL finished){
+                             ((CommentTableViewCell *) cell).top.hidden = NO;
+                         }];
+    } 
+    
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section
+{
+    if(tableView.isDecelerating || tableView.isDragging)
+    {
+        view.frame = CGRectMake(-view.frame.size.width, view.frame.origin.y, view.frame.size.width, view.frame.size.height);
+        [UIView animateWithDuration:0.5
+                         animations:^{
+                             view.frame = CGRectMake(0, view.frame.origin.y, view.frame.size.width, view.frame.size.height);
+                             
+                         }
+                         completion:^(BOOL finished){
+                         }];
     }
 }
 
