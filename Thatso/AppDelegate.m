@@ -72,6 +72,7 @@
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
+    [FBAppCall handleDidBecomeActiveWithSession:[PFFacebookUtils session]];
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     if (currentInstallation.badge != 0) {
         currentInstallation.badge = 0;
@@ -79,15 +80,17 @@
     }
 }
 
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-    //return [FBAppCall handleOpenURL:url sourceApplication:sourceApplication];
-    return [PFFacebookUtils handleOpenURL:url];
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation {
+    return [FBAppCall handleOpenURL:url
+                  sourceApplication:sourceApplication
+                        withSession:[PFFacebookUtils session]];
 }
 
-- (BOOL) application:(UIApplication *)application handleOpenURL:(NSURL *)url {
-    return [PFFacebookUtils handleOpenURL:url];
-    //return [FBAppCall handleOpenURL:url sourceApplication:nil];
-    
+- (void)applicationWillTerminate:(UIApplication *)application {
+    [[PFFacebookUtils session] close];
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {

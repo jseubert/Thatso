@@ -107,20 +107,6 @@
         
         [self.tableView addSubview:self.refreshControl];
     }
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillShow:)
-                                                 name:@"UIKeyboardWillShowNotification"
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardDidHide:)
-                                                 name:@"UIKeyboardDidHideNotification"
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillHide:)
-                                                 name:@"UIKeyboardWillHideNotification"
-                                               object:nil];
     
     //Remove yourself from the game's players
     
@@ -132,6 +118,36 @@
             [self.nonUserPlayers  addObject:user];
         }
     }
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    //Recieve messages
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    
+    self.messageClient = [appDelegate.client messageClient];
+    self.messageClient.delegate = self;
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:@"UIKeyboardWillShowNotification"
+                                               object:nil];
+
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide:)
+                                                 name:@"UIKeyboardWillHideNotification"
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyBoardWillChangeFrame:)
+                                                 name:@"UIKeyboardWillChangeFrameNotification"
+                                               object:nil];
+}
+
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 -(void)viewDidLayoutSubviews
@@ -412,16 +428,6 @@
     }
 }
 
--(void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    //Recieve messages
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    
-    self.messageClient = [appDelegate.client messageClient];
-    self.messageClient.delegate = self;
-}
-
 
 #pragma Submitting a commment
 -(void)uploadComment:(NSString *)commentText
@@ -563,31 +569,31 @@
     }
 }
 
+- (void) keyBoardWillChangeFrame:(NSNotification *)notification {
+    CGRect keyboardEndFrame = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    CGRect keyboardBeginFrame = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
+    UIViewAnimationCurve animationCurve = [[[notification userInfo] objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue];
+    NSTimeInterval animationDuration = [[[notification userInfo] objectForKey:UIKeyboardAnimationDurationUserInfoKey] integerValue];
+    
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:animationDuration];
+    [UIView setAnimationCurve:animationCurve];
+    
+    CGRect newFrame = self.composeBarView.frame;
+    CGRect keyboardFrameEnd = [self.view convertRect:keyboardEndFrame toView:nil];
+    CGRect keyboardFrameBegin = [self.view convertRect:keyboardBeginFrame toView:nil];
+    
+    newFrame.origin.y -= (keyboardFrameBegin.origin.y - keyboardFrameEnd.origin.y);
+    self.composeBarView.frame = newFrame;
+    
+    [UIView commitAnimations];
+}
 - (void) keyboardWillShow:(NSNotification *)note {
     [self.view addGestureRecognizer:self.singleTap];
-    NSDictionary *userInfo = [note userInfo];
-    CGSize kbSize = [[userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
-
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.3];
-    [UIView setAnimationBeginsFromCurrentState:YES];
-    self.composeBarView.frame = CGRectMake(self.composeBarView .frame.origin.x, (self.composeBarView.frame.origin.y - kbSize.height), self.composeBarView.frame.size.width, self.composeBarView.frame.size.height);
-    [self layoutSubviews];
-    [UIView commitAnimations];
 }
 
 - (void) keyboardWillHide:(NSNotification *)note {
     [self.view removeGestureRecognizer:self.singleTap];
-    NSDictionary *userInfo = [note userInfo];
-    CGSize kbSize = [[userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDelegate:self];
-    [UIView setAnimationDuration:0.3];
-    [UIView setAnimationBeginsFromCurrentState:YES];
-    self.composeBarView.frame = CGRectMake(self.composeBarView .frame.origin.x, (self.composeBarView.frame.origin.y + kbSize.height), self.composeBarView.frame.size.width, self.composeBarView.frame.size.height);
-    [self layoutSubviews];
-    [UIView commitAnimations];
 }
 
 - (void) keyboardDidHide:(NSNotification *)note {

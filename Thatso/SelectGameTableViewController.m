@@ -320,7 +320,7 @@
     
     }
 }*/
-
+/*
 -(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
     if(tableView.isDecelerating || tableView.isDragging)
     {
@@ -351,7 +351,7 @@
                          completion:^(BOOL finished){
                          }];
     }
-}
+}*/
 
 
 -(IBAction)logout:(id)sender{
