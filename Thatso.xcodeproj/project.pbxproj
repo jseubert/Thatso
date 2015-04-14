@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		95152C621ACEF9B7000C47D0 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95152C601ACEF9B7000C47D0 /* Crashlytics.framework */; };
+		95152C631ACEF9B7000C47D0 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95152C611ACEF9B7000C47D0 /* Fabric.framework */; };
+		95152C661ACF0EDB000C47D0 /* ScoreHorizontalHeaderScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 95152C651ACF0EDB000C47D0 /* ScoreHorizontalHeaderScrollView.m */; };
+		95152C691ACF4429000C47D0 /* SmallProfileView.m in Sources */ = {isa = PBXBuildFile; fileRef = 95152C681ACF4429000C47D0 /* SmallProfileView.m */; };
+		95152C6C1ACF4B5B000C47D0 /* UIView+Sizes.m in Sources */ = {isa = PBXBuildFile; fileRef = 95152C6B1ACF4B5B000C47D0 /* UIView+Sizes.m */; };
+		95152C721AD1EAEF000C47D0 /* LoginPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 95152C711AD1EAEF000C47D0 /* LoginPageViewController.m */; };
 		953287DE1A3246F000AC17EA /* GameHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 953287DD1A3246F000AC17EA /* GameHeaderView.m */; };
 		953D497119DF59C700596E7B /* SelectGameTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 953D497019DF59C700596E7B /* SelectGameTableViewCell.m */; };
 		9540A57F1A1D05C200EA9FEA /* Game.m in Sources */ = {isa = PBXBuildFile; fileRef = 9540A57E1A1D05C200EA9FEA /* Game.m */; };
@@ -70,6 +76,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		95152C601ACEF9B7000C47D0 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
+		95152C611ACEF9B7000C47D0 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
+		95152C641ACF0EDB000C47D0 /* ScoreHorizontalHeaderScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScoreHorizontalHeaderScrollView.h; sourceTree = "<group>"; };
+		95152C651ACF0EDB000C47D0 /* ScoreHorizontalHeaderScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScoreHorizontalHeaderScrollView.m; sourceTree = "<group>"; };
+		95152C671ACF4429000C47D0 /* SmallProfileView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmallProfileView.h; sourceTree = "<group>"; };
+		95152C681ACF4429000C47D0 /* SmallProfileView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmallProfileView.m; sourceTree = "<group>"; };
+		95152C6A1ACF4B5B000C47D0 /* UIView+Sizes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Sizes.h"; sourceTree = "<group>"; };
+		95152C6B1ACF4B5B000C47D0 /* UIView+Sizes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Sizes.m"; sourceTree = "<group>"; };
+		95152C701AD1EAEF000C47D0 /* LoginPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginPageViewController.h; sourceTree = "<group>"; };
+		95152C711AD1EAEF000C47D0 /* LoginPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginPageViewController.m; sourceTree = "<group>"; };
 		953287DC1A3246F000AC17EA /* GameHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameHeaderView.h; sourceTree = "<group>"; };
 		953287DD1A3246F000AC17EA /* GameHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameHeaderView.m; sourceTree = "<group>"; };
 		953D496F19DF59C700596E7B /* SelectGameTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectGameTableViewCell.h; sourceTree = "<group>"; };
@@ -185,6 +201,7 @@
 				9A2C6FB819A84CFA00DCF2B7 /* QuartzCore.framework in Frameworks */,
 				9A2C6FB619A84CF500DCF2B7 /* MobileCoreServices.framework in Frameworks */,
 				9ABCFA651A8C770B003BFC6F /* StoreKit.framework in Frameworks */,
+				95152C621ACEF9B7000C47D0 /* Crashlytics.framework in Frameworks */,
 				9A2C6FB419A84CE000DCF2B7 /* libz.1.1.3.dylib in Frameworks */,
 				9A2C6F6919A8324200DCF2B7 /* CoreGraphics.framework in Frameworks */,
 				9A2C6FB219A84CCE00DCF2B7 /* CFNetwork.framework in Frameworks */,
@@ -194,6 +211,7 @@
 				9A49CA1D1A214B4900F7CFCA /* Parse.framework in Frameworks */,
 				9A2C6FA619A8484300DCF2B7 /* libsqlite3.dylib in Frameworks */,
 				9A2C6FA419A8483B00DCF2B7 /* Accounts.framework in Frameworks */,
+				95152C631ACEF9B7000C47D0 /* Fabric.framework in Frameworks */,
 				9A2C6FA219A8483200DCF2B7 /* AdSupport.framework in Frameworks */,
 				9A2C6F6B19A8324200DCF2B7 /* UIKit.framework in Frameworks */,
 				9A2C6F6719A8324200DCF2B7 /* Foundation.framework in Frameworks */,
@@ -211,6 +229,10 @@
 				9A428A4519DF894900C80EE7 /* FratBarButtonItem.m */,
 				953287DC1A3246F000AC17EA /* GameHeaderView.h */,
 				953287DD1A3246F000AC17EA /* GameHeaderView.m */,
+				95152C641ACF0EDB000C47D0 /* ScoreHorizontalHeaderScrollView.h */,
+				95152C651ACF0EDB000C47D0 /* ScoreHorizontalHeaderScrollView.m */,
+				95152C671ACF4429000C47D0 /* SmallProfileView.h */,
+				95152C681ACF4429000C47D0 /* SmallProfileView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -260,6 +282,8 @@
 				9ADD437E19F7565700AFD160 /* UIButton+CustomButtons.m */,
 				9A893F091A0EC366002F6EEF /* NSString+FontSize.h */,
 				9A893F081A0EC317002F6EEF /* NSString+FontSize.m */,
+				95152C6A1ACF4B5B000C47D0 /* UIView+Sizes.h */,
+				95152C6B1ACF4B5B000C47D0 /* UIView+Sizes.m */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -276,6 +300,8 @@
 		9A2C6F5A19A8324200DCF2B7 = {
 			isa = PBXGroup;
 			children = (
+				95152C601ACEF9B7000C47D0 /* Crashlytics.framework */,
+				95152C611ACEF9B7000C47D0 /* Fabric.framework */,
 				9A9A17EA1A9EFE02005855F2 /* Resouces.bundle */,
 				9A2C6F6C19A8324200DCF2B7 /* Thatso */,
 				9A2C6F6519A8324200DCF2B7 /* Frameworks */,
@@ -369,6 +395,8 @@
 				9AFBF0CE19CD4826004F6550 /* GameViewControllerTableViewController.m */,
 				9A49CA111A18588B00F7CFCA /* PreviousRoundsTableViewController.h */,
 				9A49CA121A18588B00F7CFCA /* PreviousRoundsTableViewController.m */,
+				95152C701AD1EAEF000C47D0 /* LoginPageViewController.h */,
+				95152C711AD1EAEF000C47D0 /* LoginPageViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -438,6 +466,7 @@
 				9A2C6F5F19A8324200DCF2B7 /* Sources */,
 				9A2C6F6019A8324200DCF2B7 /* Frameworks */,
 				9A2C6F6119A8324200DCF2B7 /* Resources */,
+				95152C5B1ACEF8D6000C47D0 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -470,7 +499,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 9A2C6F5E19A8324200DCF2B7 /* Build configuration list for PBXProject "ThatSo" */;
+			buildConfigurationList = 9A2C6F5E19A8324200DCF2B7 /* Build configuration list for PBXProject "Thatso" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -501,6 +530,22 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		95152C5B1ACEF8D6000C47D0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Fabric.framework/run 74f6764dc4918346005a0be47ab9fad51c586421 bbcea9c3478770ba3e3b93fa0928df8a79c0efe6ef25c65a15e337c6232bb333";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		9A2C6F5F19A8324200DCF2B7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -511,11 +556,13 @@
 				95799FF21A1AE1FF006A209F /* PHFComposeBarView.m in Sources */,
 				95799FF81A1AE368006A209F /* PHFDelegateChain.m in Sources */,
 				9A2C6F7319A8324200DCF2B7 /* main.m in Sources */,
+				95152C6C1ACF4B5B000C47D0 /* UIView+Sizes.m in Sources */,
 				95881E8F19D90B32001202AB /* UIColor+AppColors.m in Sources */,
 				9AFBF0CF19CD4826004F6550 /* GameViewControllerTableViewController.m in Sources */,
 				9A10E3001A3AD75A00C3B541 /* BaseViewController.m in Sources */,
 				9A10E2F71A380FE000C3B541 /* GenericCategory.m in Sources */,
 				9A2C6FD619A85EF300DCF2B7 /* NewGameTableViewController.m in Sources */,
+				95152C691ACF4429000C47D0 /* SmallProfileView.m in Sources */,
 				9A428A4D19E7AAF500C80EE7 /* StringUtils.m in Sources */,
 				953D497119DF59C700596E7B /* SelectGameTableViewCell.m in Sources */,
 				9A49CA131A18588B00F7CFCA /* PreviousRoundsTableViewController.m in Sources */,
@@ -529,6 +576,8 @@
 				9A2C6F9719A832CC00DCF2B7 /* LoginScreenViewController.m in Sources */,
 				95799FF31A1AE1FF006A209F /* PHFComposeBarView_Button.m in Sources */,
 				9540A5881A1D06A200EA9FEA /* CompletedRound.m in Sources */,
+				95152C661ACF0EDB000C47D0 /* ScoreHorizontalHeaderScrollView.m in Sources */,
+				95152C721AD1EAEF000C47D0 /* LoginPageViewController.m in Sources */,
 				9540A57F1A1D05C200EA9FEA /* Game.m in Sources */,
 				9A2C6FCA19A852D200DCF2B7 /* Comms.m in Sources */,
 				9A2C6F9A19A835CD00DCF2B7 /* SelectGameTableViewController.m in Sources */,
@@ -642,8 +691,8 @@
 				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: John Seubert (BAY63V48XK)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: John Seubert (BAY63V48XK)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -676,8 +725,8 @@
 				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: John Seubert (BAY63V48XK)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: John Seubert (BAY63V48XK)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -703,7 +752,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9A2C6F5E19A8324200DCF2B7 /* Build configuration list for PBXProject "ThatSo" */ = {
+		9A2C6F5E19A8324200DCF2B7 /* Build configuration list for PBXProject "Thatso" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9A2C6F8D19A8324200DCF2B7 /* Debug */,

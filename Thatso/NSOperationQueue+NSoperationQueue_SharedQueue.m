@@ -13,7 +13,7 @@
 	static NSOperationQueue *pffileQueue = nil;
 	if (pffileQueue == nil) {
 		pffileQueue = [[NSOperationQueue alloc] init];
-		[pffileQueue setName:@"com.rwtutorial.pffilequeue"];
+		[pffileQueue setName:@"com.seubjoh.pffilequeue"];
 	}
 	return pffileQueue;
 }
@@ -22,7 +22,7 @@
 	static NSOperationQueue *profilePictureQueue = nil;
 	if (profilePictureQueue == nil) {
 		profilePictureQueue = [[NSOperationQueue alloc] init];
-		[profilePictureQueue setName:@"com.rwtutorial.profilepicturequeue"];
+		[profilePictureQueue setName:@"com.seubjoh.profilepicturequeue"];
 	}
 	return profilePictureQueue;
 }

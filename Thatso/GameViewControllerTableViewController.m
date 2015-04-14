@@ -16,62 +16,68 @@
 
 @implementation GameViewControllerTableViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+-(BOOL) isJudge
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    return [[[User currentUser] objectForKey:UserFacebookID] isEqualToString:self.currentRound[RoundJudge]];
+}
+
+#pragma mark ViewController setup
+- (id)init
+{
+    self = [super init];
     if (self) {
         self.comments = [[NSMutableArray alloc] init];
     }
     return self;
 }
 
-
--(BOOL) isJudge
-{
-    return [[[User currentUser] objectForKey:UserFacebookID] isEqualToString:self.currentRound[RoundJudge]];
-}
-
--(void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    [self refreshGame:nil];
-}
-
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    uploadingComment = false;
-
+    
+    /*
+     *ViewController Preferences/Appearance
+     */
     self.navigationItem.title = self.currentGame.gameName;
-    //setup Subviews
-    self.headerView = [[GameHeaderView alloc] initWithFrame:CGRectMake(0,
-                                                                self.navigationController.navigationBar.frame.size.height + 20 ,
-                                                                self.view.bounds.size.width,
-                                                                ProfileViewTableViewCellHeight)];
+    
+    /*
+     * Subview initializations
+     */
+    //Back button - needed for pushed view controllers
+    FratBarButtonItem *backButton= [[FratBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
+    self.navigationItem.backBarButtonItem = backButton;
+    //Previous Rounds Navigation Button
+    FratBarButtonItem *previousGames= [[FratBarButtonItem alloc] initWithTitle:@"Past Rounds" style:UIBarButtonItemStyleBordered target:self action:@selector(clickedPastGamesButton:)];
+    self.navigationItem.rightBarButtonItem = previousGames;
+    
+    //Header View
+    self.headerView = [[GameHeaderView alloc] initWithFrame:CGRectZero];
     [self setupHeader];
     [self.view addSubview:self.headerView];
     
-    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0,
-                                                                   self.headerView.frame.size.height + self.headerView.frame.origin.y,
-                                                                   self.view.bounds.size.width,
-                                                                   self.view.bounds.size.height - self.headerView.frame.size.height - self.headerView.frame.origin.y)];
-    
+    //TableView (comments table)
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectZero];
     [self.tableView setDelegate:self];
     [self.tableView setDataSource:self];
     self.tableView.backgroundColor = [UIColor blueAppColor];
     [self.tableView setSeparatorColor:[UIColor clearColor]];
     [self.view addSubview:self.tableView];
-
     
-    CGRect viewBounds = [[self view] bounds];
-    CGRect frame = CGRectMake(0.0f,
-                              viewBounds.size.height - PHFComposeBarViewInitialHeight,
-                              viewBounds.size.width,
-                              PHFComposeBarViewInitialHeight);
+    //Empty Table View
+    self.emptyTableView = [[UITextView alloc] initWithFrame:CGRectZero];
+    [self.emptyTableView setText: [self isJudge] ? @"\n\nNo one has answered yet": @"\n\nNo one has answered yet.\nAdd your answer below!"];
+    [self.emptyTableView setFont:[UIFont defaultAppFontWithSize:20.0f]];
+    [self.emptyTableView setTextColor:[UIColor whiteColor]];
+    [self.emptyTableView setBackgroundColor:[UIColor clearColor]];
+    [self.emptyTableView setTextAlignment:NSTextAlignmentCenter];
+    [self.emptyTableView setSelectable:NO];
     
-    
-    self.composeBarView = [[PHFComposeBarView alloc] initWithFrame:frame];
+    //Comment box
+    //self.composeBarView = [[PHFComposeBarView alloc] initWithFrame:CGRectZero];
+    self.composeBarView = [[PHFComposeBarView alloc] initWithFrame:CGRectMake(0.0f,
+                                           self.view.frame.size.height - PHFComposeBarViewInitialHeight,
+                                           self.view.frame.size.width,
+                                           PHFComposeBarViewInitialHeight)];
     [self.composeBarView  setMaxCharCount:140];
     [self.composeBarView  setMaxLinesCount:5];
     [self.composeBarView  setPlaceholder:@"Enter Response"];
@@ -79,37 +85,28 @@
     [self.composeBarView setButtonTintColor:[UIColor pinkAppColor]];
     [self.composeBarView setButtonTitle:@"ThatSo"];
     [self.composeBarView setBackgroundColor:[UIColor whiteColor]];
-    
     [self.view addSubview:self.composeBarView];
     
+    //Add activity indicator
     [self.view addSubview:self.activityIndicator];
+
+    //Refresh indicator for tableview
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    self.refreshControl.attributedTitle = [StringUtils makeRefreshText:@"Pull to refresh"];
+    [self.refreshControl addTarget:self action:@selector(refreshGame) forControlEvents:UIControlEventValueChanged];
+    [self.refreshControl setTintColor:[UIColor whiteColor]];
+    [self.tableView addSubview:self.refreshControl];
     
+    
+    /*
+     * Misc Setup
+     */
+    //Make a gesture recognizer for when a user taps outside of textfield to close keyboard
     self.singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resignOnTap:)];
     [self.singleTap setNumberOfTapsRequired:1];
     [self.singleTap setNumberOfTouchesRequired:1];
     
-    //Back Button
-    FratBarButtonItem *newGameButton= [[FratBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
-    self.navigationItem.backBarButtonItem = newGameButton;
-    
-    //New Game Button
-    FratBarButtonItem *previousGames= [[FratBarButtonItem alloc] initWithTitle:@"Past Rounds" style:UIBarButtonItemStyleBordered target:self action:@selector(previousGames:)];
-    self.navigationItem.rightBarButtonItem = previousGames;
-    
-    // If we are using iOS 6+, put a pull to refresh control in the table
-    if (NSClassFromString(@"UIRefreshControl") != Nil) {
-        self.refreshControl = [[UIRefreshControl alloc] init];
-        
-        
-        self.refreshControl.attributedTitle = [StringUtils makeRefreshText:@"Pull to refresh"];
-        [self.refreshControl addTarget:self action:@selector(refreshGame:) forControlEvents:UIControlEventValueChanged];
-        [self.refreshControl setTintColor:[UIColor whiteColor]];
-        
-        [self.tableView addSubview:self.refreshControl];
-    }
-    
     //Remove yourself from the game's players
-    
     self.nonUserPlayers = [[NSMutableArray alloc] init];
     for (User* user in self.currentGame.players)
     {
@@ -123,11 +120,12 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    //Recieve messages
+    //Setup delegate to receive messages with Sinch
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    
     self.messageClient = [appDelegate.client messageClient];
     self.messageClient.delegate = self;
+    
+    //Notifications for keyboard behavior
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillShow:)
                                                  name:@"UIKeyboardWillShowNotification"
@@ -145,15 +143,21 @@
                                                object:nil];
 }
 
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [self refreshGame];
+}
+
 -(void)viewWillDisappear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 -(void)viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
-
     [self layoutSubviews];
 }
 
@@ -191,7 +195,9 @@
                                        self.navigationController.navigationBar.frame.size.height + 20 ,
                                        self.view.bounds.size.width ,
                                        [self.headerView heightGivenWidth:self.view.bounds.size.width + 10] );
-    [self.headerView layoutSubviews];
+
+    
+    
     if([self isJudge])
     {
         [self.composeBarView setHidden:YES];
@@ -208,15 +214,14 @@
     }
 }
 
--(IBAction)previousGames:(id)sender{
-    // Seque to the Image Wall
+#pragma mark navigation bar button actions
+-(IBAction)clickedPastGamesButton:(id)sender{
     PreviousRoundsTableViewController *vc = [[PreviousRoundsTableViewController alloc] init];
     vc.currentGame = self.currentGame;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark - Table view data source
-
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 1;
@@ -228,6 +233,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+
     Comment* comment = [self.comments objectAtIndex:indexPath.row];
     CGFloat width = tableView.frame.size.width
     - 10    //left padding
@@ -239,14 +245,15 @@
     CGSize labelSize;
     if([comment.from.objectId isEqualToString:[User currentUser].objectId])
     {
-        labelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:[NSString stringWithFormat:@"(Your Response) %@",comment.response]];
+        labelSize = [StringUtils sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:[NSString stringWithFormat:@"(Your Response) %@",comment.response]];
         
     } else
     {
-        labelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:comment.response];        
+        labelSize = [StringUtils sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:comment.response];
     }
     //1O padding on top and bottom
-    return 10 + labelSize.height + 5 +10;
+    return 10 + labelSize.height + 10; //+ 5??
+
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
@@ -255,7 +262,6 @@
 
 - (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    
     NSString *cellIdentifier = @"ProfileViewTableViewCell";
     ProfileViewTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (cell == nil) {
@@ -264,7 +270,7 @@
     
     if([self isJudge])
     {
-        [cell.nameLabel setText:[NSString stringWithFormat:@"Your turn to pick"]];
+        [cell.nameLabel setText:[NSString stringWithFormat:@"Pick the best answer"]];
      
     } else{
         [cell.nameLabel setText:[NSString stringWithFormat:@"%@'s turn to pick", [self.currentGame playerWithfbId:self.currentRound.judge].first_name]];
@@ -292,31 +298,31 @@
 }
 
 -(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
-    ((CommentTableViewCell *) cell).top.hidden = YES;
-    if(tableView.isDecelerating || tableView.isDragging)
-    {
-        cell.frame = CGRectMake(-cell.frame.size.width, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
-        [UIView animateWithDuration:0.5
-                         animations:^{
-                             cell.frame = CGRectMake(0, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
+        ((CommentTableViewCell *) cell).top.hidden = YES;
+        if(tableView.isDecelerating || tableView.isDragging)
+        {
+            cell.frame = CGRectMake(-cell.frame.size.width, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
+            [UIView animateWithDuration:0.5
+                             animations:^{
+                                 cell.frame = CGRectMake(0, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
 
-                         }
-                         completion:^(BOOL finished){
-                                 ((CommentTableViewCell *) cell).top.hidden = NO;
-                         }];
-    } else{
-        cell.frame = CGRectMake(-cell.frame.size.width, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
-        [UIView animateWithDuration:0.5
-                              delay:indexPath.row * 0.05
-                            options:UIViewAnimationOptionTransitionNone
-                         animations:^{
-                                cell.frame = CGRectMake(0, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
-                                
-                            }
-                         completion:^(BOOL finished){
-                                 ((CommentTableViewCell *) cell).top.hidden = NO;
-                         }];
-    }
+                             }
+                             completion:^(BOOL finished){
+                                     ((CommentTableViewCell *) cell).top.hidden = NO;
+                             }];
+        } else{
+            cell.frame = CGRectMake(-cell.frame.size.width, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
+            [UIView animateWithDuration:0.5
+                                  delay:indexPath.row * 0.05
+                                options:UIViewAnimationOptionTransitionNone
+                             animations:^{
+                                    cell.frame = CGRectMake(0, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
+                                    
+                                }
+                             completion:^(BOOL finished){
+                                     ((CommentTableViewCell *) cell).top.hidden = NO;
+                             }];
+        }
     
 }
 
@@ -361,16 +367,10 @@
 
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    NSLog(@"didSelectRowAtIndexPath");
     if([self isJudge])
     {
         [self showActivityIndicator];
         Comment* winningComment = [self.comments objectAtIndex:indexPath.row];
-        NSString *title = [NSString stringWithFormat:@"%@'s comment wins!", winningComment.from.first_name];
-        NSString *summary = [NSString stringWithFormat:@"Click OK to start the next round!"];
-        
-        
-        [self showAlertWithTitle:title andSummary:summary];
         
         //Start next round
         
@@ -379,18 +379,12 @@
 }
 
 #pragma Submitting getting comments
-//Call back delegate for comments Downloade
-
-//Pull to refresh method
-- (void) refreshGame:(UIRefreshControl *)refreshControl
+- (void) refreshGame
 {
     [self showActivityIndicator];
+    [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:@"Refreshing data..."]];
+    [self.refreshControl setEnabled:NO];
     
-    if (self.refreshControl) {
-        [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:@"Refreshing data..."]];
-        [self.refreshControl setEnabled:NO];
-    }
-    NSLog(@"refreshGame: GameID: %@", self.currentGame.objectId);
     [self.currentGame fetchInBackgroundWithBlock:^(PFObject *object, NSError *error) {
         self.currentRound = self.currentGame.currentRound;
         [self.currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
@@ -417,6 +411,12 @@
             [self.refreshControl endRefreshing];
         }
         // Refresh the table data to show the new games
+        if(self.comments.count > 0)
+        {
+            [self.tableView setBackgroundView:nil];
+        } else{
+            [self.tableView setBackgroundView:self.emptyTableView];
+        }
         [self.tableView reloadData];
     
     }else{
@@ -473,7 +473,6 @@
    
 }
 
-//callback
 - (void) didAddComment:(BOOL)success needsRefresh:(BOOL)refresh addedComment:(Comment*)comment info: (NSString *) info
 {
     if(self.userCommentCell != nil)
@@ -503,7 +502,7 @@
         [self showAlertWithTitle:@"Error!" andSummary:info];
         if(refresh)
         {
-            [self refreshGame:nil];
+            [self refreshGame];
         } else{
             Comment *comment;
             for(int i = 0; i < self.comments.count; i ++)
@@ -526,16 +525,25 @@
     }
 }
 
-#pragma staring new round
+#pragma starting new round
 - (void) didStartNewRound:(BOOL)success info: (NSString *) info previousWinner:(CompletedRound *)winningRound;
 {
     [self hideActivityIndicator];
     if(success)
     {
+        //Show an alert to the user who won and that a new round is starting
+        NSString *title = [NSString stringWithFormat:@"%@ wins!", winningRound.winningResponseFrom.first_name];
+        NSString *summary = [NSString stringWithFormat:@"Press OK to start the next round!"];
+        [self showAlertWithTitle:title andSummary:summary];
+        
+        //Clear all comments for this round
         self.comments = [[NSMutableArray alloc] init];
         [[CurrentRounds instance].currentComments  removeObjectForKey:self.currentGame.objectId];
 
-        [self refreshGame:nil];
+        //Reload the game
+        [self refreshGame];
+        
+        //Send out a Sinch Message to other players
         NSMutableArray *nonUserPlayersIDs = [[NSMutableArray alloc] init];
         NSMutableArray *nonUserPlayersPushIDs = [[NSMutableArray alloc] init];
         for(User * user in self.nonUserPlayers)
@@ -549,14 +557,12 @@
         [message addHeaderWithValue:winningRound.winningResponse key:CompletedRoundWinningResponse];
         [message addHeaderWithValue:winningRound.winningResponseFrom.first_name key:CompletedRoundWinningResponseFrom];
         [message addHeaderWithValue:winningRound.gameID key:CompletedRoundGameID];
-        NSLog(@"%@", message.headers);
         [self.messageClient sendMessage:message];
         
         //Send push notification to other players
         PFPush *push = [[PFPush alloc] init];
-        
         NSDictionary *data = @{
-                               @"alert" : [NSString stringWithFormat:@"Next Round Staring in %@: \"%@\"\nPrevious Round:%@\n%@", self.currentGame.gameName, self.currentRound.category, winningRound.category, winningRound.winningResponse],
+                               @"alert" : [NSString stringWithFormat:@"New Round Starting in %@: \"%@\"", self.currentGame.gameName, self.currentRound.category],
                                @"badge" : @"Increment",
                                @"sounds" : @"woop.caf"
                                };
@@ -569,6 +575,8 @@
     }
 }
 
+
+#pragma mark keyboard and comment bar notifications
 - (void) keyBoardWillChangeFrame:(NSNotification *)notification {
     CGRect keyboardEndFrame = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGRect keyboardBeginFrame = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
@@ -629,10 +637,7 @@
 }
 
 #pragma mark - SINMessageClientDelegate
-
- - (void)messageClient:(id<SINMessageClient>)messageClient didReceiveIncomingMessage:(id<SINMessage>)message {
- NSLog(@"didReceiveIncomingMessage: %@ %@", message.text, message.headers );
-
+- (void)messageClient:(id<SINMessageClient>)messageClient didReceiveIncomingMessage:(id<SINMessage>)message {
     if([message.text isEqualToString:NewRound])
     {
         [self newRoundNotification:message inBackground:NO];
@@ -643,33 +648,24 @@
     }
 }
 
+- (void)messageSent:(id<SINMessage>)message recipientId:(NSString *)recipientId {
+}
+ 
+- (void)message:(id<SINMessage>)message shouldSendPushNotifications:(NSArray *)pushPairs {
+}
+ 
+- (void)messageDelivered:(id<SINMessageDeliveryInfo>)info {
+}
 
- 
- - (void)messageSent:(id<SINMessage>)message recipientId:(NSString *)recipientId {
-     NSLog(@"messageSent: %@ to: %@", message, recipientId);
- }
- 
- - (void)message:(id<SINMessage>)message shouldSendPushNotifications:(NSArray *)pushPairs {
-     NSLog(@"Recipient not online. \
-           Should notify recipient using push (not implemented in this demo app). \
-           Please refer to the documentation for a comprehensive description.");
- }
- 
- - (void)messageDelivered:(id<SINMessageDeliveryInfo>)info {
-     NSLog(@"Message to %@ was successfully delivered", info.recipientId);
- }
- 
- - (void)messageFailed:(id<SINMessage>)message info:(id<SINMessageFailureInfo>)failureInfo {
-     NSLog(@"Failed delivering message to %@. Reason: %@", failureInfo.recipientId,
-       [failureInfo.error description]);
- }
+- (void)messageFailed:(id<SINMessage>)message info:(id<SINMessageFailureInfo>)failureInfo {
+}
 
 -(void) newRoundNotification: (id<SINMessage>)message inBackground: (BOOL) inBackground
 {
     if([[message.headers objectForKey:CompletedRoundGameID] isEqualToString:self.currentGame.objectId])
     {
         [[UserGames instance] refreshGameID:[message.headers objectForKey:CompletedRoundGameID] withBlock:^(Game * game) {
-            [self refreshGame:nil];
+            [self refreshGame];
         }];
     }
 }
@@ -684,23 +680,21 @@
     }
     else if([[message.headers objectForKey:CommentGameID] isEqualToString:self.currentGame.objectId]){
         [self showAlertWithTitle:@"New Round Started!" andSummary:@""];
-        [self refreshGame:nil];
+        [self refreshGame];
     }
 }
 
+#pragma mark activity indicator methods
 - (void) showActivityIndicator
 {
-    [self.activityIndicator startAnimating];
-    [self.activityIndicator setHidden:NO];
+    [super showActivityIndicator];
     [self.tableView setUserInteractionEnabled:NO];
     [self.composeBarView setUserInteractionEnabled:NO];
 }
 
 -(void) hideActivityIndicator
 {
-    
-    [self.activityIndicator stopAnimating];
-    [self.activityIndicator setHidden:YES];
+    [super hideActivityIndicator];
     [self.tableView setUserInteractionEnabled:YES];
     [self.composeBarView setUserInteractionEnabled:YES];
 }

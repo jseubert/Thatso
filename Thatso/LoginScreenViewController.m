@@ -10,6 +10,8 @@
 #import "SelectGameTableViewController.h"
 #import "UIButton+CustomButtons.h"
 #import "AppDelegate.h"
+#import "LoginPageViewController.h"
+#import <Crashlytics/Crashlytics.h>
 
 
 @interface LoginScreenViewController () <PHFComposeBarViewDelegate>
@@ -17,15 +19,6 @@
 @end
 
 @implementation LoginScreenViewController
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
 
 - (void)viewDidLoad
 {
@@ -41,16 +34,14 @@
     [[[self titleLabel] layer] setCornerRadius:10.0f];
     [[self.titleLabel layer] setBorderColor:[UIColor whiteColor].CGColor];
     
-    
     self.loginButton = [UIButton  buttonWithType:UIButtonTypeRoundedRect];
-    [self.loginButton addTarget:self action:@selector(login:) forControlEvents:UIControlEventTouchUpInside];
+    [self.loginButton addTarget:self action:@selector(loginPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.loginButton fratButtonWithBorderWidth:2.0f fontSize:18.0 cornerRadius:10.0];
     [self.loginButton setTitle:@"Login with Facebook" forState:UIControlStateNormal];
     [self.view addSubview:self.loginButton];
     
     self.activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     [self.view addSubview:self.activityIndicator];
-
     
     [self.view setBackgroundColor:[UIColor blueAppColor]];
 }
@@ -73,27 +64,14 @@
         [Comms getAllFacebookFriends:nil];
         [Comms getProfilePictureForUser:[[User currentUser] objectForKey:UserFacebookID] withBlock:nil];
 
-        
-        //Start Sinch!
-        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        [appDelegate initSinchClientWithUserId:[[User currentUser] objectForKey:UserFacebookID]];
-        
-        //Register for push notifications
-        PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-        [currentInstallation addUniqueObject:[NSString stringWithFormat:@"c%@",[User currentUser].fbId] forKey:@"channels"];
-        [currentInstallation saveInBackground];
-        
-        SelectGameTableViewController *vc = [[SelectGameTableViewController alloc] init];
-        [self.navigationController pushViewController:vc animated:YES];
+        [self setupUserAndMoveToHomeScreen];
     }
 }
 
--(IBAction)login:(id)sender
+-(IBAction)loginPressed:(id)sender
 {
-    NSLog(@"LoginButton Pressed");
     // Disable the Login button to prevent multiple touches
     [self.loginButton setEnabled:NO];
-    
     [self.activityIndicator startAnimating];
     
     // Do the login
@@ -111,18 +89,7 @@
     
 	// Did we login successfully ?
 	if (success) {
-        //Start Sinch!
-        AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        [appDelegate initSinchClientWithUserId:[[User currentUser] objectForKey:UserFacebookID]];
-        
-        //Register for push notifications
-        PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-        [currentInstallation addUniqueObject:[NSString stringWithFormat:@"c%@",[User currentUser].fbId] forKey:@"channels"];
-        [currentInstallation saveInBackground];
-        
-		//Move to Fist Screen 
-		SelectGameTableViewController *vc = [[SelectGameTableViewController alloc] init];
-        [self.navigationController pushViewController:vc animated:YES];
+        [self setupUserAndMoveToHomeScreen];
         
 	} else {
 		// Show error alert
@@ -132,6 +99,60 @@
                           cancelButtonTitle:@"Ok"
                           otherButtonTitles:nil] show];
 	}
+}
+
+-(void) setupUserAndMoveToHomeScreen
+{
+    //Start Sinch!
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    [appDelegate initSinchClientWithUserId:[[User currentUser] objectForKey:UserFacebookID]];
+    
+    //Register for push notifications
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    [currentInstallation addUniqueObject:[NSString stringWithFormat:@"c%@",[User currentUser].fbId] forKey:@"channels"];
+    [currentInstallation saveInBackground];
+    
+    //Move to Fist Screen
+    SelectGameTableViewController *vc = [[SelectGameTableViewController alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+#pragma Mark pageViewController datasource delegate
+-(LoginPageViewController *)viewControllerAtIndex:(NSUInteger)index {
+    
+    LoginPageViewController *childViewController = [[LoginPageViewController alloc] init];
+    childViewController.index = index;
+    
+    return childViewController;
+    
+}
+- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController {
+    
+    NSUInteger index = [(LoginPageViewController *)viewController index];
+    
+    if (index == 0) {
+        return nil;
+    }
+    
+    index--;
+    
+    return [self viewControllerAtIndex:index];
+    
+}
+
+- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController {
+    
+    NSUInteger index = [(LoginPageViewController *)viewController index];
+    
+    
+    index++;
+    
+    if (index == 5) {
+        return nil;
+    }
+    
+    return [self viewControllerAtIndex:index];
+    
 }
 
 @end

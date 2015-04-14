@@ -18,5 +18,4 @@ extern NSInteger const CommentTableViewCellIconSize;
 @property (nonatomic, strong) UIView *top;
 
 -(void) setCommentLabelText: (NSString *) comment;
-+ (CGSize) sizeWithFontAttribute:(UIFont *)font constrainedToSize:(CGSize)size withText: (NSString *)text;
 @end

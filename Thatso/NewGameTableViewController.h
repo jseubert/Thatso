@@ -11,8 +11,8 @@
 
 @interface NewGameTableViewController : BaseViewController <DidLoginDelegate, UITableViewDataSource, UITableViewDelegate>
 
-@property (strong, nonatomic) IBOutlet UITableView *tableView;
-@property (strong, nonatomic) IBOutlet UIRefreshControl *refreshControl;
+@property (strong, nonatomic) UITableView *tableView;
+@property (strong, nonatomic) UIRefreshControl *refreshControl;
 
 @property(nonatomic) NSArray* fbFriendsArray;
 @property(nonatomic) NSString *gameName;

@@ -21,24 +21,34 @@
 @implementation NewGameTableViewController
 
 
+#pragma mark ViewController setup
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    /*
+     *ViewController Preferences/Appearance
+     */
+    self.navigationItem.title = @"Players";
+
     self.fbFriendsArray = [[DataStore instance].fbFriends allValues];
+    
+    /*
+     * Subview initializations
+     */
+    //Finish Game Button
+    FratBarButtonItem *startButton  = [[FratBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleBordered target:self action:@selector(doneButtonPressed:)];
+    self.navigationItem.rightBarButtonItem = startButton;
+    
+    //Friends table view
     self.tableView = [[UITableView alloc] initWithFrame:CGRectZero];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     [self.tableView setBackgroundColor:[UIColor blueAppColor]];
     [self.tableView setSeparatorColor:[UIColor clearColor]];
+      self.tableView.allowsMultipleSelection = YES;
     [self.view addSubview: self.tableView];
-    
-    self.navigationItem.title = @"Players";
 
-    
-    //New Game Button
-    FratBarButtonItem *startButton  = [[FratBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleBordered target:self action:@selector(nextPressed:)];
-    self.navigationItem.rightBarButtonItem = startButton;
-    self.tableView.allowsMultipleSelection = YES;
     
    // [self showLoadingAlert];
     [self showActivityIndicator];

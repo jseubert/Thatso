@@ -93,6 +93,16 @@
     // Display Alert Message
     [self.alertView show];
 }
+- (void) showActivityIndicator
+{
+    [self.activityIndicator startAnimating];
+    [self.activityIndicator setHidden:NO];
+}
+
+-(void) hideActivityIndicator
+{
+    [self.activityIndicator stopAnimating];
+}
 
 - (void) showLoadingAlertWithText: (NSString *)title
 {

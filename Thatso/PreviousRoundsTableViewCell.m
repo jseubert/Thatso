@@ -9,6 +9,7 @@
 #import "PreviousRoundsTableViewCell.h"
 
 #import "CommentTableViewCell.h"
+#import "StringUtils.h"
 
 @implementation PreviousRoundsTableViewCell
 
@@ -16,7 +17,8 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        // configure control(s)
+        [self setSelectionStyle:UITableViewCellSelectionStyleNone];
+        
         self.namesLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, self.frame.size.width -20, self.frame.size.height/2)];
         self.namesLabel.font = [UIFont defaultAppFontWithSize:16.0];
         self.namesLabel.text = @"";
@@ -58,13 +60,12 @@
 -(void)adjustLabels
 {
     
-    
     CGFloat width = self.frame.size.width
     - 10    //left padding
     - 10;   //padding on right
     
-    CGSize topLabelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:self.namesLabel.text];
-    CGSize bottomeLabelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(width, width)) withText: self.categoryLabel.text];
+    CGSize topLabelSize = [StringUtils sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:self.namesLabel.text];
+    CGSize bottomeLabelSize = [StringUtils sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(width, width)) withText: self.categoryLabel.text];
     
     self.namesLabel.frame = CGRectMake(10, 10, self.frame.size.width -20, topLabelSize.height);
     self.categoryLabel.frame = CGRectMake(10, self.namesLabel.frame.origin.x + self.namesLabel.frame.size.height + 5, self.frame.size.width-20, bottomeLabelSize.height + 10);

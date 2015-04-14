@@ -18,93 +18,104 @@
 #import <math.h>
 #import "Game.h"
 #import "CommentTableViewCell.h"
+#import <Crashlytics/Crashlytics.h>
 
 @interface SelectGameTableViewController ()
 
 @end
 
+NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
+
 @implementation SelectGameTableViewController
 
+#pragma mark ViewController setup
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self.view setBackgroundColor:[UIColor blueAppColor]];
-    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
-    self.navigationItem.title = @"Games";
 
-    //self.navigationController.navigationBar.translucent = NO;
+    
+    /*
+     *ViewController Preferences/Appearance
+     */
+    [self.view setBackgroundColor:[UIColor blueAppColor]];
+    self.navigationItem.title = @"Games";
    
-    [self.navigationController.navigationBar  setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
-                                                           [UIColor whiteColor], NSForegroundColorAttributeName,
-                                                                       [UIFont defaultAppFontWithSize:21.0], NSFontAttributeName, nil]];
-    
-    self.tableView = [[UITableView alloc] initWithFrame:CGRectZero];
-    self.tableView.delegate = self;
-    self.tableView.dataSource = self;
-    [self.tableView setBackgroundColor:[UIColor blueAppColor]];
-    [self.tableView setSeparatorColor:[UIColor clearColor]];
-    [self.view addSubview: self.tableView];
-    
+    /*
+     * Subview initializations
+     */
     //Back button - needed for pushed view controllers
     FratBarButtonItem *backButton= [[FratBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
     [self.navigationItem setBackBarButtonItem: backButton];
     
     //New Game Button
-    FratBarButtonItem *newGameButton= [[FratBarButtonItem alloc] initWithTitle:@"New Game" style:UIBarButtonItemStyleBordered target:self action:@selector(newGame:)];
+    FratBarButtonItem *newGameButton= [[FratBarButtonItem alloc] initWithTitle:@"New Game" style:UIBarButtonItemStyleBordered target:self action:@selector(newGameButtonPressed:)];
     self.navigationItem.rightBarButtonItem = newGameButton;
     
     //Logout Button
-    FratBarButtonItem *logoutButton = [[FratBarButtonItem alloc] initWithTitle:@"Logout" style:UIBarButtonItemStyleBordered target:self action:@selector(logout:)];
+    FratBarButtonItem *logoutButton = [[FratBarButtonItem alloc] initWithTitle:@"Logout" style:UIBarButtonItemStyleBordered target:self action:@selector(logoutButtonPressed:)];
     self.navigationItem.leftBarButtonItem = logoutButton;
     
+    //Main TableView
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectZero];
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    [self.tableView setBackgroundColor:[UIColor blueAppColor]];
+    [self.tableView setSeparatorColor:[UIColor clearColor]];
+    [self.tableView setShowsVerticalScrollIndicator:NO];
+    [self.tableView setHidden:YES];
+    [self.view addSubview: self.tableView];
+    
+    //Add Activity indicator
     [self.view addSubview:self.activityIndicator];
     
-    // If we are using iOS 6+, put a pull to refresh control in the table
-    if (NSClassFromString(@"UIRefreshControl") != Nil) {
-        UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
-        
-        
-        refreshControl.attributedTitle = [StringUtils makeRefreshText:@"Pull to refresh"];
-        [refreshControl addTarget:self action:@selector(refreshGames:) forControlEvents:UIControlEventValueChanged];
-        [refreshControl setTintColor:[UIColor whiteColor]];
-        [refreshControl setBackgroundColor:[UIColor blueAppColor]];
+    //Refresh indicator for tableview
+    self.refreshControl  = [[UIRefreshControl alloc] init];
+    self.refreshControl.attributedTitle = [StringUtils makeRefreshText:@"Pull to refresh"];
+    [self.refreshControl  addTarget:self action:@selector(refreshGames) forControlEvents:UIControlEventValueChanged];
+    [self.refreshControl  setTintColor:[UIColor whiteColor]];
+    [self.refreshControl  setBackgroundColor:[UIColor blueAppColor]];
+    [self.tableView addSubview:self.refreshControl];
     
-        self.refreshControl = refreshControl;
-        [self.tableView addSubview:self.refreshControl];
+    //Test tur
+    //[[NSUserDefaults standardUserDefaults] setBool:YES forKey:ViewedSelectGameScreen];
+    //Tutorial Section - show tutorial screen if this is the first time the user has seen this screen?
+    if(![[NSUserDefaults standardUserDefaults] boolForKey:ViewedSelectGameScreen])
+    {
+        /*
+        UIAlertView *newAlertView = [[UIAlertView alloc] initWithTitle:@"This is this screen" message:nil delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+        [newAlertView show];*/
+   /*     UIViewController *V2 = [[UIViewController alloc] init];
+        V2.modalPresentationStyle = UIModalPresentationFormSheet;
+        V2.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+        [self presentModalViewController:V2 animated:YES];
+        V2.view.superview.frame = CGRectMake(0, 0, 540, 620); //it's important to do this after presentModalViewController
+        V2.view.superview.center = self.view.center;*/
         
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:ViewedSelectGameScreen];
     }
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(newGamesAddedToDatabase:)
-                                                 name:N_GamesDownloaded
-                                               object:nil];
-    
-    [self.tableView setHidden:YES];
-    
-    [self.tableView setShowsVerticalScrollIndicator:NO];
-    
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    appDelegate.adView.delegate = self;
-    canShowBanner = YES;
-    
     
 }
 
 -(void)viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
-
     [self.tableView setFrame:(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-[self bannerHeight]))];
-    
-    [self.tableView reloadData];
-    
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    /*
+     *Setup Ad support for this view controller
+     */
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    appDelegate.adView.delegate = self;
+    canShowBanner = YES;
 }
 
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [self.tableView reloadData];
-    [self refreshGames:nil];
+    [self refreshGames];
 }
 
 
@@ -131,14 +142,14 @@
     }
     Round *currentRound = game.currentRound;
     
-    CGSize categoryHeight = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(self.tableView.frame.size.width -20, self.tableView.frame.size.width -20)) withText:currentRound.category];
-    int height =    5 +
+    CGSize categoryHeight = [StringUtils sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(self.tableView.frame.size.width -20, self.tableView.frame.size.width -20)) withText:currentRound.category];
+    int height =    5 + //padding
                     20 + //roundlabel
-                    5 +
+                    5 + //padding
                     40 + //profile images height
                     20 + //name label
-                    categoryHeight.height +
-                    5 + 2;
+                    categoryHeight.height + //category label height
+                    5 + 2; //padding + shadow
     
     return height;
 }
@@ -207,24 +218,6 @@
         }
         Round *currentRound = game.currentRound;
         
-        CGSize categoryHeight = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(self.tableView.frame.size.width -20, self.tableView.frame.size.width -20)) withText:currentRound.category];
-        int height =    5 +
-        20 + //roundlabel
-        5 +
-        40 + //profile images height
-        20 + //name label
-        categoryHeight.height +
-        5 + 2;
-        
-        UIView *viewLeft = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, height)];
-        viewLeft.backgroundColor = [UIColor blueAppColor];
-        //[cell.contentView addSubview:viewLeft];
-        
-        
-        UIView *viewRight = [[UIView alloc] initWithFrame:CGRectMake(self.tableView.frame.size.width - 5, 0, 5, height)];
-        viewRight.backgroundColor = [UIColor blueAppColor];
-      //  [cell.contentView addSubview:viewRight];
-        
         [cell setGame:game andRound:currentRound];
         [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
     }
@@ -244,7 +237,7 @@
     if(section == 0)
     {
         if([[UserGames instance] gameCount] == 0) {
-            cell.textLabel.text = @"No Games Found";
+            cell.textLabel.text = @"No Games Found. Press \"New Game\"!";
         } else
         {
             cell.textLabel.text = @"Your Turn to Pick";
@@ -289,73 +282,8 @@
     }
 }
 
-/*-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
-    if(tableView.isDecelerating || tableView.isDragging)
-    {
-        CGRect original = cell.frame;
-        cell.frame = CGRectMake(cell.frame.origin.x, cell.frame.origin.y, 0,0);
-        NSMutableArray *orignalFrames = [[NSMutableArray alloc] init];
-        for(UIView *view in cell.subviews)
-        {
-            [orignalFrames addObject:[NSValue valueWithCGRect:view.frame]];
-            view.frame = CGRectMake(view.frame.origin.x, view.frame.origin.y, 0,0);
-        }
-        ((SelectGameTableViewCell *) cell).top.hidden = TRUE;
-        [UIView animateWithDuration:0.5
-                         animations:^{
-                             cell.frame = original;
-    
-                         
-                         }
-                         completion:^(BOOL finished){
-                             int i = 0;
-                             for(UIView *view in cell.subviews)
-                             {
-                                 [orignalFrames addObject:[NSValue valueWithCGRect:view.frame]];
-                                 view.frame = [[orignalFrames objectAtIndex:i] CGRectValue];
-                                 i ++;
-                             }
-                                ((SelectGameTableViewCell *) cell).top.hidden = FALSE;
-                     }];
-    
-    }
-}*/
-/*
--(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
-    if(tableView.isDecelerating || tableView.isDragging)
-    {
-        ((SelectGameTableViewCell *) cell).top.hidden = YES;
-        cell.frame = CGRectMake(-cell.frame.size.width, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
-        [UIView animateWithDuration:0.5
-                         animations:^{
-                             cell.frame = CGRectMake(0, cell.frame.origin.y, cell.frame.size.width, cell.frame.size.height);
-                             
-                         }
-                         completion:^(BOOL finished){
-                             ((CommentTableViewCell *) cell).top.hidden = NO;
-                         }];
-    } 
-    
-}
-
-- (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section
-{
-    if(tableView.isDecelerating || tableView.isDragging)
-    {
-        view.frame = CGRectMake(-view.frame.size.width, view.frame.origin.y, view.frame.size.width, view.frame.size.height);
-        [UIView animateWithDuration:0.5
-                         animations:^{
-                             view.frame = CGRectMake(0, view.frame.origin.y, view.frame.size.width, view.frame.size.height);
-                             
-                         }
-                         completion:^(BOOL finished){
-                         }];
-    }
-}*/
-
-
--(IBAction)logout:(id)sender{
-    NSLog(@"Logout");
+#pragma mark navigation bar button actions
+-(IBAction)logoutButtonPressed:(id)sender{
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     [appDelegate logoutSinchClient];
     
@@ -366,31 +294,22 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
--(IBAction)newGame:(id)sender{
-    NSLog(@"newGame");
-    // Seque to the Image Wall
+-(IBAction)newGameButtonPressed:(id)sender{
     NewGameDetailsViewController *vc = [[NewGameDetailsViewController alloc] init];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
 
 //Pull to refresh method
-- (void) refreshGames:(UIRefreshControl *)refreshControl
+- (void) refreshGames
 {
     [self showActivityIndicator];
-	if (refreshControl) {
-		[refreshControl setAttributedTitle:[StringUtils makeRefreshText:@"Refreshing data..."]];
-		[refreshControl setEnabled:NO];
-	}
-    
-	// Get any new Wall Images since the last update
+    [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:@"Refreshing data..."]];
+    [self.refreshControl  setEnabled:NO];
 	[Comms getUsersGamesforDelegate:self];
 }
-#pragma mark Game Download
-- (void) newGamesAddedToDatabase:(NSNotification *)note {
-    [self.tableView reloadData];
-}
 
+#pragma mark Game Download
 //Call back delegate for new images finished
 - (void) didGetGamesDelegate:(BOOL)success info: (NSString *) info
 {
@@ -400,26 +319,23 @@
 	[self.tableView reloadData];
     
     // Update the refresh control if we have one
-	if (self.refreshControl) {
-		NSString *lastUpdated = [NSString stringWithFormat:@"Last updated on %@", [_dateFormatter stringFromDate:[NSDate date]]];
-		[self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:lastUpdated]];
-        [self.refreshControl setTintColor:[UIColor whiteColor]];
+    NSString *lastUpdated = [NSString stringWithFormat:@"Last updated on %@", [_dateFormatter stringFromDate:[NSDate date]]];
+    [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:lastUpdated]];
+    [self.refreshControl setTintColor:[UIColor whiteColor]];
         
-		[self.refreshControl endRefreshing];
-	}
+    [self.refreshControl endRefreshing];
 }
 
+#pragma activity indicators
 - (void) showActivityIndicator
 {
-    [self.activityIndicator startAnimating];
-    [self.activityIndicator setHidden:NO];
+    [super showActivityIndicator];
     [self.tableView setUserInteractionEnabled:NO];
 }
 
 -(void) hideActivityIndicator
 {
-    [self.activityIndicator stopAnimating];
-    [self.activityIndicator setHidden:YES];
+    [super hideActivityIndicator];
     [self.tableView setUserInteractionEnabled:YES];
 }
 

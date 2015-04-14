@@ -30,20 +30,9 @@
     //Back Button
     FratBarButtonItem *backButton= [[FratBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
     self.navigationItem.backBarButtonItem = backButton;
-
     
-    // If we are using iOS 6+, put a pull to refresh control in the table
-    if (NSClassFromString(@"UIRefreshControl") != Nil) {
-        UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
-        
-        
-        refreshControl.attributedTitle = [StringUtils makeRefreshText:@"Pull to refresh"];
-        [refreshControl addTarget:self action:@selector(refreshGames:) forControlEvents:UIControlEventValueChanged];
-        [refreshControl setTintColor:[UIColor whiteColor]];
-        [self.tableView addSubview:self.refreshControl];
-        self.refreshControl = refreshControl;
-
-    }
+    self.headerView = [[ScoreHorizontalHeaderScrollView alloc] initWithGame:self.currentGame];
+    [self.view addSubview:self.headerView];
     
     self.tableView = [[UITableView alloc] initWithFrame:CGRectZero];
     self.tableView.delegate = self;
@@ -52,7 +41,15 @@
     [self.tableView setSeparatorColor:[UIColor clearColor]];
     [self.view addSubview: self.tableView];
     
-    [self refreshGames:nil];
+    //Refresh indicator for tableview
+    self.refreshControl  = [[UIRefreshControl alloc] init];
+    self.refreshControl.attributedTitle = [StringUtils makeRefreshText:@"Pull to refresh"];
+    [self.refreshControl  addTarget:self action:@selector(refreshGames) forControlEvents:UIControlEventValueChanged];
+    [self.refreshControl  setTintColor:[UIColor whiteColor]];
+    [self.refreshControl  setBackgroundColor:[UIColor blueAppColor]];
+    [self.tableView addSubview:self.refreshControl];
+    
+    [self refreshGames];
     
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     appDelegate.adView.delegate = self;
@@ -62,25 +59,21 @@
 -(void)viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
-    [self.tableView setFrame:(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - [self bannerHeight]))];
+    [self.headerView setFrame:CGRectMake(0, 0, self.view.frame.size.width, 135)];
+    NSLog(@"Bottom: %f Real: %f", self.headerView.bottom, self.headerView.frame.size.height + self.headerView.frame.origin.y);
+    [self.tableView setFrame:(CGRectMake(0, self.headerView.bottom, self.view.width, self.view.height - [self bannerHeight] - self.headerView.height))];
 }
 
 
 //Pull to refresh method
-- (void) refreshGames:(UIRefreshControl *)refreshControl
+- (void) refreshGames
 {
-    if (refreshControl) {
-        [refreshControl setAttributedTitle:[StringUtils makeRefreshText:@"Refreshing data..."]];
-        [refreshControl setEnabled:NO];
-    }
+    [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:@"Refreshing data..."]];
+    [self.refreshControl setEnabled:NO];
     [Comms getPreviousRoundsInGame:self.currentGame forDelegate:self];
 
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
 #pragma mark - Table view data source
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -98,6 +91,16 @@
     }
 }
 
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    if(self.previousRounds.count == 0)
+    {
+        return 42;
+    } else
+    {
+        return 0;
+    }
+}
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if(initialLoad){
         return UITableViewAutomaticDimension;
@@ -109,9 +112,9 @@
             - 10;   //padding on right
             
         //get the size of the label given the text
-        CGSize topLabelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:round.category];
+        CGSize topLabelSize = [StringUtils sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:round.category];
         NSString *winner = round.winningResponseFrom.first_name;
-        CGSize bottomeLabelSize = [CommentTableViewCell sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(width, width)) withText:[NSString stringWithFormat:@"%@: %@", winner, round.winningResponse]];
+        CGSize bottomeLabelSize = [StringUtils sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(width, width)) withText:[NSString stringWithFormat:@"%@: %@", winner, round.winningResponse]];
         
         
         //1O padding on top and bottom
@@ -120,10 +123,23 @@
     }
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return 0;
-}
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    NSString *cellIdentifier = @"SectionCell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    }
+    if(self.previousRounds.count == 0)
+    {
+        cell.textLabel.text = @"No Past Rounds";
+    }
 
+    cell.textLabel.font = [UIFont defaultAppFontWithSize:16];
+    cell.backgroundColor = [UIColor blueAppColor];
+    cell.textLabel.textColor = [UIColor whiteColor];
+    
+    return cell;
+}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -136,8 +152,6 @@
     if(initialLoad)
     {
         cell.namesLabel.text = @"Loading rounds...";
-    } else if(self.previousRounds.count == 0){
-        cell.namesLabel.text = @"No previous rounds...";
     } else{
         CompletedRound* round = [self.previousRounds objectAtIndex:indexPath.row];
         NSString *winner = round.winningResponseFrom.first_name;
@@ -169,6 +183,20 @@
         }
         // Refresh the table data to show the new games
         [self.tableView reloadData];
+        
+        //Set scores
+        NSDictionary *scores = [[NSMutableDictionary alloc] init];
+        for(User* player in self.currentGame.players)
+        {
+            [scores setValue:@0 forKey:player.fbId];
+        }
+        for(CompletedRound* round in self.previousRounds)
+        {
+            NSNumber *score = [scores objectForKey: round.winningResponseFrom.fbId];
+            [scores setValue:[NSNumber numberWithInteger:([score intValue] + 1)] forKey:round.winningResponseFrom.fbId];
+        }
+        [self.headerView setScoresForPlayers:scores];
+        
         
     }else{
         [self showAlertWithTitle:@"Error!" andSummary:info];

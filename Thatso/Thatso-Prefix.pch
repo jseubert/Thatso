@@ -16,6 +16,7 @@
 
 #import "UIColor+AppColors.h"
 #import "UIFont+AppFonts.h"
+#import "UIView+Sizes.h"
 
 
 #ifndef __IPHONE_3_0

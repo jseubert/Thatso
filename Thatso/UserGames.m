@@ -147,20 +147,6 @@ static UserGames *instance = nil;
     [self.games setObject:[[NSMutableArray alloc] init] forKey:@"Completed"];
 }
 
-- (void) markGame:(NSString*)gameId active:(BOOL)active
-{
-    [self.activeGames setObject:[NSNumber numberWithBool:active] forKey:gameId];
-}
-
--(BOOL) isGameActive:(NSString*)gameId
-{
-    if([self.activeGames objectForKey:gameId] == nil)
-    {
-        [self.activeGames setObject:[NSNumber numberWithBool:YES] forKey:gameId];
-    }
-    return [[self.activeGames objectForKey:gameId] boolValue];
-}
-
 @end
 
 @implementation CurrentRounds

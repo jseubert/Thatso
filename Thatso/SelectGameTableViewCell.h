@@ -20,7 +20,7 @@
 @property (nonatomic, strong) NSMutableArray *nameLabels;
 @property (nonatomic, strong) NSMutableArray *profileViews;
 @property (nonatomic, strong) NSMutableArray *activityIndicators;
-
+@property (nonatomic, strong) NSMutableArray *scoreLabels;
 
 @property (nonatomic, strong) UILabel *end;
 @property (nonatomic, strong) UIView *top;

@@ -21,6 +21,9 @@
 - (void) showLoadingAlert;
 - (void) showLoadingAlertWithText: (NSString *)title;
 
+- (void) showActivityIndicator;
+- (void) hideActivityIndicator;
+
 - (CGFloat) bannerHeight;
 
 @property (nonatomic, strong) UIAlertView *alertView;

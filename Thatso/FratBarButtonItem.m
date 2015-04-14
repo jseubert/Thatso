@@ -20,7 +20,6 @@
                          target:(id)target
                          action:(SEL)action];
     if (self) {
-        // Initialization code
         self.tintColor = [UIColor whiteColor];
         
         NSDictionary *barButtonAppearanceDict = @{NSFontAttributeName : [UIFont defaultAppFontWithSize:18.0 ], NSForegroundColorAttributeName: [UIColor whiteColor]};

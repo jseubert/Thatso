@@ -27,7 +27,6 @@
         self.roundLabel.font = [UIFont defaultAppFontWithSize:16.0];
         [self.roundLabel setTextColor:[UIColor blueAppColor]];
         [self.roundLabel setTextAlignment:NSTextAlignmentLeft];
-       // [self.roundLabel setBackgroundColor:[UIColor redColor]];
         [self addSubview:self.roundLabel];
         
         self.caregoryLabel = [[UILabel alloc] initWithFrame:(CGRectZero)];
@@ -37,7 +36,6 @@
         [self.caregoryLabel setNumberOfLines:0];
         [self.caregoryLabel setLineBreakMode:NSLineBreakByWordWrapping];
         [self.caregoryLabel setText:@"Test"];
-       // [self.caregoryLabel setBackgroundColor:[UIColor redColor]];
         [self addSubview:self.caregoryLabel];
     
     }

@@ -9,21 +9,27 @@
 #import "AppDelegate.h"
 #import "LoginScreenViewController.h"
 #import "FratBarButtonItem.h"
+#import <Fabric/Fabric.h>
+#import <Crashlytics/Crashlytics.h>
+
 
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    //Reset User defaults
+    NSString *domainName = [[NSBundle mainBundle] bundleIdentifier];
+    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:domainName];
+     
+    //Crashlytics
+    [Fabric with:@[CrashlyticsKit]];
     [User registerSubclass];
-    //Beta Testing
+    //Official Release
     //[Parse setApplicationId:@"Riu6PqKr6bUkHTPDqZ7l8Z9YKCCgPD9ginQbW5Bh" clientKey:@"RRLGVt4cvUEEv1o1pU1a4s78O9FdKS7TQk4A3lfv"];
-    
-    
     
     //Internal Testing
     [Parse setApplicationId:@"pSIZJTLx1s9w6TzozqIBMYeZGjQyk9XvbqyzoztM" clientKey:@"Xceuugh2wcGDs4bQ5mPt87gwJCuNl7tyUulWHWeV"];
-    
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
     // Initialize Parse's Facebook Utilities singleton. This uses the FacebookAppID we specified in our App bundle's plist.
@@ -60,7 +66,6 @@
     if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)]){
         [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
     }
-    
     // Handle launching from a notification
 
     application.applicationIconBadgeNumber = 0;
@@ -99,6 +104,10 @@
     [currentInstallation setDeviceTokenFromData:deviceToken];
     //currentInstallation.channels = @[ @"global" ];
     [currentInstallation saveInBackground];
+}
+
+-(void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error{
+    
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {

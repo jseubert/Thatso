@@ -9,6 +9,7 @@
 #import "CommentTableViewCell.h"
 #import "UIColor+AppColors.h"
 #import "NSString+FontSize.h"
+#import "StringUtils.h"
 
 NSInteger const CommentTableViewCellIconSize = 20;
 
@@ -83,7 +84,7 @@ NSInteger const CommentTableViewCellIconSize = 20;
     - 10    //right padding button
     - 10;   //padding on right
     
-    CGSize labelSize = [CommentTableViewCell sizeWithFontAttribute:self.commentLabel.font constrainedToSize:CGSizeMake(width, width) withText:comment];
+    CGSize labelSize = [StringUtils sizeWithFontAttribute:self.commentLabel.font constrainedToSize:CGSizeMake(width, width) withText:comment];
     
     [self.commentLabel setText:comment];
     [self.commentLabel setFrame:CGRectMake(self.commentLabel.frame.origin.x,
@@ -92,17 +93,5 @@ NSInteger const CommentTableViewCellIconSize = 20;
                                          labelSize.height)];
     
 }
-
-
-+ (CGSize) sizeWithFontAttribute:(UIFont *)font constrainedToSize:(CGSize)size withText: (NSString *)text{
-    CGRect res = [text boundingRectWithSize:size
-                                    options:NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin
-                                 attributes:@{NSFontAttributeName : font}
-                                    context:nil];
-    return CGSizeMake(ceilf(res.size.width), ceilf(res.size.height));
-}
-
-
-
 
 @end

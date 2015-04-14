@@ -11,6 +11,7 @@
 #import "DataStore.h"
 #import "CommentTableViewCell.h"
 #import "UIImage+Scaling.h"
+#import "StringUtils.h"
 
 @implementation SelectGameTableViewCell
 
@@ -22,7 +23,7 @@
         bgColorView.backgroundColor = [UIColor lightBlueAppColor];
         [self setSelectedBackgroundView:bgColorView];
         
-        
+        //Initialize Views
         self.roundNumberLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         self.roundNumberLabel.font = [UIFont defaultAppFontWithSize:16.0];
         self.roundNumberLabel.text = @"1";
@@ -121,7 +122,7 @@
     [self.top.layer insertSublayer:gradient atIndex:0];
     
     
-    int width = [CommentTableViewCell sizeWithFontAttribute:self.roundNumberLabel.font constrainedToSize:(CGSizeMake(self.frame.size.width, 20)) withText:self.roundNumberLabel.text].width +10;
+    int width = [StringUtils sizeWithFontAttribute:self.roundNumberLabel.font constrainedToSize:(CGSizeMake(self.frame.size.width, 20)) withText:self.roundNumberLabel.text].width +10;
     self.roundNumberLabel.frame = CGRectMake(self.frame.size.width - width - 10,
                                              5,
                                              width,
@@ -164,7 +165,7 @@
         count ++;
     }
     
-    CGSize categoryHeight = [CommentTableViewCell sizeWithFontAttribute:self.categoryLabel.font constrainedToSize:(CGSizeMake(self.frame.size.width -20, self.frame.size.width -20)) withText:self.categoryLabel.text];
+    CGSize categoryHeight = [StringUtils sizeWithFontAttribute:self.categoryLabel.font constrainedToSize:(CGSizeMake(self.frame.size.width -20, self.frame.size.width -20)) withText:self.categoryLabel.text];
     
     self.categoryLabel.frame = CGRectMake(10,
                                           [self.nameLabels[0] frame].size.height + [self.nameLabels[0] frame].origin.y,
@@ -253,7 +254,7 @@
         [end setTextColor:[UIColor blueAppColor]];
         [self addSubview:end];
     }
-    CGSize categoryHeight = [CommentTableViewCell sizeWithFontAttribute:self.categoryLabel.font constrainedToSize:(CGSizeMake(self.frame.size.width -20, self.frame.size.width -20)) withText:round.category];
+    CGSize categoryHeight = [StringUtils sizeWithFontAttribute:self.categoryLabel.font constrainedToSize:(CGSizeMake(self.frame.size.width -20, self.frame.size.width -20)) withText:round.category];
     
     self.categoryLabel.frame = CGRectMake(10,
                                           nameLabel.frame.size.height + nameLabel.frame.origin.y,

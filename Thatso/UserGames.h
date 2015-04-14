@@ -14,7 +14,6 @@
 @property (nonatomic, strong) NSMutableDictionary *activeGames;
 +(UserGames *) instance;
 - (void) reset;
-- (void) markGame:(NSString*)gameId active:(BOOL)active;
 - (void) refreshGameID:(NSString *)gameId;
 - (void) refreshGameID:(NSString *)gameId withBlock:(void (^)(Game*))block;
 - (void) addGame: (Game *) game;

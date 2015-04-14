@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
+#import "ScoreHorizontalHeaderScrollView.h"
 
 @interface PreviousRoundsTableViewController : BaseViewController <DidGetPreviousRounds, UITableViewDataSource, UITableViewDelegate>
 {
@@ -20,4 +21,5 @@
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet UIRefreshControl *refreshControl;
 
+@property(strong, nonatomic) ScoreHorizontalHeaderScrollView *headerView; 
 @end

@@ -28,7 +28,7 @@
 		// Was login successful ?
 		if (!user) {
 			if (!error) {
-                [delegate didlogin:NO info:@"The user cancelled the Facebook login."];
+                [delegate didlogin:NO info:@"The Facebook login was cancelled."];
             } else {
                 [delegate didlogin:NO info: [NSString stringWithFormat:@"An error occurred: %@", error.localizedDescription]];
             }
@@ -49,10 +49,6 @@
                 
                 // Launch another thread to handle the download of the user's Facebook profile picture
                 [Comms getProfilePictureForUser:[user objectForKey:UserFacebookID] withBlock:nil];
-                
-                    
-                // Add the User to the list of friends in the DataStore
-                //[[DataStore instance].fbFriends setObject:user forKey:[user objectForKey:UserFacebookID]];
                 
                 //Now get all your friends and make sure theyre added
                 [Comms getAllFacebookFriends:delegate];
@@ -79,15 +75,11 @@
              NSArray *friends = result[@"data"];
              NSMutableArray *friendsIDs = [[NSMutableArray alloc] init];
              for (FBGraphObject* friend in friends) {
-                 NSLog(@"Friend: %@", friend);
                  [friendsIDs addObject:[friend objectForKey:ID]];
-                 NSLog(@"Friend: %@", [friend objectForKey:ID]);
              }
              
              PFQuery *getFBFriends = [User query];
              [getFBFriends whereKey:UserFacebookID containedIn:friendsIDs];
-             //[getFBFriends whereKey:UserFacebookID containsString:@"1467121910205120"];
-             
              
              [getFBFriends findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
                  if(error)
@@ -99,9 +91,6 @@
                          [[DataStore instance].fbFriends setObject:friend forKey:friend[UserFacebookID]];
                          [Comms getProfilePictureForUser:[friend objectForKey:UserFacebookID] withBlock:nil];
                      }
-                     
-                     [Comms getCategories];
-                     
                      [delegate didlogin:YES info: nil];
                  }
              }];
@@ -598,10 +587,6 @@
     
 }
 
-    
-
-
-
 + (void) getPreviousRoundsInGame: (Game * ) game forDelegate:(id<DidGetPreviousRounds>)delegate
 {
     PFQuery *getRounds = [PFQuery queryWithClassName:CompletedRoundClass];
@@ -624,17 +609,14 @@
 
 + (void) getCategories
 {
-
+    //Get all categories
     PFQuery *getCategory = [PFQuery queryWithClassName:CategoryClass];
-    
     [DataStore instance].categories = [[NSMutableArray alloc] initWithArray:[getCategory findObjects]];
     
+    //Get family categories
     PFQuery *getFamilyCategory = [PFQuery queryWithClassName:CategoryClass];
     [getFamilyCategory whereKey:CategoryIsPG equalTo:[NSNumber numberWithBool:YES]];
     [DataStore instance].familyCategories = [[NSMutableArray alloc] initWithArray:[getFamilyCategory findObjects]];
-    
-    NSLog(@"Categories: %@", [DataStore instance].categories);
-    NSLog(@"FamilyCategoreis: %@", [DataStore instance].familyCategories);
 }
 
 + (void) getuser: (NSString *)fbId
@@ -646,7 +628,6 @@
     if(user != nil)
     {
         [[DataStore instance].fbFriends setObject:user forKey:fbId];
-    
         [Comms getProfilePictureForUser:[user objectForKey:UserFacebookID] withBlock:nil];
     }
 }
@@ -654,6 +635,7 @@
 
 + (void) getProfilePictureForUser: (NSString*) fbId withBlock:(void (^)(UIImage*))block
 {
+    //NSOperationQueue background thread?
     [[NSOperationQueue profilePictureOperationQueue] addOperationWithBlock:^ {
         // Build a profile picture URL from the user's Facebook user id
         NSString *profilePictureURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", fbId];
