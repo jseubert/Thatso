@@ -26,7 +26,7 @@
 
     self.navigationController.navigationBar.barTintColor = [UIColor blueAppColor];
     self.titleLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    [self.titleLabel setText:@"ThatSo"];
+    [self.titleLabel setText:@"ThatSo™"];
     [self.view addSubview:self.titleLabel];
     [self.titleLabel setFont:[UIFont defaultAppFontWithSize:48.0f]];
     [self.titleLabel setTextAlignment:NSTextAlignmentCenter];

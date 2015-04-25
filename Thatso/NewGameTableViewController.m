@@ -132,7 +132,7 @@
     return NO;
 }
 
--(IBAction)nextPressed:(id)sender{
+-(IBAction)doneButtonPressed:(id)sender{
     NSLog(@"startGame");
     [self showLoadingAlertWithText:@"Starting New Game..."];
     if([self.tableView indexPathsForSelectedRows].count < 1) {

@@ -10,11 +10,11 @@
 
 @interface NewGameDetailsViewController : BaseViewController <UITextFieldDelegate>
 
-@property (strong, nonatomic) IBOutlet UILabel *gameNameLabel;
-@property (strong, nonatomic) IBOutlet UITextField *gameNameTextField;
+@property (strong, nonatomic) UILabel *gameNameLabel;
+@property (strong, nonatomic) UITextField *gameNameTextField;
 
-@property (strong, nonatomic) IBOutlet UILabel *adultContentLabel;
-@property (strong, nonatomic) IBOutlet UISwitch *adultContentSwitch;
+@property (strong, nonatomic) UILabel *adultContentLabel;
+@property (strong, nonatomic) UISwitch *adultContentSwitch;
 
 
 @end

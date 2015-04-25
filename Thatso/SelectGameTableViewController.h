@@ -11,6 +11,7 @@
 
 @interface SelectGameTableViewController : BaseViewController <GetGamesDelegate, UITableViewDataSource, UITableViewDelegate>
 
-@property (strong, nonatomic) IBOutlet UITableView *tableView;
-@property (strong, nonatomic) IBOutlet UIRefreshControl *refreshControl;
+@property (strong, nonatomic) UITableView *tableView;
+@property (strong, nonatomic) UIRefreshControl *refreshControl;
+@property (strong, nonatomic) UITextView *emptyTableView;
 @end

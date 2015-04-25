@@ -20,9 +20,9 @@
     BOOL uploadingComment; 
 }
 
-@property (strong, nonatomic) IBOutlet GameHeaderView *headerView;
-@property (strong, nonatomic) IBOutlet UITableView *tableView;
-@property (strong, nonatomic) IBOutlet PHFComposeBarView *composeBarView;
+@property (strong, nonatomic) GameHeaderView *headerView;
+@property (strong, nonatomic) UITableView *tableView;
+@property (strong, nonatomic) PHFComposeBarView *composeBarView;
 @property (strong, nonatomic) UITextView *emptyTableView;
 
 @property (strong, nonatomic) id<SINMessageClient> messageClient;

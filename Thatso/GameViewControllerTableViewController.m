@@ -402,27 +402,27 @@
     {
     
         self.comments = [[CurrentRounds instance].currentComments objectForKey:self.currentGame.objectId];
-        // Update the refresh control if we have one
-        if (self.refreshControl) {
-            NSString *lastUpdated = [NSString stringWithFormat:@"Last updated on %@", [_dateFormatter stringFromDate:[NSDate date]]];
-            [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:lastUpdated]];
-            [self.refreshControl setTintColor:[UIColor whiteColor]];
-        
-            [self.refreshControl endRefreshing];
-        }
+        // Update the refresh control
+        NSString *lastUpdated = [NSString stringWithFormat:@"Last updated on %@", [_dateFormatter stringFromDate:[NSDate date]]];
+        [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:lastUpdated]];
+        [self.refreshControl setTintColor:[UIColor whiteColor]];
+    
+        [self.refreshControl endRefreshing];
         // Refresh the table data to show the new games
         if(self.comments.count > 0)
         {
             [self.tableView setBackgroundView:nil];
         } else{
+            [self.emptyTableView setText: [self isJudge] ? @"\n\nNo one has answered yet": @"\n\nNo one has answered yet.\nAdd your answer below!"];
             [self.tableView setBackgroundView:self.emptyTableView];
         }
         [self.tableView reloadData];
     
     }else{
-        if (self.refreshControl) {
-            [self.refreshControl endRefreshing];
-        }
+        [self.emptyTableView setText:@"\n\nError loading comments\nPull to refresh"];
+        [self.tableView setBackgroundView:self.emptyTableView];
+        [self.refreshControl endRefreshing];
+
         [self showAlertWithTitle:@"Error!" andSummary:info];
         
     }

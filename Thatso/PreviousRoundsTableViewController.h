@@ -18,8 +18,8 @@
 @property(nonatomic) Game *currentGame;
 @property(nonatomic) NSMutableArray* previousRounds;
 
-@property (strong, nonatomic) IBOutlet UITableView *tableView;
-@property (strong, nonatomic) IBOutlet UIRefreshControl *refreshControl;
+@property (strong, nonatomic) UITableView *tableView;
+@property (strong, nonatomic) UIRefreshControl *refreshControl;
 
 @property(strong, nonatomic) ScoreHorizontalHeaderScrollView *headerView; 
 @end

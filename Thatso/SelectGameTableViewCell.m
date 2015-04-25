@@ -78,7 +78,7 @@
                 [self.profileViews addObject:profileView];
             
                 UIActivityIndicatorView* activityIndicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectZero];
-                [activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
+                [activityIndicator setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
                 [activityIndicator setHidden:YES];
                 [self addSubview:activityIndicator];
             

@@ -18,13 +18,14 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    //Reset User defaults
+    //Reset User defaults - for testing
     NSString *domainName = [[NSBundle mainBundle] bundleIdentifier];
     [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:domainName];
      
     //Crashlytics
     [Fabric with:@[CrashlyticsKit]];
     [User registerSubclass];
+    
     //Official Release
     //[Parse setApplicationId:@"Riu6PqKr6bUkHTPDqZ7l8Z9YKCCgPD9ginQbW5Bh" clientKey:@"RRLGVt4cvUEEv1o1pU1a4s78O9FdKS7TQk4A3lfv"];
     
@@ -45,9 +46,7 @@
     [application registerForRemoteNotifications];
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
-    [self.window makeKeyAndVisible];
     
     LoginScreenViewController *rootViewController = [[LoginScreenViewController alloc] init];
     
@@ -62,13 +61,7 @@
     [self.window makeKeyAndVisible];
     [self.window addSubview:navController.view];
     self.window.rootViewController = navController;
-    
-    if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)]){
-        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
-    }
-    // Handle launching from a notification
 
-    application.applicationIconBadgeNumber = 0;
     
     self.adView = [[ADBannerView alloc] init];
     
@@ -83,6 +76,7 @@
         currentInstallation.badge = 0;
         [currentInstallation saveEventually];
     }
+    application.applicationIconBadgeNumber = 0;
 }
 
 - (BOOL)application:(UIApplication *)application
@@ -102,7 +96,7 @@
     // Store the deviceToken in the current installation and save it to Parse.
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     [currentInstallation setDeviceTokenFromData:deviceToken];
-    //currentInstallation.channels = @[ @"global" ];
+    currentInstallation.channels = @[ @"global" ];
     [currentInstallation saveInBackground];
 }
 

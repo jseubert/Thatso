@@ -34,4 +34,14 @@
     return self.frame.size.height;
 }
 
+-(CGFloat) originX
+{
+    return self.frame.origin.x;
+}
+
+-(CGFloat) originY
+{
+    return self.frame.origin.y;
+}
+
 @end

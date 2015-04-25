@@ -65,6 +65,15 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
     [self.tableView setHidden:YES];
     [self.view addSubview: self.tableView];
     
+    //Empty Table View
+    self.emptyTableView = [[UITextView alloc] initWithFrame:CGRectZero];
+    [self.emptyTableView setText: @"No Games Found. Press \"New Game\"!"];
+    [self.emptyTableView setFont:[UIFont defaultAppFontWithSize:20.0f]];
+    [self.emptyTableView setTextColor:[UIColor whiteColor]];
+    [self.emptyTableView setBackgroundColor:[UIColor clearColor]];
+    [self.emptyTableView setTextAlignment:NSTextAlignmentCenter];
+    [self.emptyTableView setSelectable:NO];
+    
     //Add Activity indicator
     [self.view addSubview:self.activityIndicator];
     
@@ -158,12 +167,7 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
     //Make Variable size height
     if(section == 0)
     {
-        if([[UserGames instance] gameCount] == 0) {
-            return 42;
-        } else
-        {
-            return ([[[UserGames instance].games objectForKey:@"Judge"] count] == 0) ? 0 : 40;
-        }
+        return ([[[UserGames instance].games objectForKey:@"Judge"] count] == 0) ? 0 : 40;
     } else if (section == 1)
     {
         return ([[[UserGames instance].games objectForKey:@"CommentNeeded"] count] == 0) ? 0 : 40;
@@ -236,13 +240,8 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
     }
     if(section == 0)
     {
-        if([[UserGames instance] gameCount] == 0) {
-            cell.textLabel.text = @"No Games Found. Press \"New Game\"!";
-        } else
-        {
-            cell.textLabel.text = @"Your Turn to Pick";
-            cell.backgroundColor = [UIColor lightBlueAppColor];
-        }
+        cell.textLabel.text = @"Your Turn to Pick";
+        cell.backgroundColor = [UIColor lightBlueAppColor];
     } else if (section == 1)
     {
         cell.textLabel.text = @"Add Your Response";
@@ -322,8 +321,22 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
     NSString *lastUpdated = [NSString stringWithFormat:@"Last updated on %@", [_dateFormatter stringFromDate:[NSDate date]]];
     [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:lastUpdated]];
     [self.refreshControl setTintColor:[UIColor whiteColor]];
-        
     [self.refreshControl endRefreshing];
+    
+    //Set background view for table view
+    if(success) {
+        if([[UserGames instance] gameCount] > 0)
+        {
+            [self.tableView setBackgroundView:nil];
+        }else{
+            [self.emptyTableView setText: @"No Games Found. Press \"New Game\"!"];
+            [self.tableView setBackgroundView:self.emptyTableView];
+        }
+    } else{
+        [self.emptyTableView setText:@"Error loading games\nPull to try again"];
+        [self.tableView setBackgroundView:self.emptyTableView];
+        [self showAlertWithTitle:@"Error loading gamesr!" andSummary:@"Pull to try again"];
+    }
 }
 
 #pragma activity indicators
