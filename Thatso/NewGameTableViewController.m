@@ -135,14 +135,13 @@
 -(IBAction)doneButtonPressed:(id)sender{
     NSLog(@"startGame");
     [self showLoadingAlertWithText:@"Starting New Game..."];
-    if([self.tableView indexPathsForSelectedRows].count < 1) {
-        [self showAlertWithTitle:@"Not enough Friends Selected" andSummary:@"Must choose at least 2 other people."];
+    if([self.tableView indexPathsForSelectedRows].count < 2) {
+        [self showAlertWithTitle:@"Woah! You trying to be super exclusive?" andSummary:@"You have to choose at least 2 other players"];
 
     } else {
         NSMutableArray* selectedFriends = [[NSMutableArray alloc] init];
         for(NSIndexPath * indexPath in [self.tableView indexPathsForSelectedRows])
         {
-            NSLog(@"addingFreind: %ld", (long)indexPath.row);
             [selectedFriends addObject:[self.fbFriendsArray objectAtIndex:indexPath.row]];
         }
         

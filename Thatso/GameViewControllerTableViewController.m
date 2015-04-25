@@ -16,6 +16,9 @@
 
 @implementation GameViewControllerTableViewController
 
+NSString * const ViewedGameScreenJudge = @"ViewedGameScreenJudge";
+NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
+
 -(BOOL) isJudge
 {
     return [[[User currentUser] objectForKey:UserFacebookID] isEqualToString:self.currentRound[RoundJudge]];
@@ -113,6 +116,28 @@
         if(![user.objectId isEqualToString:[User currentUser].objectId])
         {
             [self.nonUserPlayers  addObject:user];
+        }
+    }
+    
+    //Show Tutorial Stuff
+    if([self isJudge])
+    {
+        if(![[NSUserDefaults standardUserDefaults] boolForKey:ViewedGameScreenJudge])
+        {
+            
+            UIAlertView *newAlertView = [[UIAlertView alloc] initWithTitle:@"In this game you are the judge. You pick the best response below submitted by the other players in the game. When you press one, the winner is announced and a new round will start with a new judge and topic." message:nil delegate:nil cancelButtonTitle:@"Kewl" otherButtonTitles: nil];
+            [newAlertView show];
+            
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:ViewedGameScreenJudge];
+        }
+    } else{
+        if(![[NSUserDefaults standardUserDefaults] boolForKey:ViewedGameScreenPlayer])
+        {
+            
+            UIAlertView *newAlertView = [[UIAlertView alloc] initWithTitle:@"In this game you need to submit your best response to the topic. Try to think of something the judge will pick!" message:nil delegate:nil cancelButtonTitle:@"Kewl" otherButtonTitles: nil];
+            [newAlertView show];
+            
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:ViewedGameScreenPlayer];
         }
     }
 }
@@ -369,6 +394,11 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if([self isJudge])
     {
+        if(self.comments.count < 2)
+        {
+            [self showAlertWithTitle:@"Hold on cowboy!" andSummary:@"Wait for there to be at least two responses before picking one."];
+            return;
+        }
         [self showActivityIndicator];
         Comment* winningComment = [self.comments objectAtIndex:indexPath.row];
         

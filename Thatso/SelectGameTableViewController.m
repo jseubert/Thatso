@@ -90,15 +90,9 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
     //Tutorial Section - show tutorial screen if this is the first time the user has seen this screen?
     if(![[NSUserDefaults standardUserDefaults] boolForKey:ViewedSelectGameScreen])
     {
-        /*
-        UIAlertView *newAlertView = [[UIAlertView alloc] initWithTitle:@"This is this screen" message:nil delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
-        [newAlertView show];*/
-   /*     UIViewController *V2 = [[UIViewController alloc] init];
-        V2.modalPresentationStyle = UIModalPresentationFormSheet;
-        V2.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-        [self presentModalViewController:V2 animated:YES];
-        V2.view.superview.frame = CGRectMake(0, 0, 540, 620); //it's important to do this after presentModalViewController
-        V2.view.superview.center = self.view.center;*/
+        
+        UIAlertView *newAlertView = [[UIAlertView alloc] initWithTitle:@"Awesome! This is the \"Games\" Screen. Here you can see all the games you are a part of. They are sorted by games you are the judge of and need to pick an answer, games you need to add a response to for the judge to pick, and games you have answered and are waiting on the judge to pick. Press \"New Game\" to create a game with your friends!" message:nil delegate:nil cancelButtonTitle:@"Kewl" otherButtonTitles: nil];
+        [newAlertView show];
         
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:ViewedSelectGameScreen];
     }

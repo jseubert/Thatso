@@ -19,6 +19,8 @@
 
 @implementation PreviousRoundsTableViewController
 
+NSString * const ViewedPreviousRoundsScreen = @"ViewedPreviousRoundsScreen";
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -54,13 +56,21 @@
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     appDelegate.adView.delegate = self;
     canShowBanner = YES;
+    
+    if(![[NSUserDefaults standardUserDefaults] boolForKey:ViewedPreviousRoundsScreen])
+    {
+        
+        UIAlertView *newAlertView = [[UIAlertView alloc] initWithTitle:@"Here you can see all the past rounds in this game and check who has won the most rounds." message:nil delegate:nil cancelButtonTitle:@"Kewl" otherButtonTitles: nil];
+        [newAlertView show];
+        
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:ViewedPreviousRoundsScreen];
+    }
 }
 
 -(void)viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
     [self.headerView setFrame:CGRectMake(0, 0, self.view.frame.size.width, 135)];
-    NSLog(@"Bottom: %f Real: %f", self.headerView.bottom, self.headerView.frame.size.height + self.headerView.frame.origin.y);
     [self.tableView setFrame:(CGRectMake(0, self.headerView.bottom, self.view.width, self.view.height - [self bannerHeight] - self.headerView.height))];
 }
 

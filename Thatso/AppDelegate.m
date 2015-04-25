@@ -20,7 +20,7 @@
 {
     //Reset User defaults - for testing
     NSString *domainName = [[NSBundle mainBundle] bundleIdentifier];
-    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:domainName];
+   // [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:domainName];
      
     //Crashlytics
     [Fabric with:@[CrashlyticsKit]];
