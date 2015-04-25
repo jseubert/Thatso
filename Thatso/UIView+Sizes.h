@@ -14,6 +14,7 @@
 @property (nonatomic) CGFloat height;
 @property (nonatomic) CGFloat end;
 @property (nonatomic) CGFloat bottom;
-
+@property (nonatomic) CGFloat originX;
+@property (nonatomic) CGFloat originY;
 
 @end

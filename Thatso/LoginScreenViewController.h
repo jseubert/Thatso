@@ -9,11 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "PHFComposeBarView.h"
 
-@interface LoginScreenViewController : UIViewController <DidLoginDelegate, UIPageViewControllerDataSource>
+@interface LoginScreenViewController : UIViewController <DidLoginDelegate>
 
 @property (strong, nonatomic) UIActivityIndicatorView *activityIndicator;
 @property (strong, nonatomic) UIButton *loginButton;
 @property (strong, nonatomic) UILabel *titleLabel;
+@property (strong, nonatomic) UIImageView *backgroundImage; 
 
 @property (strong, nonatomic) UIPageViewController *pageController;
 

@@ -10,7 +10,7 @@
 #import "SelectGameTableViewController.h"
 #import "UIButton+CustomButtons.h"
 #import "AppDelegate.h"
-#import "LoginPageViewController.h"
+#import "DeviceUtils.h"
 #import <Crashlytics/Crashlytics.h>
 
 
@@ -25,6 +25,7 @@
     [super viewDidLoad];
 
     self.navigationController.navigationBar.barTintColor = [UIColor blueAppColor];
+    
     self.titleLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     [self.titleLabel setText:@"ThatSo™"];
     [self.view addSubview:self.titleLabel];
@@ -33,6 +34,10 @@
     [self.titleLabel setTextColor:[UIColor whiteColor]];
     [[[self titleLabel] layer] setCornerRadius:10.0f];
     [[self.titleLabel layer] setBorderColor:[UIColor whiteColor].CGColor];
+    
+    self.backgroundImage = [[UIImageView alloc] initWithFrame:CGRectZero];
+    self.backgroundImage.contentMode = UIViewContentModeScaleAspectFit;
+    [self.view addSubview:self.backgroundImage];
     
     self.loginButton = [UIButton  buttonWithType:UIButtonTypeRoundedRect];
     [self.loginButton addTarget:self action:@selector(loginPressed:) forControlEvents:UIControlEventTouchUpInside];
@@ -49,10 +54,33 @@
 -(void)viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
-    
-     self.titleLabel.frame = CGRectMake(20, self.view.frame.size.height/2 - 60, self.view.frame.size.width -40, 50);
-    self.loginButton.frame = CGRectMake(20, self.view.frame.size.height - 70, self.view.frame.size.width -40, 50);
+    UIImage *backgroundImage;
+    if(IS_IPAD)
+    {
+        if(UIDeviceOrientationIsLandscape([[UIDevice currentDevice] orientation]))
+        {
+            backgroundImage = [UIImage imageNamed:@"iPadLoginScreenLandscape.png"];
+        }else
+        {
+            backgroundImage = [UIImage imageNamed:@"iPadLoginScreenPortrait.png"];
+        }
+        self.loginButton.frame = CGRectMake(30, self.view.frame.size.height - 120, self.view.frame.size.width/2, 80);
+        self.loginButton.center = CGPointMake(self.view.center.x, self.loginButton.center.y);
+
+    } else{
+        if(IS_IPHONE_5)
+        {
+            backgroundImage = [UIImage imageNamed:@"iPhone5LoginScreen.png"];
+        }else{
+            backgroundImage = [UIImage imageNamed:@"iPhoneLoginScreen.png"];
+        }
+        self.loginButton.frame = CGRectMake(30, self.view.frame.size.height - 80, self.view.frame.size.width - 60, 50);
+    }
+    [self.backgroundImage setImage:backgroundImage];
+    //self.view.originY - self.navigationController.view.height - 20
+    self.backgroundImage.frame = CGRectMake(0, self.view.originY - self.navigationController.navigationBar.height - 10, self.view.width, self.view.height);
     self.activityIndicator.frame = CGRectMake(self.view.frame.size.width/2 - 40, self.view.frame.size.height/2 -30, 80, 80);
+    self.activityIndicator.center = self.loginButton.center;
 }
 
 
@@ -72,6 +100,9 @@
 {
     // Disable the Login button to prevent multiple touches
     [self.loginButton setEnabled:NO];
+    [self.loginButton setHidden:YES];
+    
+    [self.activityIndicator setHidden:NO];
     [self.activityIndicator startAnimating];
     
     // Do the login
@@ -83,9 +114,11 @@
     NSLog(@"commsDidLogin");
 	// Re-enable the Login button
 	[self.loginButton setEnabled:YES];
+    [self.loginButton setHidden:NO];
     
 	// Stop the activity indicator
 	[self.activityIndicator stopAnimating];
+    [self.activityIndicator setHidden:YES];
     
 	// Did we login successfully ?
 	if (success) {
@@ -117,42 +150,5 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
-#pragma Mark pageViewController datasource delegate
--(LoginPageViewController *)viewControllerAtIndex:(NSUInteger)index {
-    
-    LoginPageViewController *childViewController = [[LoginPageViewController alloc] init];
-    childViewController.index = index;
-    
-    return childViewController;
-    
-}
-- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController {
-    
-    NSUInteger index = [(LoginPageViewController *)viewController index];
-    
-    if (index == 0) {
-        return nil;
-    }
-    
-    index--;
-    
-    return [self viewControllerAtIndex:index];
-    
-}
-
-- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController {
-    
-    NSUInteger index = [(LoginPageViewController *)viewController index];
-    
-    
-    index++;
-    
-    if (index == 5) {
-        return nil;
-    }
-    
-    return [self viewControllerAtIndex:index];
-    
-}
 
 @end

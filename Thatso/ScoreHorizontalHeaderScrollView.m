@@ -19,6 +19,9 @@
     if (self) {
         self.profileViews = [[NSMutableArray alloc] init];
         self.currentGame = currentGame;
+        [self setShowsHorizontalScrollIndicator:NO];
+        [self setShowsVerticalScrollIndicator:NO];
+        
         [self setBackgroundColor:[UIColor lightBlueAppColor]];
         
         self.scoreLabel = [[UILabel alloc] initWithFrame:(CGRectZero)];
@@ -27,6 +30,7 @@
         [self.scoreLabel setTextAlignment:NSTextAlignmentLeft];
         [self.scoreLabel setText:@"Score:"];
         [self addSubview:self.scoreLabel];
+        
         
         for(User *player in currentGame.players)
         {

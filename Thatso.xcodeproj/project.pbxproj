@@ -12,7 +12,6 @@
 		95152C661ACF0EDB000C47D0 /* ScoreHorizontalHeaderScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 95152C651ACF0EDB000C47D0 /* ScoreHorizontalHeaderScrollView.m */; };
 		95152C691ACF4429000C47D0 /* SmallProfileView.m in Sources */ = {isa = PBXBuildFile; fileRef = 95152C681ACF4429000C47D0 /* SmallProfileView.m */; };
 		95152C6C1ACF4B5B000C47D0 /* UIView+Sizes.m in Sources */ = {isa = PBXBuildFile; fileRef = 95152C6B1ACF4B5B000C47D0 /* UIView+Sizes.m */; };
-		95152C721AD1EAEF000C47D0 /* LoginPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 95152C711AD1EAEF000C47D0 /* LoginPageViewController.m */; };
 		953287DE1A3246F000AC17EA /* GameHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 953287DD1A3246F000AC17EA /* GameHeaderView.m */; };
 		953D497119DF59C700596E7B /* SelectGameTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 953D497019DF59C700596E7B /* SelectGameTableViewCell.m */; };
 		9540A57F1A1D05C200EA9FEA /* Game.m in Sources */ = {isa = PBXBuildFile; fileRef = 9540A57E1A1D05C200EA9FEA /* Game.m */; };
@@ -30,6 +29,11 @@
 		9A10E2FA1A380FF500C3B541 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A10E2F91A380FF500C3B541 /* UIImage+Scaling.m */; };
 		9A10E2FD1A3AB01A00C3B541 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A10E2FC1A3AB01A00C3B541 /* User.m */; };
 		9A10E3001A3AD75A00C3B541 /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A10E2FF1A3AD75A00C3B541 /* BaseViewController.m */; };
+		9A1C140F1AEC4E6700789A6E /* iPadLoginScreenLandscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A1C140B1AEC4E6700789A6E /* iPadLoginScreenLandscape.png */; };
+		9A1C14101AEC4E6700789A6E /* iPadLoginScreenPortrait.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A1C140C1AEC4E6700789A6E /* iPadLoginScreenPortrait.png */; };
+		9A1C14111AEC4E6700789A6E /* iPhone5LoginScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A1C140D1AEC4E6700789A6E /* iPhone5LoginScreen.png */; };
+		9A1C14121AEC4E6700789A6E /* iPhoneLoginScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A1C140E1AEC4E6700789A6E /* iPhoneLoginScreen.png */; };
+		9A1C14151AEC51C500789A6E /* DeviceUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A1C14141AEC51C500789A6E /* DeviceUtils.m */; };
 		9A1FFC961A0AAF9400A82788 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A1FFC951A0AAF9400A82788 /* Constants.m */; };
 		9A2C6F6719A8324200DCF2B7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A2C6F6619A8324200DCF2B7 /* Foundation.framework */; };
 		9A2C6F6919A8324200DCF2B7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A2C6F6819A8324200DCF2B7 /* CoreGraphics.framework */; };
@@ -84,8 +88,6 @@
 		95152C681ACF4429000C47D0 /* SmallProfileView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmallProfileView.m; sourceTree = "<group>"; };
 		95152C6A1ACF4B5B000C47D0 /* UIView+Sizes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Sizes.h"; sourceTree = "<group>"; };
 		95152C6B1ACF4B5B000C47D0 /* UIView+Sizes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Sizes.m"; sourceTree = "<group>"; };
-		95152C701AD1EAEF000C47D0 /* LoginPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginPageViewController.h; sourceTree = "<group>"; };
-		95152C711AD1EAEF000C47D0 /* LoginPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginPageViewController.m; sourceTree = "<group>"; };
 		953287DC1A3246F000AC17EA /* GameHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameHeaderView.h; sourceTree = "<group>"; };
 		953287DD1A3246F000AC17EA /* GameHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameHeaderView.m; sourceTree = "<group>"; };
 		953D496F19DF59C700596E7B /* SelectGameTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectGameTableViewCell.h; sourceTree = "<group>"; };
@@ -120,6 +122,12 @@
 		9A10E2FC1A3AB01A00C3B541 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		9A10E2FE1A3AD75A00C3B541 /* BaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseViewController.h; sourceTree = "<group>"; };
 		9A10E2FF1A3AD75A00C3B541 /* BaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseViewController.m; sourceTree = "<group>"; };
+		9A1C140B1AEC4E6700789A6E /* iPadLoginScreenLandscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iPadLoginScreenLandscape.png; sourceTree = "<group>"; };
+		9A1C140C1AEC4E6700789A6E /* iPadLoginScreenPortrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iPadLoginScreenPortrait.png; sourceTree = "<group>"; };
+		9A1C140D1AEC4E6700789A6E /* iPhone5LoginScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iPhone5LoginScreen.png; sourceTree = "<group>"; };
+		9A1C140E1AEC4E6700789A6E /* iPhoneLoginScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iPhoneLoginScreen.png; sourceTree = "<group>"; };
+		9A1C14131AEC51C500789A6E /* DeviceUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceUtils.h; sourceTree = "<group>"; };
+		9A1C14141AEC51C500789A6E /* DeviceUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceUtils.m; sourceTree = "<group>"; };
 		9A1FFC951A0AAF9400A82788 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		9A1FFC971A0AAFA500A82788 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		9A2C6F6319A8324200DCF2B7 /* Thatso.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Thatso.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -395,8 +403,6 @@
 				9AFBF0CE19CD4826004F6550 /* GameViewControllerTableViewController.m */,
 				9A49CA111A18588B00F7CFCA /* PreviousRoundsTableViewController.h */,
 				9A49CA121A18588B00F7CFCA /* PreviousRoundsTableViewController.m */,
-				95152C701AD1EAEF000C47D0 /* LoginPageViewController.h */,
-				95152C711AD1EAEF000C47D0 /* LoginPageViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -429,6 +435,8 @@
 			children = (
 				9A428A4E19E7AE2800C80EE7 /* StringUtils.h */,
 				9A428A4C19E7AAF500C80EE7 /* StringUtils.m */,
+				9A1C14131AEC51C500789A6E /* DeviceUtils.h */,
+				9A1C14141AEC51C500789A6E /* DeviceUtils.m */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -436,6 +444,10 @@
 		9A9A17EA1A9EFE02005855F2 /* Resouces.bundle */ = {
 			isa = PBXGroup;
 			children = (
+				9A1C140B1AEC4E6700789A6E /* iPadLoginScreenLandscape.png */,
+				9A1C140C1AEC4E6700789A6E /* iPadLoginScreenPortrait.png */,
+				9A1C140D1AEC4E6700789A6E /* iPhone5LoginScreen.png */,
+				9A1C140E1AEC4E6700789A6E /* iPhoneLoginScreen.png */,
 				9A9A17EC1A9EFE24005855F2 /* woop.caf */,
 			);
 			name = Resouces.bundle;
@@ -499,7 +511,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 9A2C6F5E19A8324200DCF2B7 /* Build configuration list for PBXProject "Thatso" */;
+			buildConfigurationList = 9A2C6F5E19A8324200DCF2B7 /* Build configuration list for PBXProject "ThatSo" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -521,9 +533,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A1C140F1AEC4E6700789A6E /* iPadLoginScreenLandscape.png in Resources */,
+				9A1C14121AEC4E6700789A6E /* iPhoneLoginScreen.png in Resources */,
 				9A9A17ED1A9EFE31005855F2 /* woop.caf in Resources */,
 				9A49CA1F1A214B9600F7CFCA /* FBUserSettingsViewResources.bundle in Resources */,
+				9A1C14111AEC4E6700789A6E /* iPhone5LoginScreen.png in Resources */,
 				9A2C6F7119A8324200DCF2B7 /* InfoPlist.strings in Resources */,
+				9A1C14101AEC4E6700789A6E /* iPadLoginScreenPortrait.png in Resources */,
 				9A2C6F7919A8324200DCF2B7 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -552,6 +568,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A2C6F7719A8324200DCF2B7 /* AppDelegate.m in Sources */,
+				9A1C14151AEC51C500789A6E /* DeviceUtils.m in Sources */,
 				9A428A5119E7C4A000C80EE7 /* CommentTableViewCell.m in Sources */,
 				95799FF21A1AE1FF006A209F /* PHFComposeBarView.m in Sources */,
 				95799FF81A1AE368006A209F /* PHFDelegateChain.m in Sources */,
@@ -577,7 +594,6 @@
 				95799FF31A1AE1FF006A209F /* PHFComposeBarView_Button.m in Sources */,
 				9540A5881A1D06A200EA9FEA /* CompletedRound.m in Sources */,
 				95152C661ACF0EDB000C47D0 /* ScoreHorizontalHeaderScrollView.m in Sources */,
-				95152C721AD1EAEF000C47D0 /* LoginPageViewController.m in Sources */,
 				9540A57F1A1D05C200EA9FEA /* Game.m in Sources */,
 				9A2C6FCA19A852D200DCF2B7 /* Comms.m in Sources */,
 				9A2C6F9A19A835CD00DCF2B7 /* SelectGameTableViewController.m in Sources */,
@@ -752,7 +768,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9A2C6F5E19A8324200DCF2B7 /* Build configuration list for PBXProject "Thatso" */ = {
+		9A2C6F5E19A8324200DCF2B7 /* Build configuration list for PBXProject "ThatSo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9A2C6F8D19A8324200DCF2B7 /* Debug */,
