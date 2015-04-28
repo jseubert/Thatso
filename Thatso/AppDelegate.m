@@ -19,7 +19,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     //Reset User defaults - for testing
-    NSString *domainName = [[NSBundle mainBundle] bundleIdentifier];
+    //NSString *domainName = [[NSBundle mainBundle] bundleIdentifier];
    // [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:domainName];
      
     //Crashlytics
@@ -27,10 +27,10 @@
     [User registerSubclass];
     
     //Official Release
-    //[Parse setApplicationId:@"Riu6PqKr6bUkHTPDqZ7l8Z9YKCCgPD9ginQbW5Bh" clientKey:@"RRLGVt4cvUEEv1o1pU1a4s78O9FdKS7TQk4A3lfv"];
+    [Parse setApplicationId:@"Riu6PqKr6bUkHTPDqZ7l8Z9YKCCgPD9ginQbW5Bh" clientKey:@"RRLGVt4cvUEEv1o1pU1a4s78O9FdKS7TQk4A3lfv"];
     
     //Internal Testing
-    [Parse setApplicationId:@"pSIZJTLx1s9w6TzozqIBMYeZGjQyk9XvbqyzoztM" clientKey:@"Xceuugh2wcGDs4bQ5mPt87gwJCuNl7tyUulWHWeV"];
+   // [Parse setApplicationId:@"pSIZJTLx1s9w6TzozqIBMYeZGjQyk9XvbqyzoztM" clientKey:@"Xceuugh2wcGDs4bQ5mPt87gwJCuNl7tyUulWHWeV"];
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
     // Initialize Parse's Facebook Utilities singleton. This uses the FacebookAppID we specified in our App bundle's plist.
@@ -112,9 +112,9 @@
     if (!_client) {
          NSLog(@"initSinchClientWithUserId: %@", userId);
         
-        _client = [Sinch clientWithApplicationKey:@"dbc9af86-a638-4c44-a244-02f263c3e4a7"
-                                applicationSecret:@"6mBCmMuQVk+XwssEuElGxQ=="
-                                  environmentHost:@"sandbox.sinch.com"
+        _client = [Sinch clientWithApplicationKey:@"69afe682-76bb-4f1b-8801-e74e65ec2183"
+                                applicationSecret:@"LOMXots80kuiW5ylT5rkcA=="
+                                  environmentHost:@"clientapi.sinch.com"
                                            userId:userId];
         
         _client.delegate = self;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Rebtel Networks AB. All rights reserved.
+ * Copyright (c) 2015 Sinch AB. All rights reserved.
  *
  * See LICENSE file for license terms and information.
  */
@@ -31,7 +31,7 @@
  * can be passed via headers.
  *
  * E.g. a human-readable "display name / username"
- * can be convenient to send as a application-defined
+ * can be convenient to send as an application-defined
  * header.
  *
  **/

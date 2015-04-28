@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Rebtel Networks AB. All rights reserved.
+ * Copyright (c) 2015 Sinch AB. All rights reserved.
  *
  * See LICENSE file for license terms and information.
  */
@@ -14,7 +14,7 @@
 
 typedef NS_ENUM(NSInteger, SINCallState) {
   SINCallStateInitiating = 0,
-  SINCallStateProgressing,  // Only applicable for outgoing calls
+  SINCallStateProgressing,  // Only applicable to outgoing calls
   SINCallStateEstablished,
   SINCallStateEnded
 };
@@ -77,6 +77,24 @@ typedef NS_ENUM(NSInteger, SINCallDirection) { SINCallDirectionIncoming = 0, SIN
  *
  */
 @property (nonatomic, readonly, assign) SINCallDirection direction;
+
+/**
+ * Call headers.
+ *
+ * Any application-defined call meta-data can be passed via headers.
+ *
+ * E.g. a human-readable "display name / username" can be convenient
+ * to send as an application-defined header.
+ *
+ * IMPORTANT: If a call is initially received via remote push
+ * notifications, headers may not be immediately available due to
+ * push payload size limitations (especially pre- iOS 8).
+ * If it's not immediately available, it will be available after the
+ * event callbacks -[SINCallDelegate callDidProgress:] or
+ * -[SINCallDelegate callDidEstablish:] .
+ *
+ **/
+@property (nonatomic, readonly) NSDictionary *headers;
 
 /**
  * The user data property may be used to associate an arbitrary

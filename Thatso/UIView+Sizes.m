@@ -13,6 +13,8 @@
 @dynamic end;
 @dynamic height;
 @dynamic width;
+@dynamic originY;
+@dynamic originX;
 
 -(CGFloat) bottom
 {

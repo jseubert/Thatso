@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Rebtel Networks AB. All rights reserved.
+ * Copyright (c) 2015 Sinch AB. All rights reserved.
  *
  * See LICENSE file for license terms and information.
  */
@@ -86,5 +86,13 @@ SIN_EXPORT
  * this property’s value to increment the current icon badge number, if any.
  */
 @property (nonatomic) NSInteger applicationIconBadgeNumber;
+
+/**
+ * Category of the local notification, as passed to
+ * +[UIUserNotificationSettings settingsForUserNotificationTypes:userNotificationActionSettings:]
+ * The value of this property is nil by default.
+ * @see UILocalNotification.category
+ */
+@property (nonatomic, copy) NSString *category NS_AVAILABLE_IOS(8_0);
 
 @end
