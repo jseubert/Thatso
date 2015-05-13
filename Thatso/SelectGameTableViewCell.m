@@ -171,6 +171,12 @@
                                           [self.nameLabels[0] frame].size.height + [self.nameLabels[0] frame].origin.y,
                                           self.frame.size.width-20,
                                           categoryHeight.height);
+    
+    self.end.frame = CGRectMake(self.frame.size.width -10 -40,
+                                                         self.roundLabel.bottom,
+                                                         40,
+                                                         40);
+    
 
     
     
@@ -197,7 +203,7 @@
     
     int players = [game.players count] - 1;
 
-    while (count < 6 && count < [game.players count])//[game.players count])
+    while (iconNumber < 6 && count < [game.players count])//[game.players count])
     {
         
         User *user = [game.players objectAtIndex:count];
@@ -243,16 +249,8 @@
     if(players > 6)
     {
 
-        UILabel *end = [[UILabel alloc] initWithFrame:CGRectMake(self.frame.size.width -10 -40,
-                                                            nameLabel.frame.origin.y + nameLabel.frame.size.height + 5,
-                                                             40,
-                                                             40)];
-        [end setText:[NSString stringWithFormat:@"+%d", (players - 6)]];
-        [end setTextAlignment:NSTextAlignmentRight];
-        [end setNumberOfLines:1];
-        [end setFont:[UIFont defaultAppFontWithSize:20.0]];
-        [end setTextColor:[UIColor blueAppColor]];
-        [self addSubview:end];
+        [self.end  setText:[NSString stringWithFormat:@"+%d", (players - 6)]];
+        [self.end setHidden:NO];
     }
     CGSize categoryHeight = [StringUtils sizeWithFontAttribute:self.categoryLabel.font constrainedToSize:(CGSizeMake(self.frame.size.width -20, self.frame.size.width -20)) withText:round.category];
     
