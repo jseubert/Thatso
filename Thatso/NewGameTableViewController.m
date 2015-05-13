@@ -138,6 +138,8 @@
     if([self.tableView indexPathsForSelectedRows].count < 2) {
         [self showAlertWithTitle:@"Woah! You trying to be super exclusive?" andSummary:@"You have to choose at least 2 other players"];
 
+    } else if([self.tableView indexPathsForSelectedRows].count > 9) {
+        [self showAlertWithTitle:@"Wow someone is popular..." andSummary:@"The max players in a game is 10. Figure out who you like best."];
     } else {
         NSMutableArray* selectedFriends = [[NSMutableArray alloc] init];
         for(NSIndexPath * indexPath in [self.tableView indexPathsForSelectedRows])
