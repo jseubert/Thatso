@@ -94,8 +94,9 @@
 
 
 -(IBAction)nextClicked:(id)sender{
+    [self.gameNameTextField resignFirstResponder];
+    [self.gameNameTextField  endEditing:YES];
     NSLog(@"newGame");
-    // Seque to the Image Wall
     if ([self.gameNameTextField.text length] == 0 || self.gameNameTextField.text == nil || [self.gameNameTextField.text length] > 100)
     {
         [self showAlertWithTitle:@"Please enter a game name" andSummary:@""];
