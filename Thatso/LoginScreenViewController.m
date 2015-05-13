@@ -136,8 +136,8 @@ NSString * const ViewedLoginScreen = @"ViewedLoginScreen";
         
 	} else {
 		// Show error alert
-		[[[UIAlertView alloc] initWithTitle:@"Login Failed"
-                                    message:info
+		[[[UIAlertView alloc] initWithTitle:@"Facebook login failed."
+                                    message:@"Please check your Facebook settings on your phone by going to the Settings app -> Facebook and making sure ThatSo is enabled"
                                    delegate:nil
                           cancelButtonTitle:@"Ok"
                           otherButtonTitles:nil] show];
