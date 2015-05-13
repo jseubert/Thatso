@@ -441,13 +441,7 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
     
         [self.refreshControl endRefreshing];
         // Refresh the table data to show the new games
-        if(self.comments.count > 0)
-        {
-            [self.tableView setBackgroundView:nil];
-        } else{
-            [self.emptyTableView setText: [self isJudge] ? @"\n\nNo one has answered yet": @"\n\nNo one has answered yet.\nAdd your answer below!"];
-            [self.tableView setBackgroundView:self.emptyTableView];
-        }
+        [self setTableBackgroundView];
         [self.tableView reloadData];
     
     }else{
@@ -457,6 +451,17 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
 
         [self showAlertWithTitle:@"Error!" andSummary:info];
         
+    }
+}
+
+-(void) setTableBackgroundView
+{
+    if(self.comments.count > 0)
+    {
+        [self.tableView setBackgroundView:nil];
+    } else{
+        [self.emptyTableView setText: [self isJudge] ? @"\n\nNo one has answered yet": @"\n\nNo one has answered yet.\nAdd your answer below!"];
+        [self.tableView setBackgroundView:self.emptyTableView];
     }
 }
 
@@ -499,6 +504,7 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
         [self.comments addObject:comment];
     }
     uploadingComment = true;
+    [self setTableBackgroundView];
     [self.tableView reloadData];
     
     [Comms addComment:comment toRound:self.currentRound forDelegate:self];
@@ -549,6 +555,7 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
                     } else{
                         [self.comments removeObjectAtIndex:i];
                     }
+                    [self setTableBackgroundView];
                     [self.tableView reloadData];
                     break;
                 }
@@ -707,6 +714,7 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
     {
         [[CurrentRounds instance] refreshCommentID:[message.headers objectForKey:ObjectID] withBlock:^(Comment *comment) {
             self.comments = [[CurrentRounds instance].currentComments objectForKey:self.currentGame.objectId];
+            [self setTableBackgroundView];
             [self.tableView reloadData];
         }];
     }
