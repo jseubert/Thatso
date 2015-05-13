@@ -13,15 +13,15 @@
 #import "BaseViewController.h"
 
 
-@interface GameViewControllerTableViewController : BaseViewController <DidAddCommentDelegate, DidGetCommentsDelegate, DidStartNewRound, PHFComposeBarViewDelegate,UITextViewDelegate, UITableViewDataSource, UITableViewDelegate, SINMessageClientDelegate>
+@interface GameViewControllerTableViewController : BaseViewController <DidAddCommentDelegate, DidGetCommentsDelegate, DidStartNewRound, PHFComposeBarViewDelegate, UITextViewDelegate, UITableViewDataSource, UITableViewDelegate, SINMessageClientDelegate>
 {
-
     NSInteger* winningIndex;
     BOOL uploadingComment; 
 }
 
 @property (strong, nonatomic) GameHeaderView *headerView;
 @property (strong, nonatomic) UITableView *tableView;
+@property (strong, nonatomic) UIRefreshControl *refreshControl;
 @property (strong, nonatomic) PHFComposeBarView *composeBarView;
 @property (strong, nonatomic) UITextView *emptyTableView;
 
@@ -35,6 +35,4 @@
 @property(nonatomic) UITapGestureRecognizer *singleTap;
 @property(nonatomic) CommentTableViewCell *userCommentCell;
 
-
-@property (strong, nonatomic) IBOutlet UIRefreshControl *refreshControl;
 @end

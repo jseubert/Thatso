@@ -85,9 +85,7 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
     [self.refreshControl  setBackgroundColor:[UIColor blueAppColor]];
     [self.tableView addSubview:self.refreshControl];
     
-    //Test tur
-    //[[NSUserDefaults standardUserDefaults] setBool:YES forKey:ViewedSelectGameScreen];
-    //Tutorial Section - show tutorial screen if this is the first time the user has seen this screen?
+    //Tutorial Section - show tutorial screen if this is the first time the user has seen this screen
     if(![[NSUserDefaults standardUserDefaults] boolForKey:ViewedSelectGameScreen])
     {
         

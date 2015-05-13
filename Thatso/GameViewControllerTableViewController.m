@@ -93,11 +93,13 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
     //Add activity indicator
     [self.view addSubview:self.activityIndicator];
 
+    
     //Refresh indicator for tableview
-    self.refreshControl = [[UIRefreshControl alloc] init];
+    self.refreshControl  = [[UIRefreshControl alloc] init];
     self.refreshControl.attributedTitle = [StringUtils makeRefreshText:@"Pull to refresh"];
-    [self.refreshControl addTarget:self action:@selector(refreshGame) forControlEvents:UIControlEventValueChanged];
-    [self.refreshControl setTintColor:[UIColor whiteColor]];
+    [self.refreshControl  addTarget:self action:@selector(refreshGame) forControlEvents:UIControlEventValueChanged];
+    [self.refreshControl  setTintColor:[UIColor whiteColor]];
+    [self.refreshControl  setBackgroundColor:[UIColor blueAppColor]];
     [self.tableView addSubview:self.refreshControl];
     
     
