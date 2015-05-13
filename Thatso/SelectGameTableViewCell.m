@@ -230,7 +230,6 @@
                                      [[profileView  layer] setCornerRadius:profileView.frame.size.height/2];
                                  }
                                  completion:^(BOOL finished){
-                                    // [theView removeFromSuperview];
                                      [activityIndicator stopAnimating];
                                      [activityIndicator setHidden:YES];
                                  }];
@@ -248,9 +247,10 @@
     UILabel *nameLabel = [self.nameLabels objectAtIndex:0];
     if(players > 6)
     {
-
         [self.end  setText:[NSString stringWithFormat:@"+%d", (players - 6)]];
         [self.end setHidden:NO];
+    } else{
+        [self.end setHidden:YES];
     }
     CGSize categoryHeight = [StringUtils sizeWithFontAttribute:self.categoryLabel.font constrainedToSize:(CGSizeMake(self.frame.size.width -20, self.frame.size.width -20)) withText:round.category];
     
