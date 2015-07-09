@@ -8,6 +8,7 @@
 
 #import "BaseViewController.h"
 #import "AppDelegate.h"
+#import "StringUtils.h"
 
 @interface BaseViewController ()
 
@@ -117,15 +118,8 @@
 
 - (void)bannerViewDidLoadAd:(ADBannerView *)banner
 {
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     if (canShowBanner)
     {
-        // If banner isn't part of view hierarchy, add it
-        if (appDelegate.adView.superview == nil)
-        {
-       //     [self.view addSubview:appDelegate.adView];
-        }
-        
         [UIView beginAnimations:@"animateAdBannerOn" context:NULL];
         
         // Assumes the banner view is just off the bottom of the screen.
@@ -133,11 +127,6 @@
         
         [UIView commitAnimations];
         
-       // bannerIsVisible = YES;
-    }
-    
-    if(canShowBanner)
-    {
         [self.view setNeedsLayout];
     }
 }

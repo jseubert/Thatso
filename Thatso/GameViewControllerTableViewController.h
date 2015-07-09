@@ -6,12 +6,12 @@
 //  Copyright (c) 2014 John Seubert. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import "PHFComposeBarView.h"
-#import "GameHeaderView.h"
-#import "CommentTableViewCell.h"
 #import "BaseViewController.h"
+#import "PHFComposeBarView.h"
+#import "RoundManager.h"
 
+@class GameHeaderView;
+@class CommentTableViewCell;
 
 @interface GameViewControllerTableViewController : BaseViewController <DidAddCommentDelegate, DidGetCommentsDelegate, DidStartNewRound, PHFComposeBarViewDelegate, UITextViewDelegate, UITableViewDataSource, UITableViewDelegate, SINMessageClientDelegate>
 {

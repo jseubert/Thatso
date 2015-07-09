@@ -12,6 +12,8 @@
 #import "CommentTableViewCell.h"
 #import "UIImage+Scaling.h"
 #import "StringUtils.h"
+#import "FriendsManager.h"
+#import "User.h"
 
 @implementation SelectGameTableViewCell
 
@@ -201,7 +203,7 @@
     int count = 0;
     int iconNumber = 0;
     
-    int players = [game.players count] - 1;
+    int players = (int)[game.players count] - 1;
 
     while (iconNumber < 6 && count < [game.players count])//[game.players count])
     {
@@ -220,7 +222,7 @@
             
             [activityIndicator startAnimating];
         
-            [DataStore getFriendProfilePictureWithID:user.fbId withBlock:^(UIImage *image) {
+            [[FriendsManager instance] getFriendProfilePictureWithID:user.fbId withBlock:^(UIImage *image) {
                 [profileView setImage:[image imageScaledToFitSize:CGSizeMake(40, 40)]];
                 profileView.frame = CGRectMake(profileView.frame.origin.x + 20, profileView.frame.origin.y + 20, 0, 0);
                 [[profileView  layer] setCornerRadius:0];

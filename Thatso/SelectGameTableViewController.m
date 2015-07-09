@@ -18,7 +18,9 @@
 #import <math.h>
 #import "Game.h"
 #import "CommentTableViewCell.h"
+#import "GameManager.h"
 #import <Crashlytics/Crashlytics.h>
+#import "User.h"
 
 @interface SelectGameTableViewController ()
 
@@ -116,7 +118,22 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(gamesLoaded:)
+                                                 name:GameManagerGamesLoaded
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(gamesLoadedError:)
+                                                 name:GameManagerGamesLoadedError
+                                               object:nil];
     [self refreshGames];
+}
+
+-(void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:GameManagerGamesLoaded object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:GameManagerGamesLoadedError object:nil];
+
 }
 
 
@@ -133,13 +150,13 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
     Game* game;
     if(indexPath.section == 0)
     {
-        game = [[[UserGames instance].games objectForKey:@"Judge"] objectAtIndex:indexPath.row];
+        game = [[[GameManager instance].sortedGames objectForKey:@"Judge"] objectAtIndex:indexPath.row];
     } else if (indexPath.section == 1)
     {
-        game = [[[UserGames instance].games objectForKey:@"CommentNeeded"] objectAtIndex:indexPath.row];
+        game = [[[GameManager instance].sortedGames objectForKey:@"CommentNeeded"] objectAtIndex:indexPath.row];
     } else if (indexPath.section == 2)
     {
-        game = [[[UserGames instance].games objectForKey:@"Completed"] objectAtIndex:indexPath.row];
+        game = [[[GameManager instance].sortedGames objectForKey:@"Completed"] objectAtIndex:indexPath.row];
     }
     Round *currentRound = game.currentRound;
     
@@ -159,13 +176,13 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
     //Make Variable size height
     if(section == 0)
     {
-        return ([[[UserGames instance].games objectForKey:@"Judge"] count] == 0) ? 0 : 40;
+        return ([[[GameManager instance].sortedGames objectForKey:@"Judge"] count] == 0) ? 0 : 40;
     } else if (section == 1)
     {
-        return ([[[UserGames instance].games objectForKey:@"CommentNeeded"] count] == 0) ? 0 : 40;
+        return ([[[GameManager instance].sortedGames objectForKey:@"CommentNeeded"] count] == 0) ? 0 : 40;
     } else if (section == 2)
     {
-        return ([[[UserGames instance].games objectForKey:@"Completed"] count] == 0) ? 0 : 40;
+        return ([[[GameManager instance].sortedGames objectForKey:@"Completed"] count] == 0) ? 0 : 40;
     } else
     {
         return 0;
@@ -177,13 +194,13 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
 {
         if(section == 0)
         {
-            return [[[UserGames instance].games objectForKey:@"Judge"] count];
+            return [[[GameManager instance].sortedGames objectForKey:@"Judge"] count];
         } else if (section == 1)
         {
-            return [[[UserGames instance].games objectForKey:@"CommentNeeded"] count];
+            return [[[GameManager instance].sortedGames objectForKey:@"CommentNeeded"] count];
         } else if (section == 2)
         {
-            return [[[UserGames instance].games objectForKey:@"Completed"] count];
+            return [[[GameManager instance].sortedGames objectForKey:@"Completed"] count];
         } else
         {
             return 0;
@@ -198,19 +215,19 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
         cell = [[SelectGameTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     
-    if([[UserGames instance] gameCount] > 0)
+    if([[GameManager instance] gameCount] > 0)
     {
         
         Game* game;
         if(indexPath.section == 0)
         {
-            game = [[[UserGames instance].games objectForKey:@"Judge"] objectAtIndex:indexPath.row];
+            game = [[[GameManager instance].sortedGames objectForKey:@"Judge"] objectAtIndex:indexPath.row];
         } else if (indexPath.section == 1)
         {
-            game = [[[UserGames instance].games objectForKey:@"CommentNeeded"] objectAtIndex:indexPath.row];
+            game = [[[GameManager instance].sortedGames objectForKey:@"CommentNeeded"] objectAtIndex:indexPath.row];
         } else if (indexPath.section == 2)
         {
-            game = [[[UserGames instance].games objectForKey:@"Completed"] objectAtIndex:indexPath.row];
+            game = [[[GameManager instance].sortedGames objectForKey:@"Completed"] objectAtIndex:indexPath.row];
         }
         Round *currentRound = game.currentRound;
         
@@ -251,19 +268,19 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if([UserGames instance].games != nil && [UserGames instance].games.count > 0)
+    if([GameManager instance].games != nil && [[GameManager instance] gameCount] > 0)
     {
         GameViewControllerTableViewController *vc = [[GameViewControllerTableViewController alloc] init];
         Game* game;
         if(indexPath.section == 0)
         {
-            game = [[[UserGames instance].games objectForKey:@"Judge"] objectAtIndex:indexPath.row];
+            game = [[[GameManager instance].sortedGames objectForKey:@"Judge"] objectAtIndex:indexPath.row];
         } else if (indexPath.section == 1)
         {
-            game = [[[UserGames instance].games objectForKey:@"CommentNeeded"] objectAtIndex:indexPath.row];
+            game = [[[GameManager instance].sortedGames objectForKey:@"CommentNeeded"] objectAtIndex:indexPath.row];
         } else if (indexPath.section == 2)
         {
-            game = [[[UserGames instance].games objectForKey:@"Completed"] objectAtIndex:indexPath.row];
+            game = [[[GameManager instance].sortedGames objectForKey:@"Completed"] objectAtIndex:indexPath.row];
         }
         [game.currentRound fetchIfNeeded];
         vc.currentGame = game;
@@ -297,7 +314,8 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
     [self showActivityIndicator];
     [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:@"Refreshing data..."]];
     [self.refreshControl  setEnabled:NO];
-	[Comms getUsersGamesforDelegate:self];
+	//[Comms getUsersGamesforDelegate:self];
+    [[GameManager instance] getUsersGamesWithDelegate:nil];
 }
 
 #pragma mark Game Download
@@ -317,7 +335,7 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
     
     //Set background view for table view
     if(success) {
-        if([[UserGames instance] gameCount] > 0)
+        if([[GameManager instance] gameCount] > 0)
         {
             [self.tableView setBackgroundView:nil];
         }else{
@@ -329,6 +347,38 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
         [self.tableView setBackgroundView:self.emptyTableView];
         [self showAlertWithTitle:@"Error loading gamesr!" andSummary:@"Pull to try again"];
     }
+}
+
+- (void) gamesLoaded :(NSNotification *)notification {
+    [self hideActivityIndicator];
+    [self.tableView setHidden:NO];
+    // Refresh the table data to show the new games
+    [self.tableView reloadData];
+    
+    // Update the refresh control if we have one
+    NSString *lastUpdated = [NSString stringWithFormat:@"Last updated on %@", [_dateFormatter stringFromDate:[NSDate date]]];
+    [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:lastUpdated]];
+    [self.refreshControl setTintColor:[UIColor whiteColor]];
+    [self.refreshControl endRefreshing];
+    
+    if([[GameManager instance] gameCount] > 0)
+    {
+        [self.tableView setBackgroundView:nil];
+    }else{
+        [self.emptyTableView setText: @"No Games Found. Press \"New Game\"!"];
+        [self.tableView setBackgroundView:self.emptyTableView];
+    }
+}
+
+-(void) gamesLoadedError:(NSNotification *)notification {
+    [self hideActivityIndicator];
+    [self.tableView setHidden:NO];
+    // Refresh the table data to show the new games
+    [self.tableView reloadData];
+    
+    [self.emptyTableView setText:@"Error loading games\nPull to try again"];
+    [self.tableView setBackgroundView:self.emptyTableView];
+    [self showAlertWithTitle:@"Error loading gamesr!" andSummary:@"Pull to try again"];
 }
 
 #pragma activity indicators

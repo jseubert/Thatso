@@ -7,7 +7,7 @@
 //
 
 #import "StringUtils.h"
-
+#import "User.h"
 
 @implementation StringUtils
 

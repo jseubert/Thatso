@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 John Seubert. All rights reserved.
 //
 
-#import <Parse/Parse.h>
-
 @interface CompletedRound : PFObject<PFSubclassing>
 @property (retain) User *judge;
 @property (retain) User *subject;

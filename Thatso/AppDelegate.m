@@ -11,6 +11,8 @@
 #import "FratBarButtonItem.h"
 #import <Fabric/Fabric.h>
 #import <Crashlytics/Crashlytics.h>
+#import "User.h" 
+#import "ConfigurationUtils.h"
 
 
 
@@ -20,17 +22,14 @@
 {
     //Reset User defaults - for testing
     //NSString *domainName = [[NSBundle mainBundle] bundleIdentifier];
-   // [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:domainName];
+    //[[NSUserDefaults standardUserDefaults] removePersistentDomainForName:domainName];
      
     //Crashlytics
     [Fabric with:@[CrashlyticsKit]];
     [User registerSubclass];
     
-    //Official Release
-    [Parse setApplicationId:@"Riu6PqKr6bUkHTPDqZ7l8Z9YKCCgPD9ginQbW5Bh" clientKey:@"RRLGVt4cvUEEv1o1pU1a4s78O9FdKS7TQk4A3lfv"];
-    
-    //Internal Testing
-   // [Parse setApplicationId:@"pSIZJTLx1s9w6TzozqIBMYeZGjQyk9XvbqyzoztM" clientKey:@"Xceuugh2wcGDs4bQ5mPt87gwJCuNl7tyUulWHWeV"];
+    //Setup Parse
+    [Parse setApplicationId:[ConfigurationUtils parseApplicationId] clientKey:[ConfigurationUtils parseClientId]];
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
     // Initialize Parse's Facebook Utilities singleton. This uses the FacebookAppID we specified in our App bundle's plist.
@@ -40,37 +39,35 @@
     UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert |
                                                     UIUserNotificationTypeBadge |
                                                     UIUserNotificationTypeSound);
+    
     UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes
                                                                              categories:nil];
     [application registerUserNotificationSettings:settings];
     [application registerForRemoteNotifications];
     
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.window.backgroundColor = [UIColor whiteColor];
-    
     LoginScreenViewController *rootViewController = [[LoginScreenViewController alloc] init];
-    
     UINavigationController *navController = [[UINavigationController alloc]initWithRootViewController:rootViewController];
     
-    //Need to set navigation bar item color here. Since this is the big one i guess
+    //Configure navigation bar and window appearance here
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     [navController.navigationBar  setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
                                                                        [UIColor whiteColor], NSForegroundColorAttributeName,
                                                                        [UIFont defaultAppFontWithSize:21.0], NSFontAttributeName, nil]];
-    
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
+    
     [self.window addSubview:navController.view];
     self.window.rootViewController = navController;
-
     
     self.adView = [[ADBannerView alloc] init];
-    
     
     return YES;
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     [FBAppCall handleDidBecomeActiveWithSession:[PFFacebookUtils session]];
+    
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     if (currentInstallation.badge != 0) {
         currentInstallation.badge = 0;
@@ -104,17 +101,22 @@
     
 }
 
+//Push Notifications
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [PFPush handlePush:userInfo];
 }
 
+//Push Notifications - background
+-(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
+{
+    completionHandler(UIBackgroundFetchResultNewData);
+}
+
 - (void)initSinchClientWithUserId:(NSString *)userId {
     if (!_client) {
-         NSLog(@"initSinchClientWithUserId: %@", userId);
-        
-        _client = [Sinch clientWithApplicationKey:@"69afe682-76bb-4f1b-8801-e74e65ec2183"
-                                applicationSecret:@"LOMXots80kuiW5ylT5rkcA=="
-                                  environmentHost:@"clientapi.sinch.com"
+        _client = [Sinch clientWithApplicationKey:[ConfigurationUtils sinchApplicationId]
+                                applicationSecret:[ConfigurationUtils sinchApplicationSecret]
+                                  environmentHost:[ConfigurationUtils sinchEnvironmentHost]
                                            userId:userId];
         
         _client.delegate = self;

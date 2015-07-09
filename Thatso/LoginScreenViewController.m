@@ -11,10 +11,12 @@
 #import "UIButton+CustomButtons.h"
 #import "AppDelegate.h"
 #import "DeviceUtils.h"
+#import "FriendsManager.h"
+#import "User.h"
 #import <Crashlytics/Crashlytics.h>
 
 
-@interface LoginScreenViewController () <PHFComposeBarViewDelegate>
+@interface LoginScreenViewController () 
 
 @end
 
@@ -87,7 +89,6 @@ NSString * const ViewedLoginScreen = @"ViewedLoginScreen";
         self.loginButton.frame = CGRectMake(30, self.view.frame.size.height - 80, self.view.frame.size.width - 60, 50);
     }
     [self.backgroundImage setImage:backgroundImage];
-    //self.view.originY - self.navigationController.view.height - 20
     self.backgroundImage.frame = CGRectMake(0, self.view.originY - self.navigationController.navigationBar.height - 10, self.view.width, self.view.height);
     self.activityIndicator.frame = CGRectMake(self.view.frame.size.width/2 - 40, self.view.frame.size.height/2 -30, 80, 80);
     self.activityIndicator.center = self.loginButton.center;
@@ -99,10 +100,21 @@ NSString * const ViewedLoginScreen = @"ViewedLoginScreen";
     
     // Check if user is cached and linked to Facebook, if so, bypass login
     if ([User currentUser] && [PFFacebookUtils isLinkedWithUser:[User currentUser]]) {
-        [Comms getAllFacebookFriends:nil];
-        [Comms getProfilePictureForUser:[[User currentUser] objectForKey:UserFacebookID] withBlock:nil];
 
-        [self setupUserAndMoveToHomeScreen];
+        //[[FriendsManager instance] getFriendProfilePictureWithID:[[User currentUser] objectForKey:UserFacebookID] withBlock:nil];
+        [[FriendsManager instance] getAllFacebooFriendsWithBlock:^(bool success, NSString *response) {
+            if (success) {
+                [self setupUserAndMoveToHomeScreen];
+                
+            } else {
+                // Show error alert
+                [[[UIAlertView alloc] initWithTitle:@"Facebook login failed."
+                                            message:response
+                                           delegate:nil
+                                  cancelButtonTitle:@"Ok"
+                                  otherButtonTitles:nil] show];
+            }
+        }];
     }
 }
 

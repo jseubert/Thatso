@@ -47,6 +47,10 @@
 			</dict>
 		</array>
 	</dict>
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>remote-notification</string>
+    </array>
 	<key>FacebookAppID</key>
 	<string>307094812802448</string>
 	<key>FacebookDIsplayName</key>

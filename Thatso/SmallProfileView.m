@@ -9,6 +9,7 @@
 #import "SmallProfileView.h"
 #import "StringUtils.h"
 #import "UIImage+Scaling.h"
+#import "FriendsManager.h"
 
 @implementation SmallProfileView
 
@@ -77,7 +78,7 @@
 {
     [self.activityIndicator startAnimating];
     [self.activityIndicator setHidden:NO];
-    [DataStore getFriendProfilePictureWithID:fbId withBlock:^(UIImage *image) {
+    [[FriendsManager instance] getFriendProfilePictureWithID:fbId withBlock:^(UIImage *image) {
         [self.profileImageView setImage:[image imageScaledToFitSize:CGSizeMake(40, 40)]];
         self.profileImageView.frame = CGRectMake(self.profileImageView.frame.origin.x + 20, self.profileImageView.frame.origin.y + 20, 0, 0);
         [[self.profileImageView  layer] setCornerRadius:0];

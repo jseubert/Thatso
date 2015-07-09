@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 John Seubert. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 
 @interface DeviceUtils : NSObject
 #define IS_IPAD (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)

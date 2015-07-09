@@ -10,6 +10,7 @@
 #import "StringUtils.h"
 #import "UIImage+Scaling.h"
 #import "SmallProfileView.h"
+#import "User.h"
 
 @implementation ScoreHorizontalHeaderScrollView
 

@@ -5,10 +5,9 @@
 //  Created by John A Seubert on 11/15/14.
 //  Copyright (c) 2014 John Seubert. All rights reserved.
 //
-
-#import <UIKit/UIKit.h>
 #import "BaseViewController.h"
-#import "ScoreHorizontalHeaderScrollView.h"
+
+@class ScoreHorizontalHeaderScrollView;
 
 @interface PreviousRoundsTableViewController : BaseViewController <DidGetPreviousRounds, UITableViewDataSource, UITableViewDelegate>
 {

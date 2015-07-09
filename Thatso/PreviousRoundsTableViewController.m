@@ -12,6 +12,8 @@
 #import "CommentTableViewCell.h"
 #import "PreviousRoundsTableViewCell.h"
 #import "AppDelegate.h"
+#import "User.h"
+#import "ScoreHorizontalHeaderScrollView.h"
 
 @interface PreviousRoundsTableViewController ()
 

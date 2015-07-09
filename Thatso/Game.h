@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 John Seubert. All rights reserved.
 //
 
-#import <Parse/Parse.h>
-#import "Round.h"
+@class User;
+@class Round;
 
 @interface Game : PFObject<PFSubclassing>
 + (NSString *)parseClassName;

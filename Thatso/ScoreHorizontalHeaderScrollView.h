@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 John Seubert. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 
 @interface ScoreHorizontalHeaderScrollView : UIScrollView
 

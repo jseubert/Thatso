@@ -6,10 +6,10 @@
 //  Copyright (c) 2014 John Seubert. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 #import "BaseViewController.h"
+#import "GameManager.h"
 
-@interface NewGameTableViewController : BaseViewController <DidLoginDelegate, UITableViewDataSource, UITableViewDelegate>
+@interface NewGameTableViewController : BaseViewController  <UITableViewDataSource, UITableViewDelegate, GameCreatedDelegate>
 
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) UIRefreshControl *refreshControl;

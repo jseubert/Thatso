@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 John Seubert. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 #import "PHFComposeBarView.h"
 
 @interface LoginScreenViewController : UIViewController <DidLoginDelegate>
@@ -17,5 +16,7 @@
 @property (strong, nonatomic) UIImageView *backgroundImage; 
 
 @property (strong, nonatomic) UIPageViewController *pageController;
+
+-(void) setupUserAndMoveToHomeScreen;
 
 @end

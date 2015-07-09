@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 John Seubert. All rights reserved.
 //
 
-#import <Parse/Parse.h>
-
 @interface GenericCategory : PFObject<PFSubclassing>
 @property (retain) NSString *startText;
 @property (retain) NSString *endText;

@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 John Seubert. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
 @interface NSOperationQueue (NSoperationQueue_SharedQueue)
 
 + (NSOperationQueue *) pffileOperationQueue;

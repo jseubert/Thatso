@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 John Seubert. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import "StringUtils.h"
 #import <iAd/iAd.h>
 
 @interface BaseViewController : UIViewController <UIAlertViewDelegate, ADBannerViewDelegate>

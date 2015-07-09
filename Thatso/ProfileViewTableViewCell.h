@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 John Seubert. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
 extern NSInteger const ProfileViewTableViewCellHeight;
 
 @interface ProfileViewTableViewCell : UITableViewCell

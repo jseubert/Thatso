@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 John Seubert. All rights reserved.
 //
 
-#import <Parse/Parse.h>
-
 @interface User : PFUser <PFSubclassing>
 @property (retain) NSString *fbId;
 @property (retain) NSString *first_name;

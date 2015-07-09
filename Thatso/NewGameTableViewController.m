@@ -13,8 +13,11 @@
 #import "UIImage+Scaling.h"
 #import "AppDelegate.h"
 #import "StringUtils.h"
+#import "GameManager.h"
+#import "FriendsManager.h"
+#import "User.h"
 
-@interface NewGameTableViewController () < CreateGameDelegate>
+@interface NewGameTableViewController ()
 
 @end
 
@@ -31,7 +34,7 @@
      */
     self.navigationItem.title = @"Players";
 
-    self.fbFriendsArray = [[DataStore instance].fbFriends allValues];
+    self.fbFriendsArray = [[FriendsManager instance].fbFriends allValues];
     
     /*
      * Subview initializations
@@ -49,10 +52,16 @@
       self.tableView.allowsMultipleSelection = YES;
     [self.view addSubview: self.tableView];
 
-    
-   // [self showLoadingAlert];
     [self showActivityIndicator];
-    [Comms getAllFacebookFriends:self];
+    [[FriendsManager instance] getAllFacebooFriendsWithBlock:^(bool success, NSString *response) {
+        [self hideActivityIndicator];
+        if (success) {
+            self.fbFriendsArray = [[FriendsManager instance].fbFriends allValues];
+            [self.tableView reloadData];
+        }else{
+            [self showAlertWithTitle:@"Error!" andSummary:response];
+        }
+    }];
     
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     appDelegate.adView.delegate = self;
@@ -63,6 +72,11 @@
 {
     [super viewDidLayoutSubviews];
     [self.tableView setFrame:(CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height - [self bannerHeight]))];
+}
+
+-(void)dealloc
+{
+    
 }
 
 #pragma mark - Table view data source
@@ -93,9 +107,9 @@
         cell = [[ProfileViewTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
    
-    NSLog(@"Row count: %ld, %lu",(long)indexPath.row, (unsigned long)[DataStore instance].fbFriends.count);
+    NSLog(@"Row count: %ld, %lu",(long)indexPath.row, (unsigned long)[FriendsManager instance].fbFriends.count);
     
-    if([DataStore instance].fbFriends.count <= 0)
+    if([FriendsManager instance].fbFriends.count <= 0)
     {
         [cell.nameLabel setText:@"No Friends :("];
         [cell setUserInteractionEnabled:NO];
@@ -103,7 +117,7 @@
         [cell setUserInteractionEnabled:YES];
         User *user = [self.fbFriendsArray objectAtIndex:indexPath.row];
         [cell.nameLabel setText:user.name];
-        [DataStore getFriendProfilePictureWithID:[user objectForKey:UserFacebookID] withBlock:^(UIImage *image) {
+        [[FriendsManager instance] getFriendProfilePictureWithID:[user objectForKey:UserFacebookID] withBlock:^(UIImage *image) {
             [cell.profilePicture setImage:[image imageScaledToFitSize:CGSizeMake(cell.frame.size.height, cell.frame.size.height)]];
         }];
     }
@@ -113,7 +127,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if(indexPath.row < self.fbFriendsArray.count && [DataStore instance].fbFriends.count > 0)
+    if(indexPath.row < self.fbFriendsArray.count && [FriendsManager instance].fbFriends.count > 0)
     {
         [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryCheckmark;
     }
@@ -147,16 +161,20 @@
             [selectedFriends addObject:[self.fbFriendsArray objectAtIndex:indexPath.row]];
         }
         
-        
-        [Comms startNewGameWithUsers:selectedFriends withName:self.gameName familyFriendly:self.familyFriendly forDelegate:self];
+        [[GameManager instance] startNewGameWithUsers:selectedFriends withName:self.gameName familyFriendly:self.familyFriendly withDelegate:self];
 
     }
 }
 
-- (void) newGameUploadedToServer:(BOOL)success game:(Game *)game info:(NSString *)info{
-    [self dismissAlert];    
-    if (success) {
-        //Send out that a new game was added so other users can download it.
+#pragma mark - Notification Callbacks and Observer Initialization
+- (void) newGameCreated:(BOOL)success game: (Game*)game info:(NSString *) info
+{
+    if(success)
+    {
+        [self dismissAlert];
+        //Get game object from notification
+        
+        //add all the users to an array for a push notification
         NSMutableArray *nonUserPlayers = [[NSMutableArray alloc] init];
         for (User* user in game.players)
         {
@@ -173,30 +191,22 @@
                                @"badge" : @"Increment",
                                @"sounds" : @"woop.caf"
                                };
-    
+        
         [push setChannels:nonUserPlayers];
         [push setData:data];
         [push sendPushInBackground];
-    
+        
+        //Pop back two viewcontrollers to main viewcontroller
         NSUInteger ownIndex = [self.navigationController.viewControllers indexOfObject:self];
         [self.navigationController popToViewController:[self.navigationController.viewControllers objectAtIndex:ownIndex - 2] animated:YES];
-    }else{
+    } else
+    {
+        [self dismissAlert];
         [self showAlertWithTitle:@"Error!" andSummary:info];
     }
 }
 
-- (void) didlogin:(BOOL)success info: (NSString *) info
-{
-    [self hideActivityIndicator];
-    if (success) {
-        self.fbFriendsArray = [[DataStore instance].fbFriends allValues];
-        [self.tableView reloadData];
-    }else{
-        [self showAlertWithTitle:@"Error!" andSummary:info];
-    }
-
-}
-
+#pragma mark - ACTIVITY INDICATOR FUNCTIONS
 - (void) showActivityIndicator
 {
     [self.activityIndicator startAnimating];
@@ -211,3 +221,4 @@
     [self.tableView setUserInteractionEnabled:YES];
 }
 @end
+

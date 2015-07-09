@@ -6,8 +6,7 @@
 //  Copyright (c) 2014 John Seubert. All rights reserved.
 //
 
-#import <Parse/Parse.h>
-#import "User.h"
+@class User;
 
 @interface Round : PFObject<PFSubclassing>
 @property (retain) NSString *judge;

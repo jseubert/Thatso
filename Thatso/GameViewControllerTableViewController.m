@@ -13,6 +13,11 @@
 #import "UIImage+Scaling.h"
 #import "PreviousRoundsTableViewController.h"
 #import "AppDelegate.h"
+#import "GameManager.h"
+#import "FriendsManager.h"
+#import "User.h"
+#import "GameHeaderView.h"
+#import "CommentTableViewCell.h"
 
 @implementation GameViewControllerTableViewController
 
@@ -197,7 +202,7 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
     [self.headerView.caregoryLabel setText:[NSString stringWithFormat:@"%@",self.currentRound.category]];
     if(![previousProfileId isEqual:self.currentRound.subject])
     {
-        [DataStore getFriendProfilePictureWithID:self.currentRound.subject withBlock:^(UIImage * image) {
+        [[FriendsManager instance] getFriendProfilePictureWithID:self.currentRound.subject withBlock:^(UIImage * image) {
 
             [self.headerView.profilePicture setImage:[image imageScaledToFitSize:CGSizeMake(40, 40)]];
             self.headerView.profilePicture.frame = CGRectMake(self.headerView.profilePicture.frame.origin.x + 20, self.headerView.profilePicture.frame.origin.y + 20, 0, 0);
@@ -303,7 +308,7 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
         [cell.nameLabel setText:[NSString stringWithFormat:@"%@'s turn to pick", [self.currentGame playerWithfbId:self.currentRound.judge].first_name]];
     }
     
-    [DataStore getFriendProfilePictureWithID:self.currentRound.judge withBlock:^(UIImage *image) {
+    [[FriendsManager instance] getFriendProfilePictureWithID:self.currentRound.judge withBlock:^(UIImage *image) {
         [cell.profilePicture setImage:[image imageScaledToFitSize:CGSizeMake(cell.frame.size.height, cell.frame.size.height)]];
         cell.profilePicture.frame = CGRectMake(cell.profilePicture.frame.origin.x + 20, cell.profilePicture.frame.origin.y + 20, 0, 0);
         [[cell.profilePicture  layer] setCornerRadius:0];
@@ -406,7 +411,7 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
         
         //Start next round
         
-        [Comms finishRound:self.currentRound inGame:self.currentGame withWinningComment:winningComment andOtherComments:self.comments forDelegate:self];
+        [[RoundManager instance] finishRound:self.currentRound inGame:self.currentGame withWinningComment:winningComment andOtherComments:self.comments forDelegate:self];
     }
 }
 
@@ -417,11 +422,11 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
     [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:@"Refreshing data..."]];
     [self.refreshControl setEnabled:NO];
     
-    [self.currentGame fetchInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+    [self.currentGame fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
         self.currentRound = self.currentGame.currentRound;
         [self.currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
             
-            [Comms getActiveCommentsForGame:self.currentGame inRound:self.currentRound forDelegate:self];
+            [[RoundManager instance] getActiveCommentsForGame:self.currentGame inRound:self.currentRound forDelegate:self];
             [self setupHeader];
         }];
     }];
@@ -433,7 +438,7 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
     if(success)
     {
     
-        self.comments = [[CurrentRounds instance].currentComments objectForKey:self.currentGame.objectId];
+        self.comments = [[RoundManager instance].currentComments objectForKey:self.currentGame.objectId];
         // Update the refresh control
         NSString *lastUpdated = [NSString stringWithFormat:@"Last updated on %@", [_dateFormatter stringFromDate:[NSDate date]]];
         [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:lastUpdated]];
@@ -507,7 +512,7 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
     [self setTableBackgroundView];
     [self.tableView reloadData];
     
-    [Comms addComment:comment toRound:self.currentRound forDelegate:self];
+    [[RoundManager instance] addComment:comment toRound:self.currentRound forDelegate:self];
    
 }
 
@@ -523,7 +528,7 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
     if(success)
     {
         //Update local
-        [[UserGames instance] userDidRespondInGame: self.currentGame];
+        [[GameManager instance] userDidRespondInGame: self.currentGame];
         
         NSMutableArray *nonUserPlayersIDs = [[NSMutableArray alloc] init];
         for(User * user in self.nonUserPlayers)
@@ -577,7 +582,7 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
         
         //Clear all comments for this round
         self.comments = [[NSMutableArray alloc] init];
-        [[CurrentRounds instance].currentComments  removeObjectForKey:self.currentGame.objectId];
+        [[RoundManager instance].currentComments  removeObjectForKey:self.currentGame.objectId];
 
         //Reload the game
         [self refreshGame];
@@ -703,7 +708,7 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
 {
     if([[message.headers objectForKey:CompletedRoundGameID] isEqualToString:self.currentGame.objectId])
     {
-        [[UserGames instance] refreshGameID:[message.headers objectForKey:CompletedRoundGameID] withBlock:^(Game * game) {
+        [[GameManager instance] refreshGameID:[message.headers objectForKey:CompletedRoundGameID] withBlock:^(Game * game) {
             [self refreshGame];
         }];
     }
@@ -712,8 +717,8 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
 {
     if([[message.headers objectForKey:CommentRoundID] isEqualToString:self.currentRound.objectId])
     {
-        [[CurrentRounds instance] refreshCommentID:[message.headers objectForKey:ObjectID] withBlock:^(Comment *comment) {
-            self.comments = [[CurrentRounds instance].currentComments objectForKey:self.currentGame.objectId];
+        [[RoundManager instance] refreshCommentID:[message.headers objectForKey:ObjectID] withBlock:^(Comment *comment) {
+            self.comments = [[RoundManager instance].currentComments objectForKey:self.currentGame.objectId];
             [self setTableBackgroundView];
             [self.tableView reloadData];
         }];
