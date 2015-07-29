@@ -101,8 +101,20 @@ NSString * const ViewedLoginScreen = @"ViewedLoginScreen";
     // Check if user is cached and linked to Facebook, if so, bypass login
     if ([User currentUser] && [PFFacebookUtils isLinkedWithUser:[User currentUser]]) {
 
+        // Disable the Login button to prevent multiple touches
+        [self.loginButton setEnabled:NO];
+        [self.loginButton setHidden:YES];
+        
+        [self.activityIndicator setHidden:NO];
+        [self.activityIndicator startAnimating];
         //[[FriendsManager instance] getFriendProfilePictureWithID:[[User currentUser] objectForKey:UserFacebookID] withBlock:nil];
         [[FriendsManager instance] getAllFacebooFriendsWithBlock:^(bool success, NSString *response) {
+            [self.loginButton setEnabled:YES];
+            [self.loginButton setHidden:NO];
+            
+            // Stop the activity indicator
+            [self.activityIndicator stopAnimating];
+            [self.activityIndicator setHidden:YES];
             if (success) {
                 [self setupUserAndMoveToHomeScreen];
                 

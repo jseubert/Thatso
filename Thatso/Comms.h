@@ -27,9 +27,7 @@ typedef void (^ImageResultBlock)(UIImage* image);
 
 
 
-@protocol DidStartNewRound <NSObject>
-- (void) didStartNewRound:(BOOL)success info: (NSString *) info previousWinner:(CompletedRound *)winningRound;
-@end
+
 
 @protocol DidGetPreviousRounds <NSObject>
 - (void) didGetPreviousRounds:(BOOL)success info: (NSString *) info;

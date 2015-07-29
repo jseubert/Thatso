@@ -27,6 +27,7 @@
 		95799FF81A1AE368006A209F /* PHFDelegateChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 95799FF71A1AE368006A209F /* PHFDelegateChain.m */; };
 		95881E8F19D90B32001202AB /* UIColor+AppColors.m in Sources */ = {isa = PBXBuildFile; fileRef = 95881E8E19D90B32001202AB /* UIColor+AppColors.m */; };
 		95881E9219D91117001202AB /* UIFont+AppFonts.m in Sources */ = {isa = PBXBuildFile; fileRef = 95881E9119D91117001202AB /* UIFont+AppFonts.m */; };
+		958D623B1B4E39DB0029F2EB /* CategoriesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 958D623A1B4E39DB0029F2EB /* CategoriesManager.m */; };
 		959801671B0D98880041A2F5 /* GameManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 959801661B0D98880041A2F5 /* GameManager.m */; };
 		959A12961B38D9F700E7702E /* FriendsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 959A12951B38D9F700E7702E /* FriendsManager.m */; };
 		95F05C5B1A30107E00752A16 /* PreviousRoundsTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 95F05C5A1A30107E00752A16 /* PreviousRoundsTableViewCell.m */; };
@@ -122,6 +123,8 @@
 		95881E8E19D90B32001202AB /* UIColor+AppColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+AppColors.m"; sourceTree = "<group>"; };
 		95881E9019D91117001202AB /* UIFont+AppFonts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+AppFonts.h"; sourceTree = "<group>"; };
 		95881E9119D91117001202AB /* UIFont+AppFonts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+AppFonts.m"; sourceTree = "<group>"; };
+		958D62391B4E39DB0029F2EB /* CategoriesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CategoriesManager.h; sourceTree = "<group>"; };
+		958D623A1B4E39DB0029F2EB /* CategoriesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CategoriesManager.m; sourceTree = "<group>"; };
 		959801651B0D98880041A2F5 /* GameManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameManager.h; sourceTree = "<group>"; };
 		959801661B0D98880041A2F5 /* GameManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameManager.m; sourceTree = "<group>"; };
 		959A12941B38D9F700E7702E /* FriendsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendsManager.h; sourceTree = "<group>"; };
@@ -252,6 +255,8 @@
 				959801661B0D98880041A2F5 /* GameManager.m */,
 				953E14341B42342500741EA6 /* RoundManager.h */,
 				953E14351B42342500741EA6 /* RoundManager.m */,
+				958D62391B4E39DB0029F2EB /* CategoriesManager.h */,
+				958D623A1B4E39DB0029F2EB /* CategoriesManager.m */,
 			);
 			name = Managers;
 			sourceTree = "<group>";
@@ -602,6 +607,7 @@
 				9A2C6F7719A8324200DCF2B7 /* AppDelegate.m in Sources */,
 				9A1C14151AEC51C500789A6E /* DeviceUtils.m in Sources */,
 				959A12961B38D9F700E7702E /* FriendsManager.m in Sources */,
+				958D623B1B4E39DB0029F2EB /* CategoriesManager.m in Sources */,
 				9A428A5119E7C4A000C80EE7 /* CommentTableViewCell.m in Sources */,
 				95799FF21A1AE1FF006A209F /* PHFComposeBarView.m in Sources */,
 				95799FF81A1AE368006A209F /* PHFDelegateChain.m in Sources */,

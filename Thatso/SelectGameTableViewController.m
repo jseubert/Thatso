@@ -65,6 +65,7 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
     [self.tableView setSeparatorColor:[UIColor clearColor]];
     [self.tableView setShowsVerticalScrollIndicator:NO];
     [self.tableView setHidden:YES];
+    [self.tableView setAllowsMultipleSelection:NO];
     [self.view addSubview: self.tableView];
     
     //Empty Table View
@@ -138,6 +139,16 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
 
 
 #pragma mark - Table view data source
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        //add code here for when you hit delete
+    }
+}
+
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -241,30 +252,28 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
 
 - (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-       
-    NSString *cellIdentifier = @"SectionCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-    }
+    UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0,0,tableView.frame.size.width,40)];
+    UILabel *headerLabel = [[UILabel alloc] initWithFrame:CGRectMake(10,0,tableView.frame.size.width,40)];
+    [headerLabel setBackgroundColor:[UIColor clearColor]];
+    [header addSubview:headerLabel];
     if(section == 0)
     {
-        cell.textLabel.text = @"Your Turn to Pick";
-        cell.backgroundColor = [UIColor lightBlueAppColor];
+        headerLabel.text = @"Your Turn to Pick";
+        header.backgroundColor = [UIColor lightBlueAppColor];
     } else if (section == 1)
     {
-        cell.textLabel.text = @"Add Your Response";
-        cell.backgroundColor = [UIColor blueAppColor];
+        headerLabel.text = @"Add Your Response";
+        header.backgroundColor = [UIColor blueAppColor];
     } else if (section ==2)
     {
-        cell.textLabel.text = @"Waiting On Judge";
-        cell.backgroundColor = [UIColor pinkAppColor];
+        headerLabel.text = @"Waiting On Judge";
+        header.backgroundColor = [UIColor pinkAppColor];
     }
     
-    cell.textLabel.font = [UIFont defaultAppFontWithSize:16];
-    cell.textLabel.textColor = [UIColor whiteColor];
+    headerLabel.font = [UIFont defaultAppFontWithSize:16];
+    headerLabel.textColor = [UIColor whiteColor];
     
-    return cell;
+    return header;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {

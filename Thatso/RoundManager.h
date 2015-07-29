@@ -15,6 +15,10 @@
 - (void) didGetComments:(BOOL)success info: (NSString *) info;
 @end
 
+@protocol DidStartNewRound <NSObject>
+- (void) didStartNewRound:(BOOL)success info: (NSString *) info previousWinner:(CompletedRound *)winningRound;
+@end
+
 @interface RoundManager : NSObject
 
 @property (nonatomic, strong) NSMutableDictionary* currentComments;

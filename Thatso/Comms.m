@@ -74,7 +74,7 @@
     }];
 }
 
-
+/*
 + (void) addComment:(Comment*)comment toRound:(Round*)round forDelegate:(id<DidAddCommentDelegate>)delegate{
     //Check if this round is still active
     PFQuery *roundQuery = [PFQuery queryWithClassName:RoundClass];
@@ -272,7 +272,7 @@
              }];
          }
     }];
-}
+}*/
 
 +(void) getNewCategoryWithSubjects: (NSMutableArray *)players inGame:(NSString *)gameId familyRated:(BOOL)familyRated reloadCategories:(BOOL)reloadCategories withBlock:(void (^)(GenericCategory*category, NSString* userId, BOOL success,  NSString* info))block
 {
@@ -390,46 +390,6 @@
     [getFamilyCategory whereKey:CategoryIsPG equalTo:[NSNumber numberWithBool:YES]];
     [DataStore instance].familyCategories = [[NSMutableArray alloc] initWithArray:[getFamilyCategory findObjects]];
 }
-/*
-+ (void) getuser: (NSString *)fbId
-{
-    PFQuery *getUser = [User query];
-    [getUser whereKey:UserFacebookID containsString:fbId];
-    
-    User* user = (User *)[getUser getFirstObject];
-    if(user != nil)
-    {
-        [[DataStore instance].fbFriends setObject:user forKey:fbId];
-        [Comms getProfilePictureForUser:[user objectForKey:UserFacebookID] withBlock:nil];
-    }
-}
-
-
-+ (void) getProfilePictureForUser: (NSString*) fbId withBlock:(void (^)(UIImage*))block
-{
-    //NSOperationQueue background thread?
-    [[NSOperationQueue profilePictureOperationQueue] addOperationWithBlock:^ {
-        // Build a profile picture URL from the user's Facebook user id
-        NSString *profilePictureURL = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture", fbId];
-        NSData *profilePictureData = [NSData dataWithContentsOfURL:[NSURL URLWithString:profilePictureURL]];
-        UIImage *profilePicture = [UIImage imageWithData:profilePictureData];
-        // Set the profile picture into the user object
-        if (profilePicture)
-        {
-            @synchronized(self){
-                [[DataStore instance].fbFriendsProfilePictures setObject:profilePicture forKey:fbId];
-            }
-        }
-        if(block != nil)
-        {
-            dispatch_async(dispatch_get_main_queue(), ^(void){
-                //Run UI Updates
-                 block(profilePicture);
-            });
-        }
-    }];
-}*/
-
 
 
 
