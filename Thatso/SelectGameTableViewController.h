@@ -7,7 +7,7 @@
 //
 #import "BaseViewController.h"
 
-@interface SelectGameTableViewController : BaseViewController <UITableViewDataSource, UITableViewDelegate>
+@interface SelectGameTableViewController : BaseViewController <UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate>
 
 @property (strong, nonatomic) UITableView *tableView;
 @property (strong, nonatomic) UIRefreshControl *refreshControl;

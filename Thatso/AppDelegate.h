@@ -16,5 +16,6 @@
 
 - (void)initSinchClientWithUserId:(NSString *)userId;
 -(void)logoutSinchClient;
+-(void)registerForNotifications;
 
 @end

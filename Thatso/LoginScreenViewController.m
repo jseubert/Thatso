@@ -53,14 +53,6 @@ NSString * const ViewedLoginScreen = @"ViewedLoginScreen";
     [self.view addSubview:self.activityIndicator];
     
     [self.view setBackgroundColor:[UIColor blueAppColor]];
-    
-    if(![[NSUserDefaults standardUserDefaults] boolForKey:ViewedLoginScreen])
-    {
-        
-        UIAlertView *newAlertView = [[UIAlertView alloc] initWithTitle:@"Welcome to ThatSo! The game where you get to make fun of all of your friends. Click \"Login with Facebook\" to connect your Facebook account and get started!" message:nil delegate:nil cancelButtonTitle:@"Kewl" otherButtonTitles: nil];
-        [newAlertView show];
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:ViewedLoginScreen];
-    }
 }
 
 -(void)viewDidLayoutSubviews

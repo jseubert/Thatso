@@ -27,6 +27,7 @@
 @end
 
 NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
+NSString * const RequestedNotifications = @"RequestedNotifications";
 
 @implementation SelectGameTableViewController
 
@@ -92,13 +93,33 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
     if(![[NSUserDefaults standardUserDefaults] boolForKey:ViewedSelectGameScreen])
     {
         
-        UIAlertView *newAlertView = [[UIAlertView alloc] initWithTitle:@"Awesome! This is the \"Games\" Screen. Here you can see all the games you are a part of. They are sorted by games you are the judge of and need to pick an answer, games you need to add a response to for the judge to pick, and games you have answered and are waiting on the judge to pick. Press \"New Game\" to create a game with your friends!" message:nil delegate:nil cancelButtonTitle:@"Kewl" otherButtonTitles: nil];
+        UIAlertView *newAlertView = [[UIAlertView alloc] initWithTitle:@"Awesome! This is the \"Games\" Screen. Here you can see all the games you are a part of. They are sorted by games you are the judge of and need to pick an answer, games you need to add a response to for the judge to pick, and games you have answered and are waiting on the judge to pick. Press \"New Game\" to create a game with your friends!" message:nil delegate:self cancelButtonTitle:@"Kewl" otherButtonTitles: nil];
+        [newAlertView setTag:1];
         [newAlertView show];
         
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:ViewedSelectGameScreen];
+    } else  {
+        [self notificationAlert];
     }
     
 }
+
+-(void) notificationAlert {
+    if(![[NSUserDefaults standardUserDefaults] boolForKey:RequestedNotifications]) {
+        if(![[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
+            UIAlertView *newAlertView = [[UIAlertView alloc] initWithTitle:@"Notifications?" message:@"So do you want to get Notifications for when new rounds start or you are added to a game? You can change this setting later in the Settings section" delegate:self cancelButtonTitle:@"Nah" otherButtonTitles:@"Yup", nil];
+            [newAlertView setTag:2];
+            [newAlertView show];
+        }
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:RequestedNotifications];
+    }
+}
+
+
+                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                         
+         
+                                                                                                                                                                                                                                                                                        
 
 -(void)viewDidLayoutSubviews
 {
@@ -401,6 +422,26 @@ NSString * const ViewedSelectGameScreen = @"ViewedSelectGameScreen";
 {
     [super hideActivityIndicator];
     [self.tableView setUserInteractionEnabled:YES];
+}
+
+#pragma UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if(alertView.tag == 2) {
+        if(buttonIndex != [alertView cancelButtonIndex]) {
+            AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+            [appDelegate registerForNotifications];
+        }
+    }
+    
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    if(alertView.tag == 1) {
+        if(![[UIApplication sharedApplication] isRegisteredForRemoteNotifications]) {
+            [self notificationAlert];
+        }
+           
+    }
 }
 
 @end
