@@ -55,7 +55,7 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
     FratBarButtonItem *backButton= [[FratBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
     self.navigationItem.backBarButtonItem = backButton;
     //Previous Rounds Navigation Button
-    FratBarButtonItem *previousGames= [[FratBarButtonItem alloc] initWithTitle:@"Past Rounds" style:UIBarButtonItemStyleBordered target:self action:@selector(clickedPastGamesButton:)];
+    FratBarButtonItem *previousGames= [[FratBarButtonItem alloc] initWithTitle:@"Past Rounds" style:UIBarButtonItemStylePlain target:self action:@selector(clickedPastGamesButton:)];
     self.navigationItem.rightBarButtonItem = previousGames;
     
     //Header View

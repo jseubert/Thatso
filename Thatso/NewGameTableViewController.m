@@ -40,7 +40,7 @@
      * Subview initializations
      */
     //Finish Game Button
-    FratBarButtonItem *startButton  = [[FratBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleBordered target:self action:@selector(doneButtonPressed:)];
+    FratBarButtonItem *startButton  = [[FratBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonPressed:)];
     self.navigationItem.rightBarButtonItem = startButton;
     
     //Friends table view

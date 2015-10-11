@@ -51,11 +51,11 @@ NSString * const RequestedNotifications = @"RequestedNotifications";
     [self.navigationItem setBackBarButtonItem: backButton];
     
     //New Game Button
-    FratBarButtonItem *newGameButton= [[FratBarButtonItem alloc] initWithTitle:@"New Game" style:UIBarButtonItemStyleBordered target:self action:@selector(newGameButtonPressed:)];
+    FratBarButtonItem *newGameButton= [[FratBarButtonItem alloc] initWithTitle:@"New Game" style:UIBarButtonItemStylePlain target:self action:@selector(newGameButtonPressed:)];
     self.navigationItem.rightBarButtonItem = newGameButton;
     
     //Logout Button
-    FratBarButtonItem *logoutButton = [[FratBarButtonItem alloc] initWithTitle:@"Logout" style:UIBarButtonItemStyleBordered target:self action:@selector(logoutButtonPressed:)];
+    FratBarButtonItem *logoutButton = [[FratBarButtonItem alloc] initWithTitle:@"Logout" style:UIBarButtonItemStylePlain target:self action:@selector(logoutButtonPressed:)];
     self.navigationItem.leftBarButtonItem = logoutButton;
     
     //Main TableView

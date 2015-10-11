@@ -28,7 +28,7 @@
         [self.navigationItem setBackBarButtonItem: backButton];
     
         //New Game Button
-        FratBarButtonItem *newGameButton= [[FratBarButtonItem alloc] initWithTitle:@"Next" style:UIBarButtonItemStyleBordered target:self action:@selector(nextClicked:)];
+        FratBarButtonItem *newGameButton= [[FratBarButtonItem alloc] initWithTitle:@"Next" style:UIBarButtonItemStylePlain target:self action:@selector(nextClicked:)];
         self.navigationItem.rightBarButtonItem = newGameButton;
 
     self.gameNameLabel = [[UILabel alloc] initWithFrame:(CGRectZero)];
