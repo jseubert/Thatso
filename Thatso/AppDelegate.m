@@ -16,6 +16,7 @@
 
 
 
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -33,7 +34,7 @@
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
     // Initialize Parse's Facebook Utilities singleton. This uses the FacebookAppID we specified in our App bundle's plist.
-    [PFFacebookUtils initializeFacebook];
+    [PFFacebookUtils initializeFacebookWithApplicationLaunchOptions:launchOptions];
     
     
     LoginScreenViewController *rootViewController = [[LoginScreenViewController alloc] init];
@@ -69,7 +70,7 @@
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-     [FBSDKAppEvents activateApp];
+    [FBSDKAppEvents activateApp];
     
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     if (currentInstallation.badge != 0) {
@@ -83,13 +84,14 @@
             openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication
          annotation:(id)annotation {
-    return [FBAppCall handleOpenURL:url
-                  sourceApplication:sourceApplication
-                        withSession:[PFFacebookUtils session]];
+    return [[FBSDKApplicationDelegate sharedInstance] application:application
+                                                          openURL:url
+                                                sourceApplication:sourceApplication
+                                                       annotation:annotation];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
-    [[PFFacebookUtils session] close];
+    //[[PFFacebookUtils session] close];
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {

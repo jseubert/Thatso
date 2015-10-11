@@ -76,8 +76,9 @@ static FriendsManager *instance = nil;
 
 - (void) getAllFacebooFriendsWithBlock:(void (^)(bool success, NSString *response))block
 {
-    FBRequest *friendsRequest = [FBRequest requestForMyFriends];
-    [friendsRequest startWithCompletionHandler: ^(FBRequestConnection *connection,
+    
+    FBSDKGraphRequest *friendsRequest = [[FBSDKGraphRequest alloc] initWithGraphPath:@"/me/friends?limit=1000" parameters:nil];
+    [friendsRequest startWithCompletionHandler: ^(FBSDKGraphRequestConnection *connection,
                                                   NSDictionary* result,
                                                   NSError *error)
      {
@@ -93,7 +94,7 @@ static FriendsManager *instance = nil;
          {
              NSArray *friends = result[@"data"];
              NSMutableArray *friendsIDs = [[NSMutableArray alloc] init];
-             for (FBGraphObject* friend in friends) {
+             for (NSDictionary* friend in friends) {
                  [friendsIDs addObject:[friend objectForKey:ID]];
              }
              

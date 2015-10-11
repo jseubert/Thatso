@@ -14,6 +14,10 @@
 #import "RoundManager.h"
 #import "User.h"
 
+
+
+
+
 @implementation Comms
 
 //Notifications 
@@ -32,6 +36,54 @@
     
 	// Basic User information and your friends are part of the standard permissions
 	// so there is no reason to ask for additional permissions
+    
+    NSArray *permissionsArray = @[ @"public_profile", @"user_friends"];
+
+    [PFFacebookUtils logInInBackgroundWithReadPermissions:permissionsArray block:^(PFUser * _Nullable user, NSError * _Nullable error) {
+        // Was login successful ?
+        if (!user) {
+            if (!error) {
+                [delegate didlogin:NO info:@"The Facebook login was cancelled."];
+            } else {
+                [delegate didlogin:NO info: [NSString stringWithFormat:@"An error occurred: %@", error.localizedDescription]];
+            }
+            return;
+        }
+        else
+        {
+                //Login Successful - Update user and find friends
+            FBSDKGraphRequest *request = [[FBSDKGraphRequest alloc] initWithGraphPath:@"me"
+                                                                           parameters:nil];
+            [request startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+                // TODO: handle results or error of request.
+                if (!error) {
+                    NSDictionary *me = (NSDictionary *)result;
+                    [[User currentUser] setObject:[me objectForKey:ID] forKey:UserFacebookID];
+                    [[User currentUser] setObject:[me objectForKey:UserFirstName] forKey:UserFirstName];
+                    [[User currentUser] setObject:[me objectForKey:UserLastName] forKey:UserLastName];
+                    [[User currentUser] setObject:[me objectForKey:UserFullName] forKey:UserFullName];
+                    [[User currentUser] saveInBackground];
+                    
+                    [[FriendsManager instance] getFriendProfilePictureWithID:[user objectForKey:UserFacebookID] withBlock:nil];
+                    
+                    //Now get all your friends and make sure theyre added
+                    [[FriendsManager instance] getAllFacebooFriendsWithBlock:^(bool success, NSString *response) {
+                        if(success)
+                        {
+                            [delegate didlogin:YES info: nil];
+                        } else{
+                            [delegate didlogin:NO info: response];
+                        }
+                    }];
+
+                } else {
+                    [delegate didlogin:NO info: @"Could not get Facebook info. Try again."];
+                }
+
+            }];
+        }
+    }];
+            /*
 	[PFFacebookUtils logInWithPermissions:[NSArray arrayWithObjects:@"user_friends", nil] block:^(PFUser *user, NSError *error) {
 		// Was login successful ?
 		if (!user) {
@@ -71,7 +123,7 @@
             }
         }];
     }
-    }];
+    }];*/
 }
 
 /*
