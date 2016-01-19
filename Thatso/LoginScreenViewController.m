@@ -99,7 +99,6 @@ NSString * const ViewedLoginScreen = @"ViewedLoginScreen";
         
         [self.activityIndicator setHidden:NO];
         [self.activityIndicator startAnimating];
-        //[[FriendsManager instance] getFriendProfilePictureWithID:[[User currentUser] objectForKey:UserFacebookID] withBlock:nil];
         [[FriendsManager instance] getAllFacebooFriendsWithBlock:^(bool success, NSString *response) {
             [self.loginButton setEnabled:YES];
             [self.loginButton setHidden:NO];

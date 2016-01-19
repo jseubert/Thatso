@@ -11,6 +11,8 @@
 
 #import <Parse/PFConstants.h>
 
+PF_WATCH_UNAVAILABLE_WARNING
+
 @class PFReachability;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -32,6 +34,8 @@ PF_WATCH_UNAVAILABLE @interface PFReachability : NSObject
 @property (nonatomic, assign, readonly) PFReachabilityState currentState;
 
 - (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
+
 - (instancetype)initWithURL:(NSURL *)url NS_DESIGNATED_INITIALIZER;
 
 /*

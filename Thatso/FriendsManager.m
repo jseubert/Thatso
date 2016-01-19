@@ -77,7 +77,7 @@ static FriendsManager *instance = nil;
 - (void) getAllFacebooFriendsWithBlock:(void (^)(bool success, NSString *response))block
 {
     
-    FBSDKGraphRequest *friendsRequest = [[FBSDKGraphRequest alloc] initWithGraphPath:@"/me/friends?limit=1000" parameters:nil];
+    FBSDKGraphRequest *friendsRequest = [[FBSDKGraphRequest alloc] initWithGraphPath:@"me/friends?limit=1000" parameters:@{@"fields": @"id, name, email"}];
     [friendsRequest startWithCompletionHandler: ^(FBSDKGraphRequestConnection *connection,
                                                   NSDictionary* result,
                                                   NSError *error)

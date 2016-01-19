@@ -19,17 +19,17 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-        [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
-        self.navigationItem.title = @"New Game";
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+    self.navigationItem.title = @"New Game";
         
     
-        //Back button - needed for pushed view controllers
-        FratBarButtonItem *backButton= [[FratBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
-        [self.navigationItem setBackBarButtonItem: backButton];
+    //Back button - needed for pushed view controllers
+    FratBarButtonItem *backButton= [[FratBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
+    [self.navigationItem setBackBarButtonItem: backButton];
     
-        //New Game Button
-        FratBarButtonItem *newGameButton= [[FratBarButtonItem alloc] initWithTitle:@"Next" style:UIBarButtonItemStylePlain target:self action:@selector(nextClicked:)];
-        self.navigationItem.rightBarButtonItem = newGameButton;
+    //New Game Button
+    FratBarButtonItem *newGameButton= [[FratBarButtonItem alloc] initWithTitle:@"Next" style:UIBarButtonItemStylePlain target:self action:@selector(nextClicked:)];
+    self.navigationItem.rightBarButtonItem = newGameButton;
 
     self.gameNameLabel = [[UILabel alloc] initWithFrame:(CGRectZero)];
     [self.gameNameLabel setText:@"Game Name"];
@@ -46,6 +46,8 @@
     [[self.gameNameTextField  layer] setCornerRadius:5.0f];
     [self.gameNameTextField setFont:[UIFont defaultAppFontWithSize:16.0f]];
     [self.gameNameTextField setTextColor:[UIColor blackColor]];
+    UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 40)];
+    self.gameNameTextField.leftView = paddingView;
     [self.view addSubview:self.gameNameTextField];
     
     self.adultContentLabel = [[UILabel alloc] initWithFrame:(CGRectZero)];
@@ -65,6 +67,7 @@
 
 -(void)viewDidLayoutSubviews
 {
+    
     [super viewDidLayoutSubviews];
     [self.gameNameLabel setFrame:(CGRectMake(10,
                                             self.navigationController.navigationBar.frame.size.height + 20,
@@ -76,8 +79,6 @@
                                                  self.view.frame.size.width-20,
                                                  40))];
     
-    UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 5, 40)];
-    self.gameNameTextField.leftView = paddingView;
     
     [self.adultContentLabel setFrame:(CGRectMake(10,
                                                 self.gameNameTextField.frame.origin.y + self.gameNameTextField.frame.size.height + 10,

@@ -9,9 +9,9 @@
 
 #import "PFApplication.h"
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || TARGET_OS_TV
 #import <UIKit/UIKit.h>
-#elif !TARGET_OS_WATCH && TARGET_OS_MAC
+#elif PF_TARGET_OS_OSX
 #import <AppKit/AppKit.h>
 #endif
 
@@ -35,7 +35,7 @@
 ///--------------------------------------
 
 - (BOOL)isAppStoreEnvironment {
-#if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
+#if TARGET_OS_IOS && !TARGET_IPHONE_SIMULATOR
     return ([[NSBundle mainBundle] pathForResource:@"embedded" ofType:@"mobileprovision"] == nil);
 #endif
 
@@ -43,15 +43,15 @@
 }
 
 - (BOOL)isExtensionEnvironment {
-    return [[[NSBundle mainBundle] bundlePath] hasSuffix:@".appex"];
+    return [[NSBundle mainBundle].bundlePath hasSuffix:@".appex"];
 }
 
 - (NSInteger)iconBadgeNumber {
-#if TARGET_OS_WATCH
+#if TARGET_OS_WATCH || TARGET_OS_TV
     return 0;
 #elif TARGET_OS_IOS
     return self.systemApplication.applicationIconBadgeNumber;
-#elif TARGET_OS_MAC
+#elif PF_TARGET_OS_OSX
     // Make sure not to use `NSApp` here, because it doesn't work sometimes,
     // `NSApplication +sharedApplication` does though.
     NSString *badgeLabel = [[NSApplication sharedApplication] dockTile].badgeLabel;
@@ -75,7 +75,7 @@
     if (self.iconBadgeNumber != iconBadgeNumber) {
 #if TARGET_OS_IOS
         self.systemApplication.applicationIconBadgeNumber = iconBadgeNumber;
-#elif !TARGET_OS_WATCH
+#elif PF_TARGET_OS_OSX
         [[NSApplication sharedApplication] dockTile].badgeLabel = [@(iconBadgeNumber) stringValue];
 #endif
     }
