@@ -160,16 +160,6 @@ NSString * const RequestedNotifications = @"RequestedNotifications";
 
 
 #pragma mark - Table view data source
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    return YES;
-}
-
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        //add code here for when you hit delete
-    }
-}
-
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {

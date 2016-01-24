@@ -22,16 +22,31 @@
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
+                  symbolName = "__15+[Comms login:]_block_invoke_3"
+                  moduleName = "Thatso"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/jseubert/projects/Thatso/Thatso/Comms.m"
+                  timestampString = "475298420.922704"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "81"
+                  endingLineNumber = "81"
+                  offsetFromSymbolStart = "164">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
                   symbolName = "__copy_helper_block_"
                   moduleName = "Thatso"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jseubert/projects/Thatso/Thatso/Comms.m"
-                  timestampString = "474863563.507366"
+                  timestampString = "475298420.922862"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "0"
                   endingLineNumber = "0"
-                  offsetFromSymbolStart = "16">
+                  offsetFromSymbolStart = "12">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
@@ -41,12 +56,12 @@
                   moduleName = "Thatso"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jseubert/projects/Thatso/Thatso/Comms.m"
-                  timestampString = "474863563.507576"
+                  timestampString = "475298420.922958"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "0"
                   endingLineNumber = "0"
-                  offsetFromSymbolStart = "16">
+                  offsetFromSymbolStart = "10">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -90,12 +105,12 @@
                   moduleName = "Thatso"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jseubert/projects/Thatso/Thatso/NewGameTableViewController.m"
-                  timestampString = "474863563.50957"
+                  timestampString = "475298420.925148"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "56"
                   endingLineNumber = "56"
-                  offsetFromSymbolStart = "1257">
+                  offsetFromSymbolStart = "1276">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
@@ -105,12 +120,12 @@
                   moduleName = "Thatso"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jseubert/projects/Thatso/Thatso/NewGameTableViewController.m"
-                  timestampString = "474863563.509729"
+                  timestampString = "475298420.925292"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "56"
                   endingLineNumber = "56"
-                  offsetFromSymbolStart = "47">
+                  offsetFromSymbolStart = "58">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -202,12 +217,12 @@
                   moduleName = "Thatso"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jseubert/projects/Thatso/Thatso/NewGameDetailsViewController.m"
-                  timestampString = "474863563.512985"
+                  timestampString = "475298420.928037"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "136"
                   endingLineNumber = "136"
-                  offsetFromSymbolStart = "129">
+                  offsetFromSymbolStart = "96">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
@@ -217,12 +232,12 @@
                   moduleName = "Thatso"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/jseubert/projects/Thatso/Thatso/NewGameDetailsViewController.m"
-                  timestampString = "474863563.513124"
+                  timestampString = "475298420.928136"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "136"
                   endingLineNumber = "136"
-                  offsetFromSymbolStart = "137">
+                  offsetFromSymbolStart = "114">
                </Location>
             </Locations>
          </BreakpointContent>
