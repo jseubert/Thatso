@@ -147,6 +147,8 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
             [[NSUserDefaults standardUserDefaults] setBool:YES forKey:ViewedGameScreenPlayer];
         }
     }
+    
+
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -607,8 +609,9 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
         PFPush *push = [[PFPush alloc] init];
         NSDictionary *data = @{
                                @"alert" : [NSString stringWithFormat:@"New Round Starting in %@: \"%@\"", self.currentGame.gameName, self.currentRound.category],
-                               @"badge" : @"Increment",
-                               @"sounds" : @"woop.caf"
+                               @"sound" : @"woop.caf",
+                               @"type" : @"newRound",
+                               @"content-available" : @1
                                };
         [push setChannels:nonUserPlayersPushIDs];
         [push setData:data];

@@ -188,8 +188,9 @@
         PFPush *push = [[PFPush alloc] init];
         NSDictionary *data = @{
                                @"alert" : [NSString stringWithFormat:@"%@ has added you to a game: %@", [User currentUser].first_name, game.gameName],
-                               @"badge" : @"Increment",
-                               @"sounds" : @"woop.caf"
+                               @"sound" : @"woop.caf",
+                               @"type" : @"newGame",
+                               @"content-available" : @1
                                };
         
         [push setChannels:nonUserPlayers];

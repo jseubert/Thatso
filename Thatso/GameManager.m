@@ -264,7 +264,7 @@ static GameManager *sharedInstance = nil;
      }];
 }
 
-- (void) getUsersGamesWithDelegate:(id<DidGetGamesDelegate>) didGetGamesDelegate
+- (void) getUsersGamesWithCallback:(void (^)(BOOL))success
 {
     PFQuery *getGames = [PFQuery queryWithClassName:GameClass];
     
@@ -278,12 +278,9 @@ static GameManager *sharedInstance = nil;
     
     [getGames findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (error) {
-            if(didGetGamesDelegate != nil)
+            if(success != nil)
             {
-                if([didGetGamesDelegate respondsToSelector:@selector(didGetGames:info:)])
-                {
-                    [didGetGamesDelegate didGetGames:YES info:nil];
-                }
+                success(NO);
             }
             [[NSNotificationCenter defaultCenter] postNotificationName:GameManagerGamesLoadedError object:nil userInfo:@{GameManagerGamesLoadedError: error.description}];
         } else {
@@ -293,12 +290,9 @@ static GameManager *sharedInstance = nil;
                 [self addGame:[objects objectAtIndex:i]];
             }
             
-            if(didGetGamesDelegate != nil)
+            if(success != nil)
             {
-                if([didGetGamesDelegate respondsToSelector:@selector(didGetGames:info:)])
-                {
-                    [didGetGamesDelegate didGetGames:YES info:nil];
-                }
+                success(YES);
             }
             // Notify that all the current games have been downloaded
             [[NSNotificationCenter defaultCenter] postNotificationName:GameManagerGamesLoaded object:nil];

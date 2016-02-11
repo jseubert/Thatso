@@ -18,9 +18,6 @@ extern NSString * const GameManagerGamesLoadedError;
 - (void) newGameCreated:(BOOL)success game: (Game*)game info:(NSString *) info;
 @end
 
-@protocol DidGetGamesDelegate <NSObject>
-- (void) didGetGames:(BOOL)success info:(NSString *) info;
-@end
 
 @interface GameManager : NSObject
 
@@ -38,6 +35,6 @@ extern NSString * const GameManagerGamesLoadedError;
 
 //Network Calls
 - (void) startNewGameWithUsers:(NSMutableArray *)fbFriendsInGame withName:(NSString*)gameName familyFriendly:(BOOL)familyFriendly withDelegate:(id<GameCreatedDelegate>) gameCreatedDelegate;
-- (void) getUsersGamesWithDelegate:(id<DidGetGamesDelegate>) didGetGamesDelegate;
+- (void) getUsersGamesWithCallback:(void (^)(BOOL))success;
 
 @end

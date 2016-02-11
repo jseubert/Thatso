@@ -168,11 +168,13 @@ NSString * const ViewedLoginScreen = @"ViewedLoginScreen";
     //Register for push notifications
     PFInstallation *currentInstallation = [PFInstallation currentInstallation];
     [currentInstallation addUniqueObject:[NSString stringWithFormat:@"c%@",[User currentUser].fbId] forKey:@"channels"];
+    [currentInstallation addUniqueObject:@"iOS" forKey:@"channels"];
     [currentInstallation saveInBackground];
     
     //Move to Fist Screen
     SelectGameTableViewController *vc = [[SelectGameTableViewController alloc] init];
     [self.navigationController pushViewController:vc animated:YES];
+
 }
 
 

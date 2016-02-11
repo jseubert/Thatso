@@ -25,6 +25,8 @@
         bgColorView.backgroundColor = [UIColor lightBlueAppColor];
         [self setSelectedBackgroundView:bgColorView];
         
+        self.backgroundColor = [UIColor whiteColor];
+        
         //Initialize Views
         self.roundNumberLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         self.roundNumberLabel.font = [UIFont defaultAppFontWithSize:16.0];

@@ -71,7 +71,7 @@ NSString * const RequestedNotifications = @"RequestedNotifications";
     
     //Empty Table View
     self.emptyTableView = [[UITextView alloc] initWithFrame:CGRectZero];
-    [self.emptyTableView setText: @"No Games Found. Press \"New Game\"!"];
+    [self.emptyTableView setText: @"\n\n\nNo Games Found. Press \"New Game\"!"];
     [self.emptyTableView setFont:[UIFont defaultAppFontWithSize:20.0f]];
     [self.emptyTableView setTextColor:[UIColor whiteColor]];
     [self.emptyTableView setBackgroundColor:[UIColor clearColor]];
@@ -101,6 +101,18 @@ NSString * const RequestedNotifications = @"RequestedNotifications";
     } else  {
         [self notificationAlert];
     }
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(gamesLoaded:)
+                                                 name:GameManagerGamesLoaded
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(gamesLoadedError:)
+                                                 name:GameManagerGamesLoadedError
+                                               object:nil];
+    
+    [self refreshGames];
     
 }
 
@@ -140,15 +152,6 @@ NSString * const RequestedNotifications = @"RequestedNotifications";
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(gamesLoaded:)
-                                                 name:GameManagerGamesLoaded
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(gamesLoadedError:)
-                                                 name:GameManagerGamesLoadedError
-                                               object:nil];
-    [self refreshGames];
 }
 
 -(void)dealloc
@@ -307,6 +310,9 @@ NSString * const RequestedNotifications = @"RequestedNotifications";
         
         
         [self.navigationController pushViewController:vc animated:YES];
+        
+        [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+
     }
 }
 
@@ -335,10 +341,15 @@ NSString * const RequestedNotifications = @"RequestedNotifications";
     [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:@"Refreshing data..."]];
     [self.refreshControl  setEnabled:NO];
 	//[Comms getUsersGamesforDelegate:self];
-    [[GameManager instance] getUsersGamesWithDelegate:nil];
+    [[GameManager instance] getUsersGamesWithCallback:nil];
+}
+
+-(void) reloadGames {
+    [self showActivityIndicator];
 }
 
 #pragma mark Game Download
+/*
 //Call back delegate for new images finished
 - (void) didGetGamesDelegate:(BOOL)success info: (NSString *) info
 {
@@ -368,8 +379,9 @@ NSString * const RequestedNotifications = @"RequestedNotifications";
         [self showAlertWithTitle:@"Error loading gamesr!" andSummary:@"Pull to try again"];
     }
 }
+*/
 
-- (void) gamesLoaded :(NSNotification *)notification {
+- (void) gamesLoaded:(NSNotification *)notification {
     [self hideActivityIndicator];
     [self.tableView setHidden:NO];
     // Refresh the table data to show the new games
@@ -385,7 +397,7 @@ NSString * const RequestedNotifications = @"RequestedNotifications";
     {
         [self.tableView setBackgroundView:nil];
     }else{
-        [self.emptyTableView setText: @"No Games Found. Press \"New Game\"!"];
+        [self.emptyTableView setText:@"\n\n\nNo Games Found.\nPress \"New Game\"!"];
         [self.tableView setBackgroundView:self.emptyTableView];
     }
 }
@@ -396,9 +408,9 @@ NSString * const RequestedNotifications = @"RequestedNotifications";
     // Refresh the table data to show the new games
     [self.tableView reloadData];
     
-    [self.emptyTableView setText:@"Error loading games\nPull to try again"];
+    [self.emptyTableView setText:@"\n\n\nError loading games\nPull to try again"];
     [self.tableView setBackgroundView:self.emptyTableView];
-    [self showAlertWithTitle:@"Error loading gamesr!" andSummary:@"Pull to try again"];
+    [self showAlertWithTitle:@"Error loading games!" andSummary:@"Pull to try again"];
 }
 
 #pragma activity indicators

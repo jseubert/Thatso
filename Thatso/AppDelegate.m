@@ -14,6 +14,8 @@
 #import "User.h" 
 #import "ConfigurationUtils.h"
 
+#import "GameManager.h"
+
 
 
 
@@ -69,15 +71,20 @@
     [[UIApplication sharedApplication] registerForRemoteNotifications];
 }
 
+//
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     [FBSDKAppEvents activateApp];
     
-    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-    if (currentInstallation.badge != 0) {
-        currentInstallation.badge = 0;
-        [currentInstallation saveEventually];
-    }
-    application.applicationIconBadgeNumber = 0;
+    AppDelegate *thisObject = self;
+    [[GameManager instance] getUsersGamesWithCallback:^(BOOL success) {
+        if(success) {
+            [thisObject setNumberOfBadges:application];
+        }
+    }];
+}
+
+- (void)applicationWillResignActive:(UIApplication *)application {
+    [self setNumberOfBadges:application];
 }
 
 - (BOOL)application:(UIApplication *)application
@@ -90,8 +97,21 @@
                                                        annotation:annotation];
 }
 
+-(void) setNumberOfBadges: (UIApplication *)application {
+    //The badge is set to the number of games a user is either The Judge of or needs to add a response
+    NSUInteger numberOfGamesRequiringAction = [((NSMutableArray *)[[GameManager instance].sortedGames objectForKey:@"Judge"]) count] + [((NSMutableArray *)[[GameManager instance].sortedGames objectForKey:@"CommentNeeded"]) count];
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    if (currentInstallation.badge != numberOfGamesRequiringAction) {
+        currentInstallation.badge = numberOfGamesRequiringAction;
+        [currentInstallation saveEventually];
+    }
+    application.applicationIconBadgeNumber = numberOfGamesRequiringAction;
+    
+}
+
 - (void)applicationWillTerminate:(UIApplication *)application {
     //[[PFFacebookUtils session] close];
+    [self setNumberOfBadges:application];
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
@@ -106,15 +126,35 @@
     
 }
 
-//Push Notifications
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-    [PFPush handlePush:userInfo];
-}
-
 //Push Notifications - background
 -(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
-    completionHandler(UIBackgroundFetchResultNewData);
+    NSLog(@"didReceiveRemoteNotification:fetchCompletionHandler: %@", userInfo);
+    NSString * type = userInfo[@"type"];
+    application.applicationIconBadgeNumber = 69;
+    if([type isEqualToString:@"newGame"]){
+        [[GameManager instance] getUsersGamesWithCallback:^(BOOL success) {
+            if(success) {
+                [self setNumberOfBadges:application];
+                [PFPush handlePush:userInfo];
+                completionHandler(UIBackgroundFetchResultNewData);
+            } else {
+                [PFPush handlePush:userInfo];
+                completionHandler(UIBackgroundFetchResultFailed);
+            }
+        }];
+    } else if([type isEqualToString:@"newRound"]) {
+        [[GameManager instance] getUsersGamesWithCallback:^(BOOL success) {
+            if(success) {
+                [self setNumberOfBadges:application];
+                [PFPush handlePush:userInfo];
+                completionHandler(UIBackgroundFetchResultNewData);
+            } else {
+                [PFPush handlePush:userInfo];
+                completionHandler(UIBackgroundFetchResultFailed);
+            }
+        }];
+    }
 }
 
 - (void)initSinchClientWithUserId:(NSString *)userId {

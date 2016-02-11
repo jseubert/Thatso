@@ -3,6 +3,6 @@
 <plist version="1.0">
 <dict>
 	<key>EnvironmentType</key>
-	<string>production</string>
+	<string>testing</string>
 </dict>
 </plist>
