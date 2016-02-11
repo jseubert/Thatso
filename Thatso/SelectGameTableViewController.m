@@ -127,12 +127,6 @@ NSString * const RequestedNotifications = @"RequestedNotifications";
     }
 }
 
-
-                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                         
-         
-                                                                                                                                                                                                                                                                                        
-
 -(void)viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
@@ -152,6 +146,7 @@ NSString * const RequestedNotifications = @"RequestedNotifications";
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    [self.tableView reloadData];
 }
 
 -(void)dealloc
