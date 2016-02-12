@@ -175,6 +175,11 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
                                              selector:@selector(keyBoardWillChangeFrame:)
                                                  name:@"UIKeyboardWillChangeFrameNotification"
                                                object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(newRound:)
+                                                 name:RoundManagerNewRoundStarted
+                                               object:nil];
 }
 
 -(void)viewDidAppear:(BOOL)animated
@@ -417,6 +422,10 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
     }
 }
 
+-(void) newRound:(NSNotification *) notification {
+    [self refreshGame];
+}
+
 #pragma Submitting getting comments
 - (void) refreshGame
 {
@@ -424,9 +433,9 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
     [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:@"Refreshing data..."]];
     [self.refreshControl setEnabled:NO];
     
-    [self.currentGame fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+    [self.currentGame fetchInBackgroundWithBlock:^(PFObject *object, NSError *error) {
         self.currentRound = self.currentGame.currentRound;
-        [self.currentRound fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        [self.currentRound fetchInBackgroundWithBlock:^(PFObject *object, NSError *error) {
             
             [[RoundManager instance] getActiveCommentsForGame:self.currentGame inRound:self.currentRound forDelegate:self];
             [self setupHeader];

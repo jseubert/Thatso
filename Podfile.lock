@@ -20,12 +20,12 @@ PODS:
   - ParseUI (1.2.0):
     - Bolts/Tasks (~> 1.3)
     - Parse (~> 1.9)
-  - SinchRTC (3.7.1)
+  - SinchRTC (3.9.1)
 
 DEPENDENCIES:
-  - ParseFacebookUtilsV4 (~> 1.11.0)
-  - ParseUI (~> 1.2.0)
-  - SinchRTC (~> 3.7.1)
+  - ParseFacebookUtilsV4
+  - ParseUI
+  - SinchRTC
 
 SPEC CHECKSUMS:
   Bolts: f52a250053bb517ca874523c3913776359ab3def
@@ -34,6 +34,6 @@ SPEC CHECKSUMS:
   Parse: de2c52a9a1421b91ae7594ab8ce191afd184f19b
   ParseFacebookUtilsV4: 216e03bd560404eed09a4875c75f0c1cdf758070
   ParseUI: af2eba584799da4a9fbdac0e178662d7438b502e
-  SinchRTC: 58b08d88160e514c08a1c03305728349113d5379
+  SinchRTC: 364114635e0aa443cf0f3778efe91521a1df444e
 
 COCOAPODS: 0.39.0

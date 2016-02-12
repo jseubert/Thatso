@@ -52,7 +52,7 @@ SIN_EXPORT SIN_EXTERN NSString *const SINCallKey;                   // SINCallKe
 @property (nonatomic, weak) id<SINCallClientDelegate> delegate;
 
 /**
- * Calls the user with the given id.
+ * Make a call to the user with the given id.
  *
  * @param userId The application specific id of the user to call.
  *
@@ -86,6 +86,41 @@ SIN_EXPORT SIN_EXTERN NSString *const SINCallKey;                   // SINCallKe
 * @return SINCall Outgoing call
 */
 - (id<SINCall>)callUserWithId:(NSString *)userId headers:(NSDictionary *)headers;
+
+/**
+ * Make a video call to the user with the given id
+ *
+ * @param userId The application specific id of the user to call.
+ * @exception NSInternalInconsistencyException Throws an exception if attempting
+ *                                             to initiate a call before the
+ *                                             SINClient is started.
+ *                                             @see -[SINClientDelegate clientDidStart:].
+ * @return SINCall Outgoing call
+ */
+- (id<SINCall>)callUserVideoWithId:(NSString *)userId;
+
+/**
+ * Make a video call to the user with the given id and the give headers
+ *
+ * @param userId The application specific id of the user to call.
+ *
+ * @param headers NSString key-value pairs to pass with the call.
+ *                The total size of header keys + values (when encoded with NSUTF8StringEncoding)
+ *                must not exceed 1024 bytes.
+ *
+ * @exception NSInternalInconsistencyException Throws an exception if attempting
+ *                                             to initiate a call before the
+ *                                             SINClient is started.
+ *                                             @see -[SINClientDelegate clientDidStart:].
+ *
+ * @exception NSInvalidArgumentException Throws an exception if headers are not strictly
+ *                                       containing only keys and values that are of type NSString,
+ *                                       or if the size of all header strings exceeds 1024 bytes when
+ *                                       encoded as UTF-8.
+ *
+ * @return SINCall Outgoing call
+ */
+- (id<SINCall>)callUserVideoWithId:(NSString *)userId headers:(NSDictionary *)headers;
 
 /**
  * Calls a phone number and terminates the call to the PSTN-network (Publicly Switched
@@ -136,6 +171,36 @@ SIN_EXPORT SIN_EXTERN NSString *const SINCallKey;                   // SINCallKe
 - (id<SINCall>)callPhoneNumber:(NSString *)phoneNumber headers:(NSDictionary *)headers;
 
 /**
+ * Make a SIP call to user with the given SIP Identity.
+ *
+ * @param sipIdentity The SIP identity string of the user to call, should be in the form of “user@domain”.
+ *
+ * @exception NSInternalInconsistencyException Throws an exception if attempting
+ *                                             to initiate a call before the
+ *                                             SINClient is started.
+ *                                             @see -[SINClientDelegate clientDidStart:].
+ * @return SINCall Outgoing call
+ */
+- (id<SINCall>)callSIP:(NSString *)sipIdentity;
+
+/**
+ * Make a SIP call to user with the given SIP Identity and adding the given headers.
+ *
+ * @param sipIdentity The SIP identity string of the user to call, should be in the form of “user@domain”.
+ *
+ * @param headers NSString key-value pairs to pass with the call.
+ *                The total size of header keys + values (when encoded with NSUTF8StringEncoding)
+ *                must not exceed 1024 bytes.
+ *
+ * @exception NSInternalInconsistencyException Throws an exception if attempting
+ *                                             to initiate a call before the
+ *                                             SINClient is started.
+ *                                             @see -[SINClientDelegate clientDidStart:].
+ * @return SINCall Outgoing call
+ */
+- (id<SINCall>)callSIP:(NSString *)sipIdentity headers:(NSDictionary*)headers;
+
+/**
 * Calls the conference with the given id.
 *
 * @param conferenceId The application specific id of the conference to call.
@@ -149,6 +214,7 @@ SIN_EXPORT SIN_EXTERN NSString *const SINCallKey;                   // SINCallKe
 *                                       characters.
 * @return SINCall Outgoing call
 */
+
 - (id<SINCall>)callConferenceWithId:(NSString *)conferenceId;
 
 /**

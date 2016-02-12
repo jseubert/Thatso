@@ -1,0 +1,1 @@
+../../../../SinchRTC/Sinch.framework/Versions/A/Headers/SINUIView+Fullscreen.h

@@ -31,4 +31,9 @@
 /** A unique identifier pertaining to the call */
 @property (nonatomic, readonly, copy) NSString *callId;
 
+/**
+ * Hint that indicates if video is offered in the call.
+ */
+@property (nonatomic, readonly, getter=isVideoOffered) BOOL videoOffered;
+
 @end

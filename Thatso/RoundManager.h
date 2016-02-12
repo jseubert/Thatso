@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 John Seubert. All rights reserved.
 //
 
+extern NSString * const RoundManagerNewRoundStarted;
+
 //Delegate Callbacks
 @protocol DidAddCommentDelegate <NSObject>
 - (void) didAddComment:(BOOL)success needsRefresh:(BOOL)refresh addedComment:(Comment *)comment info:(NSString *) info;

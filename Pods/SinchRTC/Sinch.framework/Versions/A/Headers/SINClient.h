@@ -398,6 +398,12 @@ SIN_EXPORT SIN_EXTERN NSString *const SINClientWillTerminateNotification;
  */
 - (id<SINAudioController>)audioController;
 
+/**
+ * Retrieve the interface for the video controller, which provides
+ * access to video related functionality.
+ */
+- (id<SINVideoController>)videoController;
+
 @end
 
 /**

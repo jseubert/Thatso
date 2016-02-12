@@ -11,6 +11,8 @@
 #import "User.h"
 #import "GameManager.h"
 
+NSString * const RoundManagerNewRoundStarted = @"RoundManagerNewRoundStarted";
+
 @implementation RoundManager
 
 static RoundManager *instance = nil;

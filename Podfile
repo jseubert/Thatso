@@ -5,9 +5,9 @@
 
 platform :ios, '9.0'
 target 'Thatso' do
-	pod 'SinchRTC', '~> 3.7.1'
-	pod 'ParseFacebookUtilsV4', '~> 1.11.0'
-  	pod 'ParseUI', '~> 1.2.0'
+	pod 'SinchRTC'
+	pod 'ParseFacebookUtilsV4'
+  	pod 'ParseUI'
 end
 
 

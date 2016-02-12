@@ -16,6 +16,7 @@ NSString * const GameManagerGameAddedError = @"GameManagerGameAddedError";
 NSString * const GameManagerGamesLoaded = @"GameManagerGamesLoaded";
 NSString * const GameManagerGamesLoadedError = @"GameManagerGamesLoadedError";
 
+
 //Error Codes
 NSString * const GameManagerGamesErrorNotEnoughFriends = @"Not enough players added to game.";
 
@@ -142,7 +143,7 @@ static GameManager *sharedInstance = nil;
 - (void) userDidRespondInGame: (Game*) game
 {
     BOOL addGame = false;
-    //Move the game to
+    //Move the game in the game manager
     for (NSString *key in [self.sortedGames allKeys])
     {
         NSMutableArray *gameArray =[self.sortedGames objectForKey:key];
@@ -156,6 +157,7 @@ static GameManager *sharedInstance = nil;
                     NSMutableArray *newArray = [[NSMutableArray alloc] initWithArray:existingGame.currentRound.responded];
                     [newArray addObject:[User currentUser].fbId];
                     existingGame.currentRound.responded = newArray;
+                    [gameArray removeObject:existingGame];
                     addGame = true;
                     
                     break;

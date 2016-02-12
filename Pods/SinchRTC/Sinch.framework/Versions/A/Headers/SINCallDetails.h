@@ -79,4 +79,9 @@ typedef NS_ENUM(NSInteger, SINCallEndCause) {
  */
 @property (nonatomic, readonly) UIApplicationState applicationStateWhenReceived;
 
+/**
+ * Hint that indicates if video is offered in the call.
+ */
+@property (nonatomic, readonly, getter=isVideoOffered) BOOL videoOffered;
+
 @end

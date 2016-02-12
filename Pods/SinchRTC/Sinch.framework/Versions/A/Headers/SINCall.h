@@ -207,5 +207,13 @@ typedef NS_ENUM(NSInteger, SINCallDirection) { SINCallDirectionIncoming = 0, SIN
  */
 - (void)call:(id<SINCall>)call shouldSendPushNotifications:(NSArray *)pushPairs;
 
+/**
+ * Tells the delegate that a video track has been added to the call.
+ * (A delegate can use `SINVideoController` to manage rendering views.)
+ *
+ * @see SINVideoController
+ */
+- (void)callDidAddVideoTrack:(id<SINCall>)call;
+
 @end
 

@@ -23,6 +23,8 @@
 
 #import "SINAudioController.h"
 
+#import "SINVideoController.h"
+
 #import "SINPushPair.h"
 #import "SINManagedPush.h"
 #import "SINAPSEnvironment.h"

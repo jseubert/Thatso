@@ -9,13 +9,6 @@
 #import <AVFoundation/AVFoundation.h>
 #import <Sinch/SINExport.h>
 
-/**
- * If input position is front-facing camera, returns back-facing camera.
- * If input position is back-facing camera, returns front-facing camera.
- * If input is AVCaptureDevicePositionUnspecified, returns input.
- */
-SIN_EXPORT AVCaptureDevicePosition SINToggleCaptureDevicePosition(AVCaptureDevicePosition position);
-
 @protocol SINVideoController <NSObject>
 
 /**
@@ -33,12 +26,35 @@ SIN_EXPORT AVCaptureDevicePosition SINToggleCaptureDevicePosition(AVCaptureDevic
 
 /**
  * View into which the remote peer video stream is rendered.
+ *
+ * Use -[UIView contentMode] to control how the video frame is rendered.
+ * (Note that only UIViewContentModeScaleAspectFit and UIViewContentModeScaleAspectFill will be respected)
+ *
+ * Use -[UIView backgroundColor] to specify color for potential "empty" regions
+ * when UIViewContentModeScaleAspectFit is used.
+ *
+ * @see SINUIViewFullscreenAdditions (SINUIView+Fullscreen.h) for helpers to toggle full screen.
  */
 - (UIView*)remoteView;
 
 /**
  * View into which the locally captured video stream is rendered.
+ *
+ * Use -[UIView contentMode] to control how the video frame is rendered.
+ * (Note that only UIViewContentModeScaleAspectFit and UIViewContentModeScaleAspectFill will be respected)
+ *
+ * Use -[UIView backgroundColor] to specify color for potential "empty" regions
+ * when UIViewContentModeScaleAspectFit is used.
+ *
+ * @see SINUIViewFullscreenAdditions (SINUIView+Fullscreen.h) for helpers to toggle full screen.
  */
 - (UIView*)localView;
 
 @end
+
+/**
+ * If input position is front-facing camera, returns back-facing camera.
+ * If input position is back-facing camera, returns front-facing camera.
+ * If input is AVCaptureDevicePositionUnspecified, returns input.
+ */
+SIN_EXPORT AVCaptureDevicePosition SINToggleCaptureDevicePosition(AVCaptureDevicePosition position);

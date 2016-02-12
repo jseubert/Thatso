@@ -15,6 +15,7 @@
 #import "ConfigurationUtils.h"
 
 #import "GameManager.h"
+#import "RoundManager.h"
 
 
 
@@ -148,6 +149,7 @@
             if(success) {
                 [self setNumberOfBadges:application];
                 [PFPush handlePush:userInfo];
+                [[NSNotificationCenter defaultCenter] postNotificationName:RoundManagerNewRoundStarted object:nil userInfo:nil];
                 completionHandler(UIBackgroundFetchResultNewData);
             } else {
                 [PFPush handlePush:userInfo];

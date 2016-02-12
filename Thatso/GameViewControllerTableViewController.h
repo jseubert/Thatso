@@ -29,6 +29,7 @@
 
 @property(nonatomic) Game *currentGame;
 @property(nonatomic) Round *currentRound;
+@property(nonatomic) NSString *currentGameId;
 @property(nonatomic) NSMutableArray* comments;
 @property(nonatomic) NSMutableArray* nonUserPlayers;
 @property(nonatomic) NSString* previousComment;
