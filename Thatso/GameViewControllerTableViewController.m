@@ -207,22 +207,22 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
 
     [self.headerView.roundLabel setText:[NSString stringWithFormat:@"Round %@",self.currentRound.roundNumber]];
     [self.headerView.caregoryLabel setText:[NSString stringWithFormat:@"%@",self.currentRound.category]];
-    if(![previousProfileId isEqual:self.currentRound.subject])
-    {
+   // if(![previousProfileId isEqual:self.currentRound.subject])
+   // {
         [[FriendsManager instance] getFriendProfilePictureWithID:self.currentRound.subject withBlock:^(UIImage * image) {
-
+            
             [self.headerView.profilePicture setImage:[image imageScaledToFitSize:CGSizeMake(40, 40)]];
-            self.headerView.profilePicture.frame = CGRectMake(self.headerView.profilePicture.frame.origin.x + 20, self.headerView.profilePicture.frame.origin.y + 20, 0, 0);
+           /* self.headerView.profilePicture.frame = CGRectMake(self.headerView.profilePicture.frame.origin.x + 20, self.headerView.profilePicture.frame.origin.y + 20, 0, 0);
             [UIView animateWithDuration:0.5
                          animations:^{
                              [[self.headerView.profilePicture  layer] setCornerRadius:20];
                              self.headerView.profilePicture.frame = CGRectMake(self.headerView.profilePicture.frame.origin.x - 20, self.headerView.profilePicture.frame.origin.y -20, 40, 40);
                          }
                          completion:^(BOOL finished){
-                         }];
+                         }];*/
         
         }];
-    }
+   // }
     [self layoutSubviews];
 
 }
@@ -696,7 +696,7 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
 - (void)messageClient:(id<SINMessageClient>)messageClient didReceiveIncomingMessage:(id<SINMessage>)message {
     if([message.text isEqualToString:NewRound])
     {
-        [self newRoundNotification:message inBackground:NO];
+       // [self newRoundNotification:message inBackground:NO];
     }
     else if([message.text isEqualToString:NewComment])
     {

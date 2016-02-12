@@ -301,7 +301,7 @@ NSString * const RequestedNotifications = @"RequestedNotifications";
             game = [[[GameManager instance].sortedGames objectForKey:@"Completed"] objectAtIndex:indexPath.row];
         }
         [game.currentRound fetchIfNeeded];
-        vc.currentGameId = game.objectId;
+        //vc.currentGameId = game.objectId;
         vc.currentGame = game;
         
         [self.navigationController pushViewController:vc animated:YES];

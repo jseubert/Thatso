@@ -125,9 +125,7 @@ static RoundManager *instance = nil;
                              if (succeeded) {
                                  // Notify that the Comment has been uploaded
                                  //Also add to round
-                                 NSMutableArray *newArray = [[NSMutableArray alloc] initWithArray:((Round*)round).responded];
-                                 [newArray addObject:comment.from.fbId];
-                                 round.responded = newArray;
+                                 [round addUniqueObject:comment.from.fbId forKey:RoundResponded];
                                  [round saveInBackground];
                                  
                                  [delegate didAddComment:YES needsRefresh:NO addedComment:comment info:nil];

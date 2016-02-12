@@ -90,9 +90,9 @@ NSString * const SinchEnvironmentHostTesting = @"sandbox.sinch.com";
     NSString *sinchApplicationSecret = @"";
     
     if(environmentType == EnvironmentTypeProduction) {
-        sinchApplicationSecret = SinchApplicationIdProduction;
+        sinchApplicationSecret = SinchSecretProduction;
     } else if(environmentType == EnvironmentTypeTesting) {
-        sinchApplicationSecret = SinchApplicationIdTesting;
+        sinchApplicationSecret = SinchSecretTesting;
     }
     return sinchApplicationSecret;
 }

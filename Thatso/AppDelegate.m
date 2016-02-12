@@ -161,15 +161,18 @@
 
 - (void)initSinchClientWithUserId:(NSString *)userId {
     if (!_client) {
-        _client = [Sinch clientWithApplicationKey:[ConfigurationUtils sinchApplicationId]
-                                applicationSecret:[ConfigurationUtils sinchApplicationSecret]
-                                  environmentHost:[ConfigurationUtils sinchEnvironmentHost]
+        NSString *appId = [ConfigurationUtils sinchApplicationId];
+        NSString *appSecret = [ConfigurationUtils sinchApplicationSecret];
+        NSString *enviornmentHost = [ConfigurationUtils sinchEnvironmentHost];
+        _client = [Sinch clientWithApplicationKey:appId
+                                applicationSecret:appSecret
+                                  environmentHost:enviornmentHost
                                            userId:userId];
+        
         
         _client.delegate = self;
         
         [_client setSupportMessaging:YES];
-        [_client setSupportPushNotifications:YES];
         
         [_client start];
         [_client startListeningOnActiveConnection];
