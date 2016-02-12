@@ -156,6 +156,9 @@
                 completionHandler(UIBackgroundFetchResultFailed);
             }
         }];
+    } else {
+        [PFPush handlePush:userInfo];
+        completionHandler(UIBackgroundFetchResultNoData);
     }
 }
 
