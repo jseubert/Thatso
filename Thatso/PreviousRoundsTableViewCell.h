@@ -10,9 +10,8 @@
 
 @property (nonatomic, strong) UILabel *namesLabel;
 @property (nonatomic, strong) UILabel *categoryLabel;
-@property (nonatomic, strong) UILabel *nextRoundLabel;
 
 -(void)setColorScheme:(NSInteger) code;
--(void)adjustLabels;
+//-(void)adjustLabels;
 
 @end

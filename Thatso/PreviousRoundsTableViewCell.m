@@ -23,6 +23,7 @@
         self.namesLabel.font = [UIFont defaultAppFontWithSize:16.0];
         self.namesLabel.text = @"";
         self.namesLabel.lineBreakMode = NSLineBreakByWordWrapping;
+      //  self.namesLabel.backgroundColor = [UIColor redColor];
         self.namesLabel.numberOfLines = 0;
         
         
@@ -33,42 +34,26 @@
         self.categoryLabel.text = @"";
         self.categoryLabel.lineBreakMode = NSLineBreakByWordWrapping;
         self.categoryLabel.numberOfLines = 0;
+       // self.categoryLabel.backgroundColor = [UIColor blueColor];
         
         [self addSubview:self.categoryLabel];
         
-        self.nextRoundLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.frame.size.width-10-40, 10, 40, self.frame.size.height/2)];
-        self.nextRoundLabel.font = [UIFont defaultAppFontWithSize:14.0];
-        self.nextRoundLabel.text = @"New";
-        self.nextRoundLabel.numberOfLines = 1;
-        self.nextRoundLabel.hidden = true;
-        [self.nextRoundLabel setBackgroundColor:[UIColor pinkAppColor]];
-        [self.nextRoundLabel setNumberOfLines:0];
-        [self.nextRoundLabel setLineBreakMode:NSLineBreakByWordWrapping];
-        [self.nextRoundLabel setTextColor:[UIColor whiteColor]];
-        [self.nextRoundLabel setTextAlignment:NSTextAlignmentCenter];
-        [[self.nextRoundLabel  layer] setBorderWidth:2.0f];
-        [[self.nextRoundLabel  layer] setBorderColor:[UIColor whiteColor].CGColor];
-        [[self.nextRoundLabel  layer] setCornerRadius:10.0f];
-        [self.nextRoundLabel setClipsToBounds:YES];
-        
-        
-        [self addSubview:self.nextRoundLabel];
     }
     return self;
 }
 
--(void)adjustLabels
+-(void)layoutSubviews
 {
-    
-    CGFloat width = self.frame.size.width
+    [super layoutSubviews];
+    CGFloat width = self.contentView.frame.size.width
     - 10    //left padding
     - 10;   //padding on right
     
     CGSize topLabelSize = [StringUtils sizeWithFontAttribute:[UIFont defaultAppFontWithSize:16.0] constrainedToSize:(CGSizeMake(width, width)) withText:self.namesLabel.text];
     CGSize bottomeLabelSize = [StringUtils sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(width, width)) withText: self.categoryLabel.text];
     
-    self.namesLabel.frame = CGRectMake(10, 10, self.frame.size.width -20, topLabelSize.height);
-    self.categoryLabel.frame = CGRectMake(10, self.namesLabel.frame.origin.x + self.namesLabel.frame.size.height + 5, self.frame.size.width-20, bottomeLabelSize.height + 10);
+    self.namesLabel.frame = CGRectMake(10, 10, width, topLabelSize.height);
+    self.categoryLabel.frame = CGRectMake(10, self.namesLabel.frame.origin.x + self.namesLabel.frame.size.height + 5, width, bottomeLabelSize.height + 10);
     
     
 }

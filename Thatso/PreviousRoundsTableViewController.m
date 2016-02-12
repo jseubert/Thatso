@@ -172,7 +172,7 @@ NSString * const ViewedPreviousRoundsScreen = @"ViewedPreviousRoundsScreen";
     }
     
     [cell setColorScheme:indexPath.row];
-    [cell adjustLabels];
+  //  [cell adjustLabels];
     
     return cell;
     
