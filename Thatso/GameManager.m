@@ -189,9 +189,8 @@ static GameManager *sharedInstance = nil;
             {
                 if(![existingGame.currentRound.responded containsObject:game.objectId])
                 {
-                    NSMutableArray *newArray = [[NSMutableArray alloc] initWithArray:existingGame.currentRound.responded];
-                    [newArray addObject:[User currentUser].fbId];
-                    existingGame.currentRound.responded = newArray;
+                    [existingGame.currentRound addUniqueObject:[User currentUser].fbId forKey:RoundResponded];
+                    [existingGame.currentRound saveInBackground];
                     [gameArray removeObject:existingGame];
                     addGame = true;
                     
