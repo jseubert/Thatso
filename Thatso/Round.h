@@ -16,5 +16,7 @@
 @property (retain) NSArray *responded;
 @property (retain) NSString *categoryID;
 + (NSString *)parseClassName;
+
+-(NSString *) categoryWithResponses;
 @end
 

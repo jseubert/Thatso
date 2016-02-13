@@ -180,7 +180,9 @@ NSString * const RequestedNotifications = @"RequestedNotifications";
     }
     Round *currentRound = game.currentRound;
     
-    CGSize categoryHeight = [StringUtils sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(self.tableView.frame.size.width -20, self.tableView.frame.size.width -20)) withText:currentRound.category];
+    //Add number of responses
+    CGSize categoryHeight = [StringUtils sizeWithFontAttribute:[UIFont defaultAppFontWithSize:14.0] constrainedToSize:(CGSizeMake(self.tableView.frame.size.width -20, self.tableView.frame.size.width -20)) withText:[currentRound categoryWithResponses]];
+    
     int height =    5 + //padding
                     20 + //roundlabel
                     5 + //padding

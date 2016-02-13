@@ -17,6 +17,8 @@
 #import "GameManager.h"
 #import "RoundManager.h"
 
+#import "PushUtils.h"
+
 
 
 
@@ -100,13 +102,17 @@
 
 -(void) setNumberOfBadges: (UIApplication *)application {
     //The badge is set to the number of games a user is either The Judge of or needs to add a response
-    NSUInteger numberOfGamesRequiringAction = [((NSMutableArray *)[[GameManager instance].sortedGames objectForKey:@"Judge"]) count] + [((NSMutableArray *)[[GameManager instance].sortedGames objectForKey:@"CommentNeeded"]) count];
-    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-    if (currentInstallation.badge != numberOfGamesRequiringAction) {
-        currentInstallation.badge = numberOfGamesRequiringAction;
-        [currentInstallation saveEventually];
+    if ([User currentUser] && [PFFacebookUtils isLinkedWithUser:[User currentUser]]) {
+        NSUInteger numberOfGamesRequiringAction = [((NSMutableArray *)[[GameManager instance].sortedGames objectForKey:@"Judge"]) count] + [((NSMutableArray *)[[GameManager instance].sortedGames objectForKey:@"CommentNeeded"]) count];
+        PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+        if (currentInstallation.badge != numberOfGamesRequiringAction) {
+            currentInstallation.badge = numberOfGamesRequiringAction;
+            [currentInstallation saveEventually];
+        }
+        application.applicationIconBadgeNumber = numberOfGamesRequiringAction;
+    } else {
+        application.applicationIconBadgeNumber = 0;
     }
-    application.applicationIconBadgeNumber = numberOfGamesRequiringAction;
     
 }
 
@@ -131,8 +137,76 @@
 -(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
     NSLog(@"didReceiveRemoteNotification:fetchCompletionHandler: %@", userInfo);
-    NSString * type = userInfo[@"type"];
-    application.applicationIconBadgeNumber = 69;
+    NSString * type = userInfo[PushParameterPushType];
+    PushType pushType = [PushUtils pushTypeForString:type];
+    switch (pushType) {
+        case PushTypeNewGame:
+        {
+            [[GameManager instance] getUsersGamesWithCallback:^(BOOL success) {
+                if(success) {
+                    [self setNumberOfBadges:application];
+                    [PFPush handlePush:userInfo];
+                    completionHandler(UIBackgroundFetchResultNewData);
+                } else {
+                    [PFPush handlePush:userInfo];
+                    completionHandler(UIBackgroundFetchResultFailed);
+                }
+            }];
+            break;
+        }
+        case PushTypeNewRound:
+        {
+            [[GameManager instance] getUsersGamesWithCallback:^(BOOL success) {
+                if(success) {
+                    [self setNumberOfBadges:application];
+                    [PFPush handlePush:userInfo];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:RoundManagerNewRoundStarted object:nil userInfo:userInfo];
+                    completionHandler(UIBackgroundFetchResultNewData);
+                } else {
+                    [PFPush handlePush:userInfo];
+                    completionHandler(UIBackgroundFetchResultFailed);
+                }
+            }];
+            break;
+        }
+        case PushTypePlayerAdded:
+        {
+            [[GameManager instance] getUsersGamesWithCallback:^(BOOL success) {
+                if(success) {
+                    [self setNumberOfBadges:application];
+                    [PFPush handlePush:userInfo];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:RoundManagerPlayerAdded object:nil userInfo:userInfo];
+                    completionHandler(UIBackgroundFetchResultNewData);
+                } else {
+                    [PFPush handlePush:userInfo];
+                    completionHandler(UIBackgroundFetchResultFailed);
+                }
+            }];
+            break;
+        }
+        case PushTypePlayerLeft:
+        {
+            [[GameManager instance] getUsersGamesWithCallback:^(BOOL success) {
+                if(success) {
+                    [self setNumberOfBadges:application];
+                    [PFPush handlePush:userInfo];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:RoundManagerPlayerLeft object:nil userInfo:userInfo];
+                    completionHandler(UIBackgroundFetchResultNewData);
+                } else {
+                    [PFPush handlePush:userInfo];
+                    completionHandler(UIBackgroundFetchResultFailed);
+                }
+            }];
+            break;
+        }
+        default:
+        {
+            [PFPush handlePush:userInfo];
+            completionHandler(UIBackgroundFetchResultNoData);
+            break;
+        }
+    }
+    /*
     if([type isEqualToString:@"newGame"]){
         [[GameManager instance] getUsersGamesWithCallback:^(BOOL success) {
             if(success) {
@@ -149,7 +223,7 @@
             if(success) {
                 [self setNumberOfBadges:application];
                 [PFPush handlePush:userInfo];
-                [[NSNotificationCenter defaultCenter] postNotificationName:RoundManagerNewRoundStarted object:nil userInfo:nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:RoundManagerNewRoundStarted object:nil userInfo:userInfo];
                 completionHandler(UIBackgroundFetchResultNewData);
             } else {
                 [PFPush handlePush:userInfo];
@@ -159,7 +233,7 @@
     } else {
         [PFPush handlePush:userInfo];
         completionHandler(UIBackgroundFetchResultNoData);
-    }
+    }*/
 }
 
 - (void)initSinchClientWithUserId:(NSString *)userId {

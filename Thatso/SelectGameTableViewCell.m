@@ -200,7 +200,9 @@
     
     [self.gameNameLabel setText: game.gameName];
     [self.roundNumberLabel setText: [NSString stringWithFormat:@"%@",round.roundNumber]];
-    [self.categoryLabel setText:round.category];
+    
+    //Add number of responses
+    [self.categoryLabel setText:[round categoryWithResponses]];
     
     int count = 0;
     int iconNumber = 0;

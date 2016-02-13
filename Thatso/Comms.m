@@ -176,6 +176,22 @@
 
 + (void) getPreviousRoundsInGame: (Game * ) game forDelegate:(id<DidGetPreviousRounds>)delegate
 {
+    //Check if the user has already downloaded all the old games
+    NSArray *previousRounds = [[PreviousRounds instance].previousRounds objectForKey:game.objectId];
+    if(previousRounds != nil) {
+        if((previousRounds.count + 1)== [game.rounds intValue]) {
+            [delegate didGetPreviousRounds:YES info: nil];
+            return;
+        }
+    }
+    
+    //First round of game so don't need to query
+    if([game.rounds intValue] == 1) {
+        [delegate didGetPreviousRounds:YES info: nil];
+        return;
+    }
+    
+    
     PFQuery *getRounds = [PFQuery queryWithClassName:CompletedRoundClass];
     
     [getRounds orderByDescending:CompletedRoundNumber];

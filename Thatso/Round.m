@@ -24,4 +24,16 @@
     return RoundClass;
 }
 
+-(NSString *) categoryWithResponses {
+    NSString *responseString = @"";
+    if(self.responded.count == 1) {
+        responseString = @" (1 response)";
+    } else if(self.responded.count > 1) {
+        responseString = [NSString stringWithFormat:@" (%ld responses)", self.responded.count];
+    }
+    
+    return [NSString stringWithFormat:@"%@%@", self.category, responseString];
+    
+}
+
 @end

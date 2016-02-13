@@ -7,6 +7,8 @@
 //
 
 extern NSString * const RoundManagerNewRoundStarted;
+extern NSString * const RoundManagerPlayerAdded;
+extern NSString * const RoundManagerPlayerLeft;
 
 //Delegate Callbacks
 @protocol DidAddCommentDelegate <NSObject>

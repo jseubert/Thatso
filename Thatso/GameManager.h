@@ -36,5 +36,5 @@ extern NSString * const GameManagerGamesLoadedError;
 //Network Calls
 - (void) startNewGameWithUsers:(NSMutableArray *)fbFriendsInGame withName:(NSString*)gameName familyFriendly:(BOOL)familyFriendly withDelegate:(id<GameCreatedDelegate>) gameCreatedDelegate;
 - (void) getUsersGamesWithCallback:(void (^)(BOOL))success;
-
+- (void) leaveGame:(Game*)game withCallback:(void (^)(BOOL))success;
 @end

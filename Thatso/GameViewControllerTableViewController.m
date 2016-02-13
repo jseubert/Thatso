@@ -18,6 +18,7 @@
 #import "User.h"
 #import "GameHeaderView.h"
 #import "CommentTableViewCell.h"
+#import "PushUtils.h"
 
 @implementation GameViewControllerTableViewController
 
@@ -55,7 +56,7 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
     FratBarButtonItem *backButton= [[FratBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
     self.navigationItem.backBarButtonItem = backButton;
     //Previous Rounds Navigation Button
-    FratBarButtonItem *previousGames= [[FratBarButtonItem alloc] initWithTitle:@"Past Rounds" style:UIBarButtonItemStylePlain target:self action:@selector(clickedPastGamesButton:)];
+    FratBarButtonItem *previousGames= [[FratBarButtonItem alloc] initWithTitle:@"Details" style:UIBarButtonItemStylePlain target:self action:@selector(clickedPastGamesButton:)];
     self.navigationItem.rightBarButtonItem = previousGames;
     
     //Header View
@@ -177,8 +178,18 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
                                                object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(newRound:)
+                                             selector:@selector(newRoundNotification:)
                                                  name:RoundManagerNewRoundStarted
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(playerAddedNotification:)
+                                                 name:RoundManagerPlayerAdded
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(playerLeftNotification:)
+                                                 name:RoundManagerPlayerLeft
                                                object:nil];
 }
 
@@ -422,8 +433,25 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
     }
 }
 
--(void) newRound:(NSNotification *) notification {
-    [self refreshGame];
+-(void) newRoundNotification:(NSNotification *) notification {
+    NSString * gameId = notification.userInfo[PushParameterGameId];
+    if([self.currentGame.objectId isEqualToString: gameId]){
+        [self refreshGame];
+    }
+}
+
+-(void) playerLeftNotification:(NSNotification *) notification {
+    NSString * gameId = notification.userInfo[PushParameterGameId];
+    if([self.currentGame.objectId isEqualToString: gameId]){
+        [self refreshGame];
+    }
+}
+
+-(void) playerAddedNotification:(NSNotification *) notification {
+    NSString * gameId = notification.userInfo[PushParameterGameId];
+    if([self.currentGame.objectId isEqualToString: gameId]){
+        [self refreshGame];
+    }
 }
 
 #pragma Submitting getting comments
@@ -615,16 +643,7 @@ NSString * const ViewedGameScreenPlayer = @"ViewedGameScreenPlayer";
         [self.messageClient sendMessage:message];
         
         //Send push notification to other players
-        PFPush *push = [[PFPush alloc] init];
-        NSDictionary *data = @{
-                               @"alert" : [NSString stringWithFormat:@"New Round Starting in %@: \"%@\"", self.currentGame.gameName, self.currentRound.category],
-                               @"sound" : @"woop.caf",
-                               @"type" : @"newRound",
-                               @"content-available" : @1
-                               };
-        [push setChannels:nonUserPlayersPushIDs];
-        [push setData:data];
-        [push sendPushInBackground];
+        [PushUtils sendNewRoundPushForGame:self.currentGame inRound:self.currentRound];
         
     }else{
         [self showAlertWithTitle:@"Error!" andSummary:info];

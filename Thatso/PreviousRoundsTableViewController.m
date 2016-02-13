@@ -14,6 +14,10 @@
 #import "AppDelegate.h"
 #import "User.h"
 #import "ScoreHorizontalHeaderScrollView.h"
+#import "RoundManager.h"
+#import "GameManager.h"
+
+#import "PushUtils.h"
 
 @interface PreviousRoundsTableViewController ()
 
@@ -29,7 +33,7 @@ NSString * const ViewedPreviousRoundsScreen = @"ViewedPreviousRoundsScreen";
     initialLoad = true;
     self.previousRounds = [[NSMutableArray alloc] init];
     
-    self.navigationItem.title = @"Past Rounds";
+    self.navigationItem.title = @"Details";
     
     //Back Button
     FratBarButtonItem *backButton= [[FratBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
@@ -59,6 +63,21 @@ NSString * const ViewedPreviousRoundsScreen = @"ViewedPreviousRoundsScreen";
     appDelegate.adView.delegate = self;
     canShowBanner = YES;
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(newRoundNotification:)
+                                                 name:RoundManagerNewRoundStarted
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(playerAddedNotification:)
+                                                 name:RoundManagerPlayerAdded
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(playerLeftNotification:)
+                                                 name:RoundManagerPlayerLeft
+                                               object:nil];
+    
     if(![[NSUserDefaults standardUserDefaults] boolForKey:ViewedPreviousRoundsScreen])
     {
         
@@ -69,6 +88,10 @@ NSString * const ViewedPreviousRoundsScreen = @"ViewedPreviousRoundsScreen";
     }
 }
 
+-(void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 -(void)viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
@@ -76,10 +99,54 @@ NSString * const ViewedPreviousRoundsScreen = @"ViewedPreviousRoundsScreen";
     [self.tableView setFrame:(CGRectMake(0, self.headerView.bottom, self.view.width, self.view.height - [self bannerHeight] - self.headerView.height))];
 }
 
+# pragma mark
+# pragma NSNotification callbacks
+-(void) newRoundNotification:(NSNotification *) notification {
+    NSString * gameId = notification.userInfo[PushParameterGameId];
+    if([self.currentGame.objectId isEqualToString: gameId]){
+        [self showActivityIndicator];
+        [self.currentGame fetchInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+            [self.currentGame.currentRound fetchInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                [self refreshGames];
+            }];
+        }];
+    }
+}
+
+-(void) playerLeftNotification:(NSNotification *) notification {
+    NSString * gameId = notification.userInfo[PushParameterGameId];
+    if([self.currentGame.objectId isEqualToString: gameId]){
+        [self showActivityIndicator];
+        [self.currentGame fetchInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+            [self.currentGame.currentRound fetchInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                [self.headerView removeFromSuperview];
+                self.headerView = [[ScoreHorizontalHeaderScrollView alloc] initWithGame:self.currentGame];
+                [self.view addSubview:self.headerView];
+                [self refreshGames];
+            }];
+        }];
+    }
+}
+
+-(void) playerAddedNotification:(NSNotification *) notification {
+    NSString * gameId = notification.userInfo[PushParameterGameId];
+    if([self.currentGame.objectId isEqualToString: gameId]){
+        [self showActivityIndicator];
+        [self.currentGame fetchInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+            [self.currentGame.currentRound fetchInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                [self.headerView removeFromSuperview];
+                self.headerView = [[ScoreHorizontalHeaderScrollView alloc] initWithGame:self.currentGame];
+                [self.view addSubview:self.headerView];
+                [self refreshGames];
+            }];
+        }];
+    }
+}
 
 //Pull to refresh method
 - (void) refreshGames
 {
+    [self showActivityIndicator];
     [self.refreshControl setAttributedTitle:[StringUtils makeRefreshText:@"Refreshing data..."]];
     [self.refreshControl setEnabled:NO];
     [Comms getPreviousRoundsInGame:self.currentGame forDelegate:self];
@@ -99,14 +166,14 @@ NSString * const ViewedPreviousRoundsScreen = @"ViewedPreviousRoundsScreen";
     {
         return 1;
     }else{
-        return self.previousRounds.count;
+        return self.previousRounds.count + 2;
     }
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     if(self.previousRounds.count == 0)
     {
-        return 42;
+        return 45;
     } else
     {
         return 0;
@@ -117,7 +184,10 @@ NSString * const ViewedPreviousRoundsScreen = @"ViewedPreviousRoundsScreen";
     if(initialLoad){
         return UITableViewAutomaticDimension;
     } else{
-        CompletedRound* round = [self.previousRounds objectAtIndex:indexPath.row];
+        if(indexPath.row == 0 || indexPath.row == 1) {
+            return 45;
+        }
+        CompletedRound* round = [self.previousRounds objectAtIndex:indexPath.row - 2];
         
         CGFloat width = tableView.frame.size.width
             - 10    //left padding
@@ -155,27 +225,68 @@ NSString * const ViewedPreviousRoundsScreen = @"ViewedPreviousRoundsScreen";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *cellIdentifier = @"PreviousCell";
-    PreviousRoundsTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-    if (cell == nil) {
-        cell = [[PreviousRoundsTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    if(indexPath.row == 0) {
+        NSString *cellIdentifier = @"AddPlayerCell";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+        if (cell == nil) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        }
+        cell.textLabel.text = [NSString stringWithFormat:@"+ Add Player to %@", self.currentGame.gameName];
+        return cell;
+        
+    } else if(indexPath.row == 1) {
+        NSString *cellIdentifier = @"RemovePlayerCell";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+        if (cell == nil) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        }
+         cell.textLabel.text = [NSString stringWithFormat:@"-  Leave %@", self.currentGame.gameName];
+        return cell;
+    } else {
+        NSString *cellIdentifier = @"PreviousCell";
+        PreviousRoundsTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+        if (cell == nil) {
+            cell = [[PreviousRoundsTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        }
+        
+        if(initialLoad)
+        {
+            cell.namesLabel.text = @"Loading rounds...";
+        } else{
+            CompletedRound* round = [self.previousRounds objectAtIndex:indexPath.row - 2];
+            NSString *winner = round.winningResponseFrom.first_name;
+            [cell.namesLabel setText:round.category];
+            [cell.categoryLabel setText:[NSString stringWithFormat:@"%@: %@", winner, round.winningResponse]];
+        }
+        
+        [cell setColorScheme:indexPath.row];
+        
+        return cell;
     }
     
-    if(initialLoad)
-    {
-        cell.namesLabel.text = @"Loading rounds...";
-    } else{
-        CompletedRound* round = [self.previousRounds objectAtIndex:indexPath.row];
-        NSString *winner = round.winningResponseFrom.first_name;
-        [cell.namesLabel setText:round.category];
-        [cell.categoryLabel setText:[NSString stringWithFormat:@"%@: %@", winner, round.winningResponse]];
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
+    //add player
+    if(indexPath.row == 0) {
+        
     }
-    
-    [cell setColorScheme:indexPath.row];
-  //  [cell adjustLabels];
-    
-    return cell;
-    
+    //Leave game
+    else if (indexPath.row == 1) {
+        if(self.currentGame.players.count <= 3) {
+            UIAlertView *newAlertView = [[UIAlertView alloc] initWithTitle:@"Hey don't be selfish. If you leave this game now, there won't be enough players." message:@"Maybe we'll add this feature later. Maybe." delegate:nil cancelButtonTitle:@"Sorry" otherButtonTitles:nil];
+            [newAlertView show];
+        } else if([[[User currentUser] objectForKey:UserFacebookID] isEqualToString:self.currentGame.currentRound[RoundJudge]]){
+            UIAlertView *newAlertView = [[UIAlertView alloc] initWithTitle:@"Hey, you can't leave a game while you are the judge, wait for the next round." message:nil delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+            [newAlertView show];
+        } else {
+            UIAlertView *newAlertView = [[UIAlertView alloc] initWithTitle:@"YO! You really want to bail on this game?" message:nil delegate:self cancelButtonTitle:@"Oops, no" otherButtonTitles:@"Yeppers", nil];
+            newAlertView.tag = 1;
+            [newAlertView show];
+        }
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        
+    }
 }
 
 - (void) didGetPreviousRounds:(BOOL)success info: (NSString *) info
@@ -216,4 +327,24 @@ NSString * const ViewedPreviousRoundsScreen = @"ViewedPreviousRoundsScreen";
     }
 }
 
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if (alertView.tag == 1) {
+        if(buttonIndex == 1) {
+            NSLog(@"Yeppers");
+            [self showActivityIndicator];
+            [[GameManager instance] leaveGame:self.currentGame withCallback:^(BOOL success) {
+                if(success) {
+                    //Pop back two viewcontrollers to main viewcontroller
+                    NSUInteger ownIndex = [self.navigationController.viewControllers indexOfObject:self];
+                    [self.navigationController popToViewController:[self.navigationController.viewControllers objectAtIndex:ownIndex - 2] animated:YES];
+                } else {
+                    UIAlertView *newAlertView = [[UIAlertView alloc] initWithTitle:@"Huh, there was a problem leaving the game. Try again." message:nil delegate:self cancelButtonTitle:@"Oh Ok" otherButtonTitles: nil];
+                    [newAlertView show];
+                }
+            }];
+        } else {
+            NSLog(@"No");
+        }
+    }
+}
 @end

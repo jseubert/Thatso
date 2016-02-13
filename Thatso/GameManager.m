@@ -8,6 +8,7 @@
 
 #import "GameManager.h"
 #import "User.h"
+#import "PushUtils.h"
 
 //Notifciation Codes
 NSString * const GameManagerGameAdded = @"GameManagerGameAdded";
@@ -138,6 +139,40 @@ static GameManager *sharedInstance = nil;
         [self.games addObject:game];
     }
     
+}
+
+-(void) removeGame:(NSString*) gameId {
+    Game *gameToRemove = nil;
+    for(Game *game in self.games) {
+        if([gameId isEqualToString:game.objectId]){
+            gameToRemove = game;
+            break;
+        }
+    }
+    if(gameToRemove != nil){
+        [self.games removeObject:gameToRemove];
+        [self sortGames];
+    }
+}
+
+-(void) sortGames {
+    self.sortedGames = [[NSMutableDictionary alloc] init];
+    [self.sortedGames setObject:[[NSMutableArray alloc] init] forKey:@"Judge"];
+    [self.sortedGames setObject:[[NSMutableArray alloc] init] forKey:@"CommentNeeded"];
+    [self.sortedGames setObject:[[NSMutableArray alloc] init] forKey:@"Completed"];
+    for(Game *game in self.games) {
+        //Add the game to the correct category
+        if([game.currentRound.judge isEqualToString: [[User currentUser] objectForKey:UserFacebookID]])
+        {
+            [[self.sortedGames objectForKey:@"Judge"] addObject:game];
+        } else if([game.currentRound.responded containsObject:[[User currentUser] objectForKey:UserFacebookID]])
+        {
+            [[self.sortedGames objectForKey:@"Completed"] addObject:game];
+        } else
+        {
+            [[self.sortedGames objectForKey:@"CommentNeeded"] addObject:game];
+        }
+    }
 }
 
 - (void) userDidRespondInGame: (Game*) game
@@ -298,6 +333,41 @@ static GameManager *sharedInstance = nil;
             }
             // Notify that all the current games have been downloaded
             [[NSNotificationCenter defaultCenter] postNotificationName:GameManagerGamesLoaded object:nil];
+        }
+    }];
+}
+//check to make sure there are the correct number of players. If someone else quit at the same time, re add yourself and return no success
+
+- (void) leaveGame:(Game*)game withCallback:(void (^)(BOOL))success {
+    User *currentUser = [game playerWithObjectId:[PFUser currentUser].objectId];
+    [game removeObject:currentUser forKey:GamePlayers];
+    [game saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+        if(succeeded) {
+            //Something went wrong, re add yourself
+            if(game.players.count <= 2) {
+                [game addUniqueObject:[PFUser currentUser] forKey:GamePlayers];
+                [game saveInBackground];
+                if(success != nil) {
+                    success(NO);
+                }
+                return;
+            //Successful
+            } else {
+                //Remove the local game
+                [self removeGame:game.objectId];
+                
+                //Send push notification
+                [PushUtils sendPlayerLeftPushForGame:game];
+                if(success != nil) {
+                    success(YES);
+                }
+                return;
+            }
+        } else {
+            if(success != nil) {
+                success(NO);
+            }
+            return;
         }
     }];
 }

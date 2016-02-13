@@ -11,7 +11,9 @@
 #import "User.h"
 #import "GameManager.h"
 
-NSString * const RoundManagerNewRoundStarted = @"RoundManagerNewRoundStarted";
+NSString * const RoundManagerNewRoundStarted    = @"RoundManagerNewRoundStarted";
+NSString * const RoundManagerPlayerAdded        = @"RoundManagerPlayerAdded";
+NSString * const RoundManagerPlayerLeft         = @"RoundManagerPlayerLeft";
 
 @implementation RoundManager
 

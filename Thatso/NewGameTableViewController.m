@@ -16,6 +16,7 @@
 #import "GameManager.h"
 #import "FriendsManager.h"
 #import "User.h"
+#import "PushUtils.h"
 
 @interface NewGameTableViewController ()
 
@@ -185,17 +186,7 @@
         }
         
         //Send push notification to other players
-        PFPush *push = [[PFPush alloc] init];
-        NSDictionary *data = @{
-                               @"alert" : [NSString stringWithFormat:@"%@ has added you to a game: %@", [User currentUser].first_name, game.gameName],
-                               @"sound" : @"woop.caf",
-                               @"type" : @"newGame",
-                               @"content-available" : @1
-                               };
-        
-        [push setChannels:nonUserPlayers];
-        [push setData:data];
-        [push sendPushInBackground];
+        [PushUtils sendNewRoundPushForGame:game];
         
         //Pop back two viewcontrollers to main viewcontroller
         NSUInteger ownIndex = [self.navigationController.viewControllers indexOfObject:self];
