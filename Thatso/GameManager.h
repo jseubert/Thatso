@@ -29,6 +29,7 @@ extern NSString * const GameManagerGamesLoadedError;
 - (void) refreshGameID:(NSString *)gameId;
 - (void) refreshGameID:(NSString *)gameId withBlock:(void (^)(Game*))block;
 - (void) addGame: (Game *) game;
+-(void) removeGame:(NSString*) gameId;
 - (NSInteger) gameCount;
 - (void) clearData;
 
@@ -37,4 +38,5 @@ extern NSString * const GameManagerGamesLoadedError;
 - (void) startNewGameWithUsers:(NSMutableArray *)fbFriendsInGame withName:(NSString*)gameName familyFriendly:(BOOL)familyFriendly withDelegate:(id<GameCreatedDelegate>) gameCreatedDelegate;
 - (void) getUsersGamesWithCallback:(void (^)(BOOL))success;
 - (void) leaveGame:(Game*)game withCallback:(void (^)(BOOL))success;
+- (void) addPlayers:(NSMutableArray *)fbFriendsInGame toGame:(Game*)game withCallback:(void (^)(BOOL))success;
 @end

@@ -121,4 +121,45 @@ NSString * const PushParameterPushType = @"pushType";
     [push sendPushInBackground];
 }
 
++ (void) sendPlayerAddedPushForGame:(Game *)game addedPlayers:(NSMutableArray *)fbFriendsAdded
+{
+    NSMutableArray *nonUserPlayersPushIDs = [[NSMutableArray alloc] init];
+    for(User * user in game.players)
+    {
+        if(![user.objectId isEqualToString:[User currentUser].objectId])
+        {
+            [nonUserPlayersPushIDs addObject:[NSString stringWithFormat:@"c%@",user.fbId]];
+        }
+    }
+    NSString *friendsAddedString = @"";
+    if(fbFriendsAdded.count == 1) {
+        User * user = [fbFriendsAdded firstObject];
+        friendsAddedString = user.first_name;
+    } else if(fbFriendsAdded.count == 2) {
+        User * user = [fbFriendsAdded firstObject];
+        User * user2 = [fbFriendsAdded lastObject];
+        friendsAddedString = [NSString stringWithFormat:@"%@ and %@", user.first_name, user2.first_name];
+    } else {
+        for(int i = 0; i < fbFriendsAdded.count - 1; i ++) {
+            User * user = [fbFriendsAdded objectAtIndex:i];
+            friendsAddedString = [NSString stringWithFormat:@"%@ %@,", friendsAddedString, user.first_name];
+        }
+        User * last = [fbFriendsAdded lastObject];
+        friendsAddedString = [NSString stringWithFormat:@"%@ and %@", friendsAddedString, last.first_name];
+    }
+    
+    PFPush *push = [[PFPush alloc] init];
+    NSDictionary *data = @{
+                           @"alert" : [NSString stringWithFormat:@"%@ has added %@ to the game: %@", [User currentUser].first_name, friendsAddedString, game.gameName],
+                           @"sound" : @"woop.caf",
+                           PushParameterPushType : [PushUtils stringForPushType:PushTypePlayerAdded],
+                           PushParameterGameId : game.objectId,
+                           @"content-available" : @1
+                           };
+    
+    [push setChannels:nonUserPlayersPushIDs];
+    [push setData:data];
+    [push sendPushInBackground];
+}
+
 @end

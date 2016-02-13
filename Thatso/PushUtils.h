@@ -27,6 +27,7 @@ typedef NS_ENUM(NSInteger, PushType) {
 + (void) sendNewRoundPushForGame:(Game *)game inRound:(Round*) round;
 + (void) sendNewRoundPushForGame:(Game *)game;
 + (void) sendPlayerLeftPushForGame:(Game *)game;
++ (void) sendPlayerAddedPushForGame:(Game *)game addedPlayers:(NSMutableArray *)fbFriendsAdded;
 
 
 

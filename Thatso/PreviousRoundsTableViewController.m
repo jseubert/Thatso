@@ -16,7 +16,7 @@
 #import "ScoreHorizontalHeaderScrollView.h"
 #import "RoundManager.h"
 #import "GameManager.h"
-
+#import "AddPlayerViewController.h"
 #import "PushUtils.h"
 
 @interface PreviousRoundsTableViewController ()
@@ -48,6 +48,9 @@ NSString * const ViewedPreviousRoundsScreen = @"ViewedPreviousRoundsScreen";
     [self.tableView setBackgroundColor:[UIColor blueAppColor]];
     [self.tableView setSeparatorColor:[UIColor clearColor]];
     [self.view addSubview: self.tableView];
+    
+    //Add Activity indicator
+    [self.view addSubview:self.activityIndicator];
     
     //Refresh indicator for tableview
     self.refreshControl  = [[UIRefreshControl alloc] init];
@@ -269,7 +272,10 @@ NSString * const ViewedPreviousRoundsScreen = @"ViewedPreviousRoundsScreen";
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     //add player
     if(indexPath.row == 0) {
-        
+        AddPlayerViewController *vc = [[AddPlayerViewController alloc] init];
+        vc.currentGame = self.currentGame;
+        [self.navigationController pushViewController:vc animated:YES];
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
     //Leave game
     else if (indexPath.row == 1) {
@@ -291,6 +297,7 @@ NSString * const ViewedPreviousRoundsScreen = @"ViewedPreviousRoundsScreen";
 
 - (void) didGetPreviousRounds:(BOOL)success info: (NSString *) info
 {
+    [self hideActivityIndicator];
     initialLoad = false;
     if(success)
     {
@@ -346,5 +353,20 @@ NSString * const ViewedPreviousRoundsScreen = @"ViewedPreviousRoundsScreen";
             NSLog(@"No");
         }
     }
+}
+
+#pragma mark - ACTIVITY INDICATOR FUNCTIONS
+- (void) showActivityIndicator
+{
+    [self.activityIndicator startAnimating];
+    [self.activityIndicator setHidden:NO];
+    [self.tableView setUserInteractionEnabled:NO];
+}
+
+-(void) hideActivityIndicator
+{
+    [self.activityIndicator stopAnimating];
+    [self.activityIndicator setHidden:YES];
+    [self.tableView setUserInteractionEnabled:YES];
 }
 @end

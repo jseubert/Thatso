@@ -372,5 +372,37 @@ static GameManager *sharedInstance = nil;
     }];
 }
 
+- (void) addPlayers:(NSMutableArray *)fbFriendsInGame toGame:(Game*)game withCallback:(void (^)(BOOL))success {
+    
+    [game addUniqueObjectsFromArray:fbFriendsInGame forKey:GamePlayers];
+    [game saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+        if(succeeded) {
+            //Something went wrong, re add yourself
+            if(game.players.count > 10) {
+                [game removeObjectsInArray:fbFriendsInGame forKey:GamePlayers];
+                [game saveInBackground];
+                if(success != nil) {
+                    success(NO);
+                }
+                return;
+                //Successful
+            } else {
+                //Send push notification
+                [self getUsersGamesWithCallback:nil];
+                [PushUtils sendPlayerAddedPushForGame:game addedPlayers:fbFriendsInGame];
+                if(success != nil) {
+                    success(YES);
+                }
+                return;
+            }
+        } else {
+            if(success != nil) {
+                success(NO);
+            }
+            return;
+        }
+    }];
+}
+
 
 @end

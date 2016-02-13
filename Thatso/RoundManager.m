@@ -232,6 +232,8 @@ static RoundManager *instance = nil;
              [game saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                  if(succeeded)
                  {
+                     [[GameManager instance] removeGame:game.objectId];
+                     [[GameManager instance] addGame:game];
                      //Build archivedRound object and save it
                      CompletedRound *completedRound = [CompletedRound object];
                      completedRound.judge = [game playerWithfbId:round.judge];
@@ -255,7 +257,6 @@ static RoundManager *instance = nil;
                                      [round deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                                          if(succeeded)
                                          {
-                                             [[GameManager instance] addGame:game];
                                              [delegate didStartNewRound:YES info: error.localizedDescription previousWinner:completedRound];
                                          }else{
                                              [delegate didStartNewRound:NO info: error.localizedDescription previousWinner:nil];

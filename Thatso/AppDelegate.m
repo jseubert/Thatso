@@ -206,34 +206,6 @@
             break;
         }
     }
-    /*
-    if([type isEqualToString:@"newGame"]){
-        [[GameManager instance] getUsersGamesWithCallback:^(BOOL success) {
-            if(success) {
-                [self setNumberOfBadges:application];
-                [PFPush handlePush:userInfo];
-                completionHandler(UIBackgroundFetchResultNewData);
-            } else {
-                [PFPush handlePush:userInfo];
-                completionHandler(UIBackgroundFetchResultFailed);
-            }
-        }];
-    } else if([type isEqualToString:@"newRound"]) {
-        [[GameManager instance] getUsersGamesWithCallback:^(BOOL success) {
-            if(success) {
-                [self setNumberOfBadges:application];
-                [PFPush handlePush:userInfo];
-                [[NSNotificationCenter defaultCenter] postNotificationName:RoundManagerNewRoundStarted object:nil userInfo:userInfo];
-                completionHandler(UIBackgroundFetchResultNewData);
-            } else {
-                [PFPush handlePush:userInfo];
-                completionHandler(UIBackgroundFetchResultFailed);
-            }
-        }];
-    } else {
-        [PFPush handlePush:userInfo];
-        completionHandler(UIBackgroundFetchResultNoData);
-    }*/
 }
 
 - (void)initSinchClientWithUserId:(NSString *)userId {
